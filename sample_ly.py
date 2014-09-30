@@ -45,7 +45,7 @@ reserva = {
 
 tokens = ['CTE_INTEGER','CTE_FLOAT', 'CTE_STRING','ID'] + list(reserva.values())
 
-literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','_']
+literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#']
 
 #TOKENS
 
@@ -113,7 +113,7 @@ def p_statute(p):
                 | screen'''
 
 def p_module(p):
-    '''module : MOD '_' ID moduleA'''
+    '''module : MOD '#' ID moduleA'''
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -131,7 +131,7 @@ def p_type(p):
             | FLOAT'''
 
 def p_calling(p):
-	'''calling : '_' ID '(' callingA'''
+	'''calling : '#' ID '(' callingA'''
 
 def p_callingA(p):
     '''callingA : callingB ')' ';'
@@ -285,7 +285,7 @@ def p_error(p):
 
 import ply.yacc as yacc
 yacc.yacc()
-'''
+#'''
 s = sys.argv[1];
 
 f = open(s, "r")
@@ -298,4 +298,4 @@ for l in lines:
 yacc.parse(unicode(st))
 print st
 f.close()
-'''
+#'''
