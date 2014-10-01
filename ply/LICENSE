@@ -1,0 +1,4 @@
+Project SAMPLE uses Ply 3.4 as lex/syntax analyzer, copyrighted by David Beazley.
+Licensed under BSD and re-distributed with pycparser in accordance
+with this license. For more details and info:
+http://www.dabeaz.com/ply
