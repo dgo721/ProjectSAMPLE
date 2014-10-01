@@ -79,7 +79,7 @@ def t_error(t):
     t.lexer.skip(1)
     
 # Construye LEX
-import ply.lex as lex
+from ply import lex
 lex.lex()
 
 # Parser
@@ -283,10 +283,19 @@ def p_error(p):
         print("Syntax error at EOF")
 
 
-import ply.yacc as yacc
+from ply import yacc
 yacc.yacc()
 #'''
-s = sys.argv[1];
+
+try:
+    if sys.argv[1]:
+        Name = str(sys.argv[1])
+
+except:
+    print "no argument given - using DERP"
+    Name = "ej1.txt"
+
+s = Name
 
 f = open(s, "r")
 lines = f.readlines()
