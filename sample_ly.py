@@ -52,6 +52,7 @@ literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#']
 def t_ID(t):
     r'[a-z][a-zA-Z0-9_]*'
     t.type = reserva.get(t.value,'ID')    # Check for reserved words
+    print "ID", t
     return t
 
 t_CTE_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -59,11 +60,13 @@ t_CTE_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
 def t_CTE_FLOAT(t):
     r'-?\d+\.\d*'
     t.value = float(t.value)
+    print "FLOAT", t
     return t
 
 def t_CTE_INTEGER(t):
     r'\d+'
     t.value = int(t.value)
+    print "INT", t
     return t
 
 t_ignore = " \t"
@@ -86,6 +89,7 @@ lex.lex()
 
 def p_program(p):
     '''program : INIT programA'''
+    print p[0]
 
 def p_programA(p):
     '''programA : programB END
@@ -292,7 +296,7 @@ try:
         Name = str(sys.argv[1])
 
 except:
-    print "no argument given - using DERP"
+    print "no argument given"
     Name = "ej1.txt"
 
 s = Name
@@ -305,6 +309,6 @@ for l in lines:
     st=st+lines[x]
     x=x+1
 yacc.parse(unicode(st))
-print st
+#print st
 f.close()
 #'''
