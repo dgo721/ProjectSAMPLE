@@ -15,14 +15,13 @@ class TabVars:
 	def __str__(self):
 		return repr(self.data)
 
-x=TabVars()
-print x
+def vartipo(tipo, previo):
+	if (previo!=1):
+		previo=tipo
+	return previo
 
-x.add('y', 'INT')
-x.add("x", "INT")
-
-if x.lookup("x")!=True:
-	x.add("x", "FLOAT")
-else:
-	print "EXISTS"
-print x
+def tabvar(nombre,tipo):
+	if tab_valores.lookup(nombre)!=True:
+		tab_valores.add(nombre, tipo)
+	else:
+		print "EXISTS"

@@ -51,8 +51,7 @@ literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#']
 
 def t_ID(t):
     r'[a-z][a-zA-Z0-9_]*'
-    t.type = reserva.get(t.value,'ID')    # Check for reserved words
-    print "ID", t
+    t.type = reserva.get(t.value,'ID')    # Checa palabras reservadas
     return t
 
 t_CTE_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -60,13 +59,15 @@ t_CTE_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
 def t_CTE_FLOAT(t):
     r'-?\d+\.\d*'
     t.value = float(t.value)
-    print "FLOAT", t
+    global tipo_asigna
+    tipo_asigna = vartipo(1, tipo_asigna)
     return t
 
 def t_CTE_INTEGER(t):
     r'\d+'
     t.value = int(t.value)
-    print "INT", t
+    global tipo_asigna
+    tipo_asigna = vartipo(0, tipo_asigna)
     return t
 
 t_ignore = " \t"
@@ -89,7 +90,6 @@ lex.lex()
 
 def p_program(p):
     '''program : INIT programA'''
-    print p[0]
 
 def p_programA(p):
     '''programA : programB END
@@ -164,6 +164,11 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
+    global tipo_asigna, tab_valores
+    if p[2] == '=':
+    	print tipo_asigna, p[1]
+    	tab_valores.add(p[1], tipo_asigna)
+    	tipo_asigna = 0
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
@@ -275,6 +280,7 @@ def p_var_cte(p):
     '''var_cte : ID
                 | CTE_INTEGER
                 | CTE_FLOAT'''
+    print p[1],
 
 def p_empty(p):
     'empty :'
@@ -289,15 +295,18 @@ def p_error(p):
 
 from ply import yacc
 yacc.yacc()
+from tabvars import *
+
+tipo_asigna=0
+tab_valores=TabVars()
+
 #'''
 
 try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
-
 except:
-    print "no argument given"
-    Name = "ej1.txt"
+    Name = "ej3.txt"
 
 s = Name
 
@@ -308,7 +317,8 @@ st=""
 for l in lines:
     st=st+lines[x]
     x=x+1
-yacc.parse(unicode(st))
-#print st
+yacc.parse(st)
+print st
 f.close()
 #'''
+print tab_valores

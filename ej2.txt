@@ -4,7 +4,7 @@ var1 = 3;
 var3 = 67.34;
 
 mod # first {
-	var2 = 23;
+	var2 = 23.3;
 }
 
 mod # second (int d) {
@@ -20,7 +20,7 @@ mod # third (int e, float f) {
 if (var1 > 2) {
 	var4 = var1 + var3;
 } else { 
-	if (var3 < 100) {
+	if (var3 < 99) {
 		var4 = var1 - var3;
 	} else {
 		var4 = var1 * var3;
