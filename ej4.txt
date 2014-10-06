@@ -1,18 +1,15 @@
 init
 
-var1 = 3;
-var3 = 67.34;
-
 mod # first {
-	var2 = 23.3;
+	
 }
 
 mod # second (int d) {
-	var5 = d;
+	
 }
 
 mod # third (int e, float f) {
-	var6 = e*f;
+	
 }
 
 # third (e,f);

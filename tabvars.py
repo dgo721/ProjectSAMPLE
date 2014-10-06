@@ -20,7 +20,13 @@ def vartipo(tipo, previo):
 		previo=tipo
 	return previo
 
-def tabvar(nombre,tipo):
+def vartipo_mod(tipo):
+	if (tipo=="int"):
+		return 0
+	elif (tipo=="float"):
+		return 1
+
+def tabvar(nombre, tipo):
 	if tab_valores.lookup(nombre)!=True:
 		tab_valores.add(nombre, tipo)
 	else:
