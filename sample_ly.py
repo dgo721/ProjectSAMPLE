@@ -114,6 +114,11 @@ def p_statute(p):
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
+    global id_params, contparam_int, contparam_float
+    print "modulo #", p[3], id_params, contparam_int, contparam_float
+    id_params=[] #Reinicia lista de parametros
+    contparam_int=0 #Reinicia contador int
+    contparam_float=0 #Reinicia contado float
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -121,8 +126,9 @@ def p_moduleA(p):
 
 def p_vars(p):
     '''vars : type ID varsA'''
-    global id_type, tab_valores
+    global id_type, tab_valores, id_params
     #print p[2]
+    id_params.append(p[2])
     tab_valores = tabvar(tab_valores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
 def p_varsA(p):
@@ -132,9 +138,13 @@ def p_varsA(p):
 def p_type(p):
     '''type : INT
             | FLOAT'''
-    global id_type
+    global id_type, contparam_int, contparam_float
+    if (p[1]=='int'):
+    	contparam_int=contparam_int+1
+    else:
+    	contparam_float=contparam_float+1
     id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT o FLOAT
-    print id_type
+    #print id_type,
 
 def p_calling(p):
 	'''calling : '#' ID '(' callingA'''
@@ -172,7 +182,7 @@ def p_assign(p):
     	#print tab_valores
     	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
     	tipo_asigna = 0 #Reinicia parametro tipo
-    	assign_vars=[] = #Reinicia lista
+    	assign_vars=[] #Reinicia lista
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
@@ -315,6 +325,9 @@ assign_vars = list()
 tipo_asigna=0 #Determina si el tipo de variable en asignacion es INT(0) o FLOAT(1)
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
+id_params = list()
+contparam_int=0
+contparam_float=0
 
 #'''
 

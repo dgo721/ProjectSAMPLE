@@ -6,6 +6,12 @@ class TabVars:
 	def add(self, key, value):
 		self.data[key]=[value]
 
+	def getKey(self, key):
+		for llave in self.data:
+			if (llave==key):
+				return key
+		return None
+
 	def getType(self, key):
 		return self.data[key][0]
 
