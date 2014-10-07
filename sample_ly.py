@@ -59,15 +59,11 @@ t_CTE_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
 def t_CTE_FLOAT(t):
     r'-?\d+\.\d*'
     t.value = float(t.value)
-    global tipo_asigna
-    tipo_asigna = vartipo(1, tipo_asigna) #FLOAT encontrado, enviado a guardad en tabla de variables
     return t
 
 def t_CTE_INTEGER(t):
     r'\d+'
     t.value = int(t.value)
-    global tipo_asigna
-    tipo_asigna = vartipo(0, tipo_asigna) #INT encontrado, enviado a guardad en tabla de variables
     return t
 
 t_ignore = " \t"
@@ -125,9 +121,9 @@ def p_moduleA(p):
 
 def p_vars(p):
     '''vars : type ID varsA'''
-    global id_type
-    print p[2]
-    tab_valores.add(p[2], vartipo_mod(id_type.pop()))
+    global id_type, tab_valores
+    #print p[2]
+    tab_valores = tabvar(tab_valores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
 def p_varsA(p):
     '''varsA : ',' vars
@@ -137,7 +133,7 @@ def p_type(p):
     '''type : INT
             | FLOAT'''
     global id_type
-    id_type.append(p[1])
+    id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT o FLOAT
     print id_type
 
 def p_calling(p):
@@ -170,10 +166,13 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
-    global tipo_asigna
+    global assign_vars, tipo_asigna, tab_valores
     if p[2] == '=':
-    	tab_valores.add(p[1], tipo_asigna) #Se agrega par a tabla de variables
+    	#print "EN LISTA", vartipo_assign(assign_vars)
+    	#print tab_valores
+    	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
     	tipo_asigna = 0 #Reinicia parametro tipo
+    	assign_vars=[] = #Reinicia lista
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
@@ -285,6 +284,16 @@ def p_var_cte(p):
     '''var_cte : ID
                 | CTE_INTEGER
                 | CTE_FLOAT'''
+    global assign_vars
+    if (type(p[1]) is int):
+    	assign_vars.append(0) #Encuentra un entero para asignar
+    	#print "INT", p[1]
+    elif (type(p[1]) is float):
+    	assign_vars.append(1) #Encuentra un float para asignar
+    	#print "FLOAT", p[1]
+    else:
+    	assign_vars.append(tipoID(tab_valores, p[1]))
+    	#print "ID", p[1]
 
 def p_empty(p):
     'empty :'
@@ -301,9 +310,11 @@ from ply import yacc
 yacc.yacc()
 from tabvars import *
 
+
+assign_vars = list()
 tipo_asigna=0 #Determina si el tipo de variable en asignacion es INT(0) o FLOAT(1)
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
-tab_valores=TabVars()
+tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
 
 #'''
 
@@ -326,4 +337,6 @@ yacc.parse(st)
 #print st
 f.close()
 #'''
-print tab_valores
+#print "TABLA FINAL", tab_valores
+#tab_valores = sort_tabvar(tab_valores)
+tab_valores.echo() #Despliega tabla de valores
