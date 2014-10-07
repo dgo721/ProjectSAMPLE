@@ -22,13 +22,25 @@ class TabVars:
 		return False
 
 	def echo(self):
-		print "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10)
-		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10)
+		print "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5)
+		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
 		for key in sorted(self.data):
 			if (self.data[key][0]==0):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10)
+				print key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10)
+				print key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5)
+	
+	def write(self):
+		f = open('out-tabla_vars', 'w')
+		output = "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5)
+		print >> f, output
+		print >> f, "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
+		for key in sorted(self.data):
+			if (self.data[key][0]==0):
+				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5)
+			elif (self.data[key][0]==1):
+				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5)
+		f.close()
 	
 	def __str__(self):
 		return repr(self.data)
@@ -37,6 +49,7 @@ class TabVars:
 #float o int. Encontrando un float, hace toda la operacion como float.
 def vartipo_assign(varlista):
 	index = 0
+	print varlista,
 	while (index != 1 and varlista!=[]):
 		compara=varlista.pop(0)
 		
@@ -44,6 +57,7 @@ def vartipo_assign(varlista):
 			index = 1
 		elif compara==0:
 			index = 0
+	print index
 	return index
 	pass
 

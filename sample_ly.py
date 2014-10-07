@@ -181,9 +181,11 @@ def p_assign(p):
     if p[2] == '=':
     	#print "EN LISTA", vartipo_assign(assign_vars)
     	#print tab_valores
+    	if p[1] == 'var1':
+    		print p[1], vartipo_assign(assign_vars)
     	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
-    	tipo_asigna = 0 #Reinicia parametro tipo
     	assign_vars=[] #Reinicia lista
+    	tipo_asigna = 0 #Reinicia parametro tipo
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
@@ -322,11 +324,11 @@ yacc.yacc()
 from tabvars import *
 from dirmods import *
 
-assign_vars = list()
 tipo_asigna=0 #Determina si el tipo de variable en asignacion es INT(0) o FLOAT(1)
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
+id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
+assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
 tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
-id_params = list()
 dir_modulos=DirMods()
 contparam_int=0
 contparam_float=0
@@ -355,5 +357,7 @@ f.close()
 #print "TABLA FINAL", tab_valores
 #tab_valores = sort_tabvar(tab_valores)
 tab_valores.echo() #Despliega tabla de valores
+tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
-dir_modulos.echo()
+dir_modulos.echo() #Despliega directorio de modulos
+dir_modulos.write()

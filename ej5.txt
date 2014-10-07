@@ -1,0 +1,9 @@
+init
+
+var1 = 3;
+var2 = 0;
+var3 = 0.0;
+var4 = 5 > 4;
+var4 = 5 > 4.6;
+
+end
