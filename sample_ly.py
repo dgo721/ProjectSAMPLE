@@ -114,8 +114,9 @@ def p_statute(p):
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
-    global id_params, contparam_int, contparam_float
-    print "modulo #", p[3], id_params, contparam_int, contparam_float
+    global id_params, contparam_int, contparam_float, dir_modulos
+    #print "modulo #", p[3], id_params, contparam_int, contparam_float
+    dir_modulos = dirmod(dir_modulos, p[3], id_params, contparam_int, contparam_float, tab_valores)
     id_params=[] #Reinicia lista de parametros
     contparam_int=0 #Reinicia contador int
     contparam_float=0 #Reinicia contado float
@@ -140,9 +141,9 @@ def p_type(p):
             | FLOAT'''
     global id_type, contparam_int, contparam_float
     if (p[1]=='int'):
-    	contparam_int=contparam_int+1
+    	contparam_int=contparam_int+1 #Acumula un entero en contador
     else:
-    	contparam_float=contparam_float+1
+    	contparam_float=contparam_float+1 #Acumula un flotante en contador
     id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT o FLOAT
     #print id_type,
 
@@ -319,13 +320,14 @@ def p_error(p):
 from ply import yacc
 yacc.yacc()
 from tabvars import *
-
+from dirmods import *
 
 assign_vars = list()
 tipo_asigna=0 #Determina si el tipo de variable en asignacion es INT(0) o FLOAT(1)
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
 id_params = list()
+dir_modulos=DirMods()
 contparam_int=0
 contparam_float=0
 
@@ -353,3 +355,5 @@ f.close()
 #print "TABLA FINAL", tab_valores
 #tab_valores = sort_tabvar(tab_valores)
 tab_valores.echo() #Despliega tabla de valores
+print("\n")
+dir_modulos.echo()
