@@ -11,6 +11,11 @@ reserva = {
     'end' : 'END',
     'int' : 'INT',
     'float' : 'FLOAT',
+    'bool' : 'BOOL',
+    'true' : 'TRUE',
+    'false' : 'FALSE',
+    'and' : 'AND',
+    'or' : 'OR',
     'echo' : 'ECHO',
     'clear' : 'CLEAR',
     'sample' : 'SAMPLE',
@@ -54,7 +59,7 @@ def t_ID(t):
     t.type = reserva.get(t.value,'ID') # Checa palabras reservadas
     return t
 
-t_CTE_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
+t_CTE_STRING = r'\".*?\"'
 
 def t_CTE_FLOAT(t):
     r'-?\d+\.\d*'
@@ -114,12 +119,13 @@ def p_statute(p):
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
-    global id_params, contparam_int, contparam_float, dir_modulos
+    global id_params, contparam_int, contparam_float, contparam_bool, dir_modulos
     #print "modulo #", p[3], id_params, contparam_int, contparam_float
-    dir_modulos = dirmod(dir_modulos, p[3], id_params, contparam_int, contparam_float, tab_valores)
+    dir_modulos = dirmod(dir_modulos, p[3], id_params, contparam_int, contparam_float, contparam_bool, tab_valores)
     id_params=[] #Reinicia lista de parametros
     contparam_int=0 #Reinicia contador int
     contparam_float=0 #Reinicia contado float
+    contparam_bool=0 #Reinicia contador bool
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -130,6 +136,8 @@ def p_vars(p):
     global id_type, tab_valores, id_params
     #print p[2]
     id_params.append(p[2])
+    #print id_type
+    #print id_params
     tab_valores = tabvar(tab_valores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
 def p_varsA(p):
@@ -138,14 +146,17 @@ def p_varsA(p):
 
 def p_type(p):
     '''type : INT
-            | FLOAT'''
-    global id_type, contparam_int, contparam_float
+            | FLOAT
+            | BOOL'''
+    global id_type, contparam_int, contparam_float, contparam_bool
     if (p[1]=='int'):
     	contparam_int=contparam_int+1 #Acumula un entero en contador
-    else:
+    elif (p[1]=='bool'):
+		contparam_bool=contparam_bool+1 #Acumula un boleano en contador
+    elif (p[1]=='float'):
     	contparam_float=contparam_float+1 #Acumula un flotante en contador
     id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT o FLOAT
-    #print id_type,
+    #print p[1],
 
 def p_calling(p):
 	'''calling : '#' ID '(' callingA'''
@@ -177,15 +188,12 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
-    global assign_vars, tipo_asigna, tab_valores
+    global assign_vars, tab_valores
     if p[2] == '=':
     	#print "EN LISTA", vartipo_assign(assign_vars)
     	#print tab_valores
-    	if p[1] == 'var1':
-    		print p[1], vartipo_assign(assign_vars)
     	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
     	assign_vars=[] #Reinicia lista
-    	tipo_asigna = 0 #Reinicia parametro tipo
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
@@ -296,7 +304,9 @@ def p_screen(p):
 def p_var_cte(p):
     '''var_cte : ID
                 | CTE_INTEGER
-                | CTE_FLOAT'''
+                | CTE_FLOAT
+                | TRUE
+                | FALSE'''
     global assign_vars
     if (type(p[1]) is int):
     	assign_vars.append(0) #Encuentra un entero para asignar
@@ -304,6 +314,8 @@ def p_var_cte(p):
     elif (type(p[1]) is float):
     	assign_vars.append(1) #Encuentra un float para asignar
     	#print "FLOAT", p[1]
+    elif (p[1] == 'true' or p[1] == 'false'):
+    	assign_vars.append(2) #Encuentra un boleano para asignar
     else:
     	assign_vars.append(tipoID(tab_valores, p[1]))
     	#print "ID", p[1]
@@ -324,7 +336,6 @@ yacc.yacc()
 from tabvars import *
 from dirmods import *
 
-tipo_asigna=0 #Determina si el tipo de variable en asignacion es INT(0) o FLOAT(1)
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
@@ -332,6 +343,7 @@ tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo se
 dir_modulos=DirMods()
 contparam_int=0
 contparam_float=0
+contparam_bool=0
 
 #'''
 
@@ -339,7 +351,7 @@ try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
-    Name = "ej4.txt"
+    Name = "ej2.txt"
 
 s = Name
 

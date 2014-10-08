@@ -29,6 +29,8 @@ class TabVars:
 				print key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
 				print key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5)
+			elif (self.data[key][0]==2):
+				print key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5)
 	
 	def write(self):
 		f = open('out-tabla_vars', 'w')
@@ -40,6 +42,8 @@ class TabVars:
 				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
 				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5)
+			elif (self.data[key][0]==2):
+				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5)
 		f.close()
 	
 	def __str__(self):
@@ -49,17 +53,16 @@ class TabVars:
 #float o int. Encontrando un float, hace toda la operacion como float.
 def vartipo_assign(varlista):
 	index = 0
-	print varlista,
-	while (index != 1 and varlista!=[]):
+	while (varlista!=[]):
 		compara=varlista.pop(0)
 		
-		if compara==1:
+		if compara==2:
+			index = 2
+		elif compara==1 and index<2:
 			index = 1
-		elif compara==0:
+		elif compara==0 and index<1:
 			index = 0
-	print index
 	return index
-	pass
 
 #Usado en VAR_CTE para ASSIGN, determina el tipo de un ID ya registrado en la tabla.
 def tipoID(tab_valores, nombre):
@@ -74,7 +77,8 @@ def vartipo_mod(tipo):
 		return 0
 	elif (tipo=="float"):
 		return 1
-
+	elif (tipo=="bool"):
+		return 2
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente
 def tabvar(tab_valores, nombre, tipo):
