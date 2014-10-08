@@ -188,11 +188,12 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
-    global assign_vars, tab_valores
+    global assign_vars, tab_valores, flag_logic
     if p[2] == '=':
     	#print "EN LISTA", vartipo_assign(assign_vars)
     	#print tab_valores
-    	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
+    	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars, flag_logic))
+    	flag_logic = False
     	assign_vars=[] #Reinicia lista
 
 def p_condition(p):
@@ -241,13 +242,19 @@ def p_repeatB(p):
             | empty'''
 
 def p_expression(p):
-    '''expression : exp '=' '=' exp
-                | exp '<' '>' exp
-                | exp '<' '=' exp
-                | exp '>' '=' exp
-                | exp '>' exp
-                | exp '<' exp
-                | exp'''
+    '''expression : exp expressionA'''
+
+def p_expressionA(p):
+    '''expressionA : '=' '=' exp
+                | '<' '>' exp
+                | '<' '=' exp
+                | '>' '=' exp
+                | '>' exp
+                | '<' exp
+                | empty'''
+    global flag_logic
+    if (p[1]=='=' or p[1]=='<' or p[1]=='>'):
+    	flag_logic = True
 
 def p_exp(p):
     '''exp : term expA'''
@@ -341,6 +348,7 @@ id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
 tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
 dir_modulos=DirMods()
+flag_logic=False
 contparam_int=0
 contparam_float=0
 contparam_bool=0
@@ -351,7 +359,7 @@ try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
-    Name = "ej2.txt"
+    Name = "ej3.txt"
 
 s = Name
 
@@ -371,5 +379,5 @@ f.close()
 tab_valores.echo() #Despliega tabla de valores
 tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
-dir_modulos.echo() #Despliega directorio de modulos
-dir_modulos.write()
+#dir_modulos.echo() #Despliega directorio de modulos
+#dir_modulos.write()
