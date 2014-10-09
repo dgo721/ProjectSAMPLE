@@ -51,11 +51,8 @@ class TabVars:
 
 #Usado en ASSIGN, determina si en una asignacion de multiples valores, se llega a un
 #float o int. Encontrando un float, hace toda la operacion como float.
-def vartipo_assign(varlista, flag):
+def vartipo_assign(varlista):
 	index = 0
-	if (flag==True):
-		return 2
-
 	while (varlista!=[]):
 		compara=varlista.pop(0)
 		

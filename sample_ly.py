@@ -116,6 +116,8 @@ def p_statute(p):
                 | calling
                 | pipeline
                 | screen'''
+    global assign_vars
+    assign_vars=[]
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
@@ -188,16 +190,12 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
-    global assign_vars, tab_valores, flag_logic
-    if p[2] == '=':
-    	#print "EN LISTA", vartipo_assign(assign_vars)
-    	#print tab_valores
-    	tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars, flag_logic))
-    	flag_logic = False
-    	assign_vars=[] #Reinicia lista
+    global tab_valores
+    tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
+    print "ENTRA IF,",
 
 def p_conditionA(p):
     '''conditionA : ELSE block
@@ -252,9 +250,6 @@ def p_expressionA(p):
                 | '>' exp
                 | '<' exp
                 | empty'''
-    global flag_logic
-    if (p[1]=='=' or p[1]=='<' or p[1]=='>'):
-    	flag_logic = True
 
 def p_exp(p):
     '''exp : term expA'''
@@ -317,15 +312,17 @@ def p_var_cte(p):
     global assign_vars
     if (type(p[1]) is int):
     	assign_vars.append(0) #Encuentra un entero para asignar
-    	#print "INT", p[1]
+    	#print "INT", p[1],
     elif (type(p[1]) is float):
     	assign_vars.append(1) #Encuentra un float para asignar
-    	#print "FLOAT", p[1]
+    	#print "FLOAT", p[1],
     elif (p[1] == 'true' or p[1] == 'false'):
     	assign_vars.append(2) #Encuentra un boleano para asignar
     else:
     	assign_vars.append(tipoID(tab_valores, p[1]))
-    	#print "ID", p[1]
+    	#print "ID", p[1],
+
+
 
 def p_empty(p):
     'empty :'
@@ -343,12 +340,12 @@ yacc.yacc()
 from tabvars import *
 from dirmods import *
 
+los_param = list()
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
 tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
 dir_modulos=DirMods()
-flag_logic=False
 contparam_int=0
 contparam_float=0
 contparam_bool=0
@@ -375,9 +372,8 @@ yacc.parse(st)
 f.close()
 #'''
 #print "TABLA FINAL", tab_valores
-#tab_valores = sort_tabvar(tab_valores)
 tab_valores.echo() #Despliega tabla de valores
-tab_valores.write() #Guarda en archivo la tabla de valores
+#tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
 #dir_modulos.echo() #Despliega directorio de modulos
 #dir_modulos.write()
