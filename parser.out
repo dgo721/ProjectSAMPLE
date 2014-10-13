@@ -1,10 +1,5 @@
 Created by PLY version 3.4 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    AND
-    OR
-
 Grammar
 
 Rule 0     S' -> program
@@ -74,17 +69,17 @@ Rule 63    expressionA -> < = exp
 Rule 64    expressionA -> > = exp
 Rule 65    expressionA -> > exp
 Rule 66    expressionA -> < exp
-Rule 67    expressionA -> empty
-Rule 68    exp -> term expA
-Rule 69    expA -> expB
-Rule 70    expA -> empty
-Rule 71    expB -> + exp
-Rule 72    expB -> - exp
-Rule 73    term -> factor termA
-Rule 74    termA -> termB
-Rule 75    termA -> empty
-Rule 76    termB -> * term
-Rule 77    termB -> / term
+Rule 67    expressionA -> AND exp
+Rule 68    expressionA -> OR exp
+Rule 69    expressionA -> empty
+Rule 70    exp -> term expA
+Rule 71    expA -> + exp
+Rule 72    expA -> - exp
+Rule 73    expA -> empty
+Rule 74    term -> factor termA
+Rule 75    termA -> * term
+Rule 76    termA -> / term
+Rule 77    termA -> empty
 Rule 78    factor -> ( expression )
 Rule 79    factor -> var_cte
 Rule 80    figure -> OVAL
@@ -118,16 +113,16 @@ Terminals, with rules where they appear
 #                    : 17 26
 (                    : 18 26 39 46 47 78
 )                    : 18 27 28 39 46 47 78
-*                    : 76
+*                    : 75
 +                    : 71
 ,                    : 21 30 50
 -                    : 72
-/                    : 77
+/                    : 76
 ;                    : 27 28 38 42 43 45 46 47 48 52 54 55 56
 <                    : 62 63 66
 =                    : 38 61 61 63 64
 >                    : 62 64 65
-AND                  : 
+AND                  : 67
 ARC                  : 83
 BLACK                : 92
 BLUE                 : 90
@@ -154,7 +149,7 @@ LEFT                 : 86
 MOD                  : 17
 OFF                  : 55
 ON                   : 54
-OR                   : 
+OR                   : 68
 ORANGE               : 93
 OUT                  : 47
 OVAL                 : 80
@@ -192,13 +187,12 @@ command              : 13 57
 commandA             : 53
 condition            : 10
 conditionA           : 39
-empty                : 6 22 31 37 41 51 59 67 70 75
-exp                  : 49 52 52 54 55 60 61 62 63 64 65 66 71 72
-expA                 : 68
-expB                 : 69
+empty                : 6 22 31 37 41 51 59 69 73 77
+exp                  : 49 52 52 54 55 60 61 62 63 64 65 66 67 68 71 72
+expA                 : 70
 expression           : 29 38 39 42 78
 expressionA          : 60
-factor               : 73
+factor               : 74
 figure               : 52
 module               : 8
 moduleA              : 17
@@ -216,9 +210,8 @@ repeatA              : 56 58
 repeatB              : 57
 screen               : 16
 statute              : 7 35
-term                 : 68 76 77
-termA                : 73
-termB                : 74
+term                 : 70 75 76
+termA                : 74
 type                 : 20
 var_cte              : 46 79
 vars                 : 18 21
@@ -311,8 +304,8 @@ state 2
 state 3
 
     (52) command -> figure . exp exp color ;
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -445,6 +438,7 @@ state 12
 
     (97) screen -> CLEAR .
 
+    MOD             reduce using rule 97 (screen -> CLEAR .)
     ID              reduce using rule 97 (screen -> CLEAR .)
     IF              reduce using rule 97 (screen -> CLEAR .)
     ECHO            reduce using rule 97 (screen -> CLEAR .)
@@ -459,9 +453,8 @@ state 12
     TRIO            reduce using rule 97 (screen -> CLEAR .)
     QUAD            reduce using rule 97 (screen -> CLEAR .)
     ARC             reduce using rule 97 (screen -> CLEAR .)
-    }               reduce using rule 97 (screen -> CLEAR .)
-    MOD             reduce using rule 97 (screen -> CLEAR .)
     END             reduce using rule 97 (screen -> CLEAR .)
+    }               reduce using rule 97 (screen -> CLEAR .)
 
 
 state 13
@@ -533,8 +526,8 @@ state 17
 
     (42) write -> ECHO . expression ;
     (60) expression -> . exp expressionA
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -679,6 +672,7 @@ state 27
 
     (96) screen -> WHERE .
 
+    MOD             reduce using rule 96 (screen -> WHERE .)
     ID              reduce using rule 96 (screen -> WHERE .)
     IF              reduce using rule 96 (screen -> WHERE .)
     ECHO            reduce using rule 96 (screen -> WHERE .)
@@ -693,9 +687,8 @@ state 27
     TRIO            reduce using rule 96 (screen -> WHERE .)
     QUAD            reduce using rule 96 (screen -> WHERE .)
     ARC             reduce using rule 96 (screen -> WHERE .)
-    }               reduce using rule 96 (screen -> WHERE .)
-    MOD             reduce using rule 96 (screen -> WHERE .)
     END             reduce using rule 96 (screen -> WHERE .)
+    }               reduce using rule 96 (screen -> WHERE .)
 
 
 state 28
@@ -832,11 +825,10 @@ state 32
 
 state 33
 
-    (68) exp -> term . expA
-    (69) expA -> . expB
-    (70) expA -> . empty
-    (71) expB -> . + exp
-    (72) expB -> . - exp
+    (70) exp -> term . expA
+    (71) expA -> . + exp
+    (72) expA -> . - exp
+    (73) expA -> . empty
     (103) empty -> .
 
     +               shift and go to state 59
@@ -850,6 +842,8 @@ state 33
     =               reduce using rule 103 (empty -> .)
     <               reduce using rule 103 (empty -> .)
     >               reduce using rule 103 (empty -> .)
+    AND             reduce using rule 103 (empty -> .)
+    OR              reduce using rule 103 (empty -> .)
     ;               reduce using rule 103 (empty -> .)
     )               reduce using rule 103 (empty -> .)
     RED             reduce using rule 103 (empty -> .)
@@ -863,9 +857,8 @@ state 33
     ,               reduce using rule 103 (empty -> .)
     ]               reduce using rule 103 (empty -> .)
 
-    expB                           shift and go to state 61
-    expA                           shift and go to state 62
-    empty                          shift and go to state 63
+    empty                          shift and go to state 62
+    expA                           shift and go to state 61
 
 state 34
 
@@ -878,15 +871,18 @@ state 34
     =               reduce using rule 102 (var_cte -> FALSE .)
     <               reduce using rule 102 (var_cte -> FALSE .)
     >               reduce using rule 102 (var_cte -> FALSE .)
+    AND             reduce using rule 102 (var_cte -> FALSE .)
+    OR              reduce using rule 102 (var_cte -> FALSE .)
     ;               reduce using rule 102 (var_cte -> FALSE .)
-    )               reduce using rule 102 (var_cte -> FALSE .)
     ,               reduce using rule 102 (var_cte -> FALSE .)
+    ]               reduce using rule 102 (var_cte -> FALSE .)
     (               reduce using rule 102 (var_cte -> FALSE .)
     ID              reduce using rule 102 (var_cte -> FALSE .)
     CTE_INTEGER     reduce using rule 102 (var_cte -> FALSE .)
     CTE_FLOAT       reduce using rule 102 (var_cte -> FALSE .)
     TRUE            reduce using rule 102 (var_cte -> FALSE .)
     FALSE           reduce using rule 102 (var_cte -> FALSE .)
+    )               reduce using rule 102 (var_cte -> FALSE .)
     RED             reduce using rule 102 (var_cte -> FALSE .)
     YELLOW          reduce using rule 102 (var_cte -> FALSE .)
     BLUE            reduce using rule 102 (var_cte -> FALSE .)
@@ -895,15 +891,14 @@ state 34
     ORANGE          reduce using rule 102 (var_cte -> FALSE .)
     PURPLE          reduce using rule 102 (var_cte -> FALSE .)
     CYAN            reduce using rule 102 (var_cte -> FALSE .)
-    ]               reduce using rule 102 (var_cte -> FALSE .)
 
 
 state 35
 
     (78) factor -> ( . expression )
     (60) expression -> . exp expressionA
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -923,7 +918,7 @@ state 35
     var_cte                        shift and go to state 37
     exp                            shift and go to state 47
     factor                         shift and go to state 41
-    expression                     shift and go to state 64
+    expression                     shift and go to state 63
 
 state 36
 
@@ -936,15 +931,18 @@ state 36
     =               reduce using rule 100 (var_cte -> CTE_FLOAT .)
     <               reduce using rule 100 (var_cte -> CTE_FLOAT .)
     >               reduce using rule 100 (var_cte -> CTE_FLOAT .)
+    AND             reduce using rule 100 (var_cte -> CTE_FLOAT .)
+    OR              reduce using rule 100 (var_cte -> CTE_FLOAT .)
     ;               reduce using rule 100 (var_cte -> CTE_FLOAT .)
-    )               reduce using rule 100 (var_cte -> CTE_FLOAT .)
     ,               reduce using rule 100 (var_cte -> CTE_FLOAT .)
+    ]               reduce using rule 100 (var_cte -> CTE_FLOAT .)
     (               reduce using rule 100 (var_cte -> CTE_FLOAT .)
     ID              reduce using rule 100 (var_cte -> CTE_FLOAT .)
     CTE_INTEGER     reduce using rule 100 (var_cte -> CTE_FLOAT .)
     CTE_FLOAT       reduce using rule 100 (var_cte -> CTE_FLOAT .)
     TRUE            reduce using rule 100 (var_cte -> CTE_FLOAT .)
     FALSE           reduce using rule 100 (var_cte -> CTE_FLOAT .)
+    )               reduce using rule 100 (var_cte -> CTE_FLOAT .)
     RED             reduce using rule 100 (var_cte -> CTE_FLOAT .)
     YELLOW          reduce using rule 100 (var_cte -> CTE_FLOAT .)
     BLUE            reduce using rule 100 (var_cte -> CTE_FLOAT .)
@@ -953,7 +951,6 @@ state 36
     ORANGE          reduce using rule 100 (var_cte -> CTE_FLOAT .)
     PURPLE          reduce using rule 100 (var_cte -> CTE_FLOAT .)
     CYAN            reduce using rule 100 (var_cte -> CTE_FLOAT .)
-    ]               reduce using rule 100 (var_cte -> CTE_FLOAT .)
 
 
 state 37
@@ -964,11 +961,14 @@ state 37
     /               reduce using rule 79 (factor -> var_cte .)
     +               reduce using rule 79 (factor -> var_cte .)
     -               reduce using rule 79 (factor -> var_cte .)
+    ,               reduce using rule 79 (factor -> var_cte .)
+    ]               reduce using rule 79 (factor -> var_cte .)
     =               reduce using rule 79 (factor -> var_cte .)
     <               reduce using rule 79 (factor -> var_cte .)
     >               reduce using rule 79 (factor -> var_cte .)
+    AND             reduce using rule 79 (factor -> var_cte .)
+    OR              reduce using rule 79 (factor -> var_cte .)
     )               reduce using rule 79 (factor -> var_cte .)
-    ,               reduce using rule 79 (factor -> var_cte .)
     ;               reduce using rule 79 (factor -> var_cte .)
     (               reduce using rule 79 (factor -> var_cte .)
     ID              reduce using rule 79 (factor -> var_cte .)
@@ -984,7 +984,6 @@ state 37
     ORANGE          reduce using rule 79 (factor -> var_cte .)
     PURPLE          reduce using rule 79 (factor -> var_cte .)
     CYAN            reduce using rule 79 (factor -> var_cte .)
-    ]               reduce using rule 79 (factor -> var_cte .)
 
 
 state 38
@@ -998,15 +997,18 @@ state 38
     =               reduce using rule 99 (var_cte -> CTE_INTEGER .)
     <               reduce using rule 99 (var_cte -> CTE_INTEGER .)
     >               reduce using rule 99 (var_cte -> CTE_INTEGER .)
+    AND             reduce using rule 99 (var_cte -> CTE_INTEGER .)
+    OR              reduce using rule 99 (var_cte -> CTE_INTEGER .)
     ;               reduce using rule 99 (var_cte -> CTE_INTEGER .)
-    )               reduce using rule 99 (var_cte -> CTE_INTEGER .)
     ,               reduce using rule 99 (var_cte -> CTE_INTEGER .)
+    ]               reduce using rule 99 (var_cte -> CTE_INTEGER .)
     (               reduce using rule 99 (var_cte -> CTE_INTEGER .)
     ID              reduce using rule 99 (var_cte -> CTE_INTEGER .)
     CTE_INTEGER     reduce using rule 99 (var_cte -> CTE_INTEGER .)
     CTE_FLOAT       reduce using rule 99 (var_cte -> CTE_INTEGER .)
     TRUE            reduce using rule 99 (var_cte -> CTE_INTEGER .)
     FALSE           reduce using rule 99 (var_cte -> CTE_INTEGER .)
+    )               reduce using rule 99 (var_cte -> CTE_INTEGER .)
     RED             reduce using rule 99 (var_cte -> CTE_INTEGER .)
     YELLOW          reduce using rule 99 (var_cte -> CTE_INTEGER .)
     BLUE            reduce using rule 99 (var_cte -> CTE_INTEGER .)
@@ -1015,7 +1017,6 @@ state 38
     ORANGE          reduce using rule 99 (var_cte -> CTE_INTEGER .)
     PURPLE          reduce using rule 99 (var_cte -> CTE_INTEGER .)
     CYAN            reduce using rule 99 (var_cte -> CTE_INTEGER .)
-    ]               reduce using rule 99 (var_cte -> CTE_INTEGER .)
 
 
 state 39
@@ -1029,15 +1030,18 @@ state 39
     =               reduce using rule 101 (var_cte -> TRUE .)
     <               reduce using rule 101 (var_cte -> TRUE .)
     >               reduce using rule 101 (var_cte -> TRUE .)
+    AND             reduce using rule 101 (var_cte -> TRUE .)
+    OR              reduce using rule 101 (var_cte -> TRUE .)
     ;               reduce using rule 101 (var_cte -> TRUE .)
-    )               reduce using rule 101 (var_cte -> TRUE .)
     ,               reduce using rule 101 (var_cte -> TRUE .)
+    ]               reduce using rule 101 (var_cte -> TRUE .)
     (               reduce using rule 101 (var_cte -> TRUE .)
     ID              reduce using rule 101 (var_cte -> TRUE .)
     CTE_INTEGER     reduce using rule 101 (var_cte -> TRUE .)
     CTE_FLOAT       reduce using rule 101 (var_cte -> TRUE .)
     TRUE            reduce using rule 101 (var_cte -> TRUE .)
     FALSE           reduce using rule 101 (var_cte -> TRUE .)
+    )               reduce using rule 101 (var_cte -> TRUE .)
     RED             reduce using rule 101 (var_cte -> TRUE .)
     YELLOW          reduce using rule 101 (var_cte -> TRUE .)
     BLUE            reduce using rule 101 (var_cte -> TRUE .)
@@ -1046,14 +1050,13 @@ state 39
     ORANGE          reduce using rule 101 (var_cte -> TRUE .)
     PURPLE          reduce using rule 101 (var_cte -> TRUE .)
     CYAN            reduce using rule 101 (var_cte -> TRUE .)
-    ]               reduce using rule 101 (var_cte -> TRUE .)
 
 
 state 40
 
     (52) command -> figure exp . exp color ;
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1071,20 +1074,19 @@ state 40
 
     term                           shift and go to state 33
     var_cte                        shift and go to state 37
-    exp                            shift and go to state 65
+    exp                            shift and go to state 64
     factor                         shift and go to state 41
 
 state 41
 
-    (73) term -> factor . termA
-    (74) termA -> . termB
-    (75) termA -> . empty
-    (76) termB -> . * term
-    (77) termB -> . / term
+    (74) term -> factor . termA
+    (75) termA -> . * term
+    (76) termA -> . / term
+    (77) termA -> . empty
     (103) empty -> .
 
-    *               shift and go to state 66
-    /               shift and go to state 67
+    *               shift and go to state 65
+    /               shift and go to state 66
     +               reduce using rule 103 (empty -> .)
     -               reduce using rule 103 (empty -> .)
     (               reduce using rule 103 (empty -> .)
@@ -1096,6 +1098,8 @@ state 41
     =               reduce using rule 103 (empty -> .)
     <               reduce using rule 103 (empty -> .)
     >               reduce using rule 103 (empty -> .)
+    AND             reduce using rule 103 (empty -> .)
+    OR              reduce using rule 103 (empty -> .)
     ;               reduce using rule 103 (empty -> .)
     )               reduce using rule 103 (empty -> .)
     RED             reduce using rule 103 (empty -> .)
@@ -1109,9 +1113,8 @@ state 41
     ,               reduce using rule 103 (empty -> .)
     ]               reduce using rule 103 (empty -> .)
 
-    empty                          shift and go to state 70
-    termB                          shift and go to state 68
-    termA                          shift and go to state 69
+    empty                          shift and go to state 68
+    termA                          shift and go to state 67
 
 state 42
 
@@ -1124,15 +1127,18 @@ state 42
     =               reduce using rule 98 (var_cte -> ID .)
     <               reduce using rule 98 (var_cte -> ID .)
     >               reduce using rule 98 (var_cte -> ID .)
+    AND             reduce using rule 98 (var_cte -> ID .)
+    OR              reduce using rule 98 (var_cte -> ID .)
     ;               reduce using rule 98 (var_cte -> ID .)
-    )               reduce using rule 98 (var_cte -> ID .)
     ,               reduce using rule 98 (var_cte -> ID .)
+    ]               reduce using rule 98 (var_cte -> ID .)
     (               reduce using rule 98 (var_cte -> ID .)
     ID              reduce using rule 98 (var_cte -> ID .)
     CTE_INTEGER     reduce using rule 98 (var_cte -> ID .)
     CTE_FLOAT       reduce using rule 98 (var_cte -> ID .)
     TRUE            reduce using rule 98 (var_cte -> ID .)
     FALSE           reduce using rule 98 (var_cte -> ID .)
+    )               reduce using rule 98 (var_cte -> ID .)
     RED             reduce using rule 98 (var_cte -> ID .)
     YELLOW          reduce using rule 98 (var_cte -> ID .)
     BLUE            reduce using rule 98 (var_cte -> ID .)
@@ -1141,14 +1147,13 @@ state 42
     ORANGE          reduce using rule 98 (var_cte -> ID .)
     PURPLE          reduce using rule 98 (var_cte -> ID .)
     CYAN            reduce using rule 98 (var_cte -> ID .)
-    ]               reduce using rule 98 (var_cte -> ID .)
 
 
 state 43
 
     (56) repeat -> REPLAY CTE_INTEGER . [ repeatA ] ;
 
-    [               shift and go to state 71
+    [               shift and go to state 69
 
 
 state 44
@@ -1159,25 +1164,25 @@ state 44
     (47) pipelineA -> . OUT ( ) ;
     (48) pipelineA -> . COUNT ;
 
-    [               shift and go to state 75
-    IN              shift and go to state 73
-    OUT             shift and go to state 76
-    COUNT           shift and go to state 72
+    [               shift and go to state 73
+    IN              shift and go to state 71
+    OUT             shift and go to state 74
+    COUNT           shift and go to state 70
 
-    pipelineA                      shift and go to state 74
+    pipelineA                      shift and go to state 72
 
 state 45
 
     (26) calling -> # ID . ( callingA
 
-    (               shift and go to state 77
+    (               shift and go to state 75
 
 
 state 46
 
     (43) write -> " CTE_STRING . " ;
 
-    "               shift and go to state 78
+    "               shift and go to state 76
 
 
 state 47
@@ -1189,17 +1194,21 @@ state 47
     (64) expressionA -> . > = exp
     (65) expressionA -> . > exp
     (66) expressionA -> . < exp
-    (67) expressionA -> . empty
+    (67) expressionA -> . AND exp
+    (68) expressionA -> . OR exp
+    (69) expressionA -> . empty
     (103) empty -> .
 
     =               shift and go to state 80
     <               shift and go to state 81
     >               shift and go to state 83
+    AND             shift and go to state 77
+    OR              shift and go to state 79
     ;               reduce using rule 103 (empty -> .)
     )               reduce using rule 103 (empty -> .)
     ,               reduce using rule 103 (empty -> .)
 
-    expressionA                    shift and go to state 79
+    expressionA                    shift and go to state 78
     empty                          shift and go to state 82
 
 state 48
@@ -1219,6 +1228,7 @@ state 49
     QUAD            reduce using rule 53 (command -> SAMPLE commandA .)
     ARC             reduce using rule 53 (command -> SAMPLE commandA .)
     ]               reduce using rule 53 (command -> SAMPLE commandA .)
+    MOD             reduce using rule 53 (command -> SAMPLE commandA .)
     ID              reduce using rule 53 (command -> SAMPLE commandA .)
     IF              reduce using rule 53 (command -> SAMPLE commandA .)
     ECHO            reduce using rule 53 (command -> SAMPLE commandA .)
@@ -1228,9 +1238,8 @@ state 49
     PIPE            reduce using rule 53 (command -> SAMPLE commandA .)
     WHERE           reduce using rule 53 (command -> SAMPLE commandA .)
     CLEAR           reduce using rule 53 (command -> SAMPLE commandA .)
-    }               reduce using rule 53 (command -> SAMPLE commandA .)
-    MOD             reduce using rule 53 (command -> SAMPLE commandA .)
     END             reduce using rule 53 (command -> SAMPLE commandA .)
+    }               reduce using rule 53 (command -> SAMPLE commandA .)
 
 
 state 50
@@ -1274,8 +1283,8 @@ state 53
 
     (38) assign -> ID = . expression ;
     (60) expression -> . exp expressionA
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1301,8 +1310,8 @@ state 54
 
     (39) condition -> IF ( . expression ) block conditionA
     (60) expression -> . exp expressionA
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1354,9 +1363,9 @@ state 58
 
 state 59
 
-    (71) expB -> + . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (71) expA -> + . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1379,9 +1388,9 @@ state 59
 
 state 60
 
-    (72) expB -> - . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (72) expA -> - . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1404,93 +1413,70 @@ state 60
 
 state 61
 
-    (69) expA -> expB .
+    (70) exp -> term expA .
 
-    (               reduce using rule 69 (expA -> expB .)
-    ID              reduce using rule 69 (expA -> expB .)
-    CTE_INTEGER     reduce using rule 69 (expA -> expB .)
-    CTE_FLOAT       reduce using rule 69 (expA -> expB .)
-    TRUE            reduce using rule 69 (expA -> expB .)
-    FALSE           reduce using rule 69 (expA -> expB .)
-    =               reduce using rule 69 (expA -> expB .)
-    <               reduce using rule 69 (expA -> expB .)
-    >               reduce using rule 69 (expA -> expB .)
-    ;               reduce using rule 69 (expA -> expB .)
-    )               reduce using rule 69 (expA -> expB .)
-    RED             reduce using rule 69 (expA -> expB .)
-    YELLOW          reduce using rule 69 (expA -> expB .)
-    BLUE            reduce using rule 69 (expA -> expB .)
-    GREEN           reduce using rule 69 (expA -> expB .)
-    BLACK           reduce using rule 69 (expA -> expB .)
-    ORANGE          reduce using rule 69 (expA -> expB .)
-    PURPLE          reduce using rule 69 (expA -> expB .)
-    CYAN            reduce using rule 69 (expA -> expB .)
-    ,               reduce using rule 69 (expA -> expB .)
-    ]               reduce using rule 69 (expA -> expB .)
+    (               reduce using rule 70 (exp -> term expA .)
+    ID              reduce using rule 70 (exp -> term expA .)
+    CTE_INTEGER     reduce using rule 70 (exp -> term expA .)
+    CTE_FLOAT       reduce using rule 70 (exp -> term expA .)
+    TRUE            reduce using rule 70 (exp -> term expA .)
+    FALSE           reduce using rule 70 (exp -> term expA .)
+    ,               reduce using rule 70 (exp -> term expA .)
+    ]               reduce using rule 70 (exp -> term expA .)
+    ;               reduce using rule 70 (exp -> term expA .)
+    )               reduce using rule 70 (exp -> term expA .)
+    =               reduce using rule 70 (exp -> term expA .)
+    <               reduce using rule 70 (exp -> term expA .)
+    >               reduce using rule 70 (exp -> term expA .)
+    AND             reduce using rule 70 (exp -> term expA .)
+    OR              reduce using rule 70 (exp -> term expA .)
+    RED             reduce using rule 70 (exp -> term expA .)
+    YELLOW          reduce using rule 70 (exp -> term expA .)
+    BLUE            reduce using rule 70 (exp -> term expA .)
+    GREEN           reduce using rule 70 (exp -> term expA .)
+    BLACK           reduce using rule 70 (exp -> term expA .)
+    ORANGE          reduce using rule 70 (exp -> term expA .)
+    PURPLE          reduce using rule 70 (exp -> term expA .)
+    CYAN            reduce using rule 70 (exp -> term expA .)
 
 
 state 62
 
-    (68) exp -> term expA .
+    (73) expA -> empty .
 
-    (               reduce using rule 68 (exp -> term expA .)
-    ID              reduce using rule 68 (exp -> term expA .)
-    CTE_INTEGER     reduce using rule 68 (exp -> term expA .)
-    CTE_FLOAT       reduce using rule 68 (exp -> term expA .)
-    TRUE            reduce using rule 68 (exp -> term expA .)
-    FALSE           reduce using rule 68 (exp -> term expA .)
-    =               reduce using rule 68 (exp -> term expA .)
-    <               reduce using rule 68 (exp -> term expA .)
-    >               reduce using rule 68 (exp -> term expA .)
-    ,               reduce using rule 68 (exp -> term expA .)
-    )               reduce using rule 68 (exp -> term expA .)
-    ;               reduce using rule 68 (exp -> term expA .)
-    ]               reduce using rule 68 (exp -> term expA .)
-    RED             reduce using rule 68 (exp -> term expA .)
-    YELLOW          reduce using rule 68 (exp -> term expA .)
-    BLUE            reduce using rule 68 (exp -> term expA .)
-    GREEN           reduce using rule 68 (exp -> term expA .)
-    BLACK           reduce using rule 68 (exp -> term expA .)
-    ORANGE          reduce using rule 68 (exp -> term expA .)
-    PURPLE          reduce using rule 68 (exp -> term expA .)
-    CYAN            reduce using rule 68 (exp -> term expA .)
+    (               reduce using rule 73 (expA -> empty .)
+    ID              reduce using rule 73 (expA -> empty .)
+    CTE_INTEGER     reduce using rule 73 (expA -> empty .)
+    CTE_FLOAT       reduce using rule 73 (expA -> empty .)
+    TRUE            reduce using rule 73 (expA -> empty .)
+    FALSE           reduce using rule 73 (expA -> empty .)
+    =               reduce using rule 73 (expA -> empty .)
+    <               reduce using rule 73 (expA -> empty .)
+    >               reduce using rule 73 (expA -> empty .)
+    AND             reduce using rule 73 (expA -> empty .)
+    OR              reduce using rule 73 (expA -> empty .)
+    ;               reduce using rule 73 (expA -> empty .)
+    )               reduce using rule 73 (expA -> empty .)
+    RED             reduce using rule 73 (expA -> empty .)
+    YELLOW          reduce using rule 73 (expA -> empty .)
+    BLUE            reduce using rule 73 (expA -> empty .)
+    GREEN           reduce using rule 73 (expA -> empty .)
+    BLACK           reduce using rule 73 (expA -> empty .)
+    ORANGE          reduce using rule 73 (expA -> empty .)
+    PURPLE          reduce using rule 73 (expA -> empty .)
+    CYAN            reduce using rule 73 (expA -> empty .)
+    ,               reduce using rule 73 (expA -> empty .)
+    ]               reduce using rule 73 (expA -> empty .)
 
 
 state 63
-
-    (70) expA -> empty .
-
-    (               reduce using rule 70 (expA -> empty .)
-    ID              reduce using rule 70 (expA -> empty .)
-    CTE_INTEGER     reduce using rule 70 (expA -> empty .)
-    CTE_FLOAT       reduce using rule 70 (expA -> empty .)
-    TRUE            reduce using rule 70 (expA -> empty .)
-    FALSE           reduce using rule 70 (expA -> empty .)
-    =               reduce using rule 70 (expA -> empty .)
-    <               reduce using rule 70 (expA -> empty .)
-    >               reduce using rule 70 (expA -> empty .)
-    ;               reduce using rule 70 (expA -> empty .)
-    )               reduce using rule 70 (expA -> empty .)
-    RED             reduce using rule 70 (expA -> empty .)
-    YELLOW          reduce using rule 70 (expA -> empty .)
-    BLUE            reduce using rule 70 (expA -> empty .)
-    GREEN           reduce using rule 70 (expA -> empty .)
-    BLACK           reduce using rule 70 (expA -> empty .)
-    ORANGE          reduce using rule 70 (expA -> empty .)
-    PURPLE          reduce using rule 70 (expA -> empty .)
-    CYAN            reduce using rule 70 (expA -> empty .)
-    ,               reduce using rule 70 (expA -> empty .)
-    ]               reduce using rule 70 (expA -> empty .)
-
-
-state 64
 
     (78) factor -> ( expression . )
 
     )               shift and go to state 96
 
 
-state 65
+state 64
 
     (52) command -> figure exp exp . color ;
     (88) color -> . RED
@@ -1513,10 +1499,10 @@ state 65
 
     color                          shift and go to state 98
 
-state 66
+state 65
 
-    (76) termB -> * . term
-    (73) term -> . factor termA
+    (75) termA -> * . term
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1536,10 +1522,10 @@ state 66
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
-state 67
+state 66
 
-    (77) termB -> / . term
-    (73) term -> . factor termA
+    (76) termA -> / . term
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1559,94 +1545,69 @@ state 67
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
+state 67
+
+    (74) term -> factor termA .
+
+    +               reduce using rule 74 (term -> factor termA .)
+    -               reduce using rule 74 (term -> factor termA .)
+    ;               reduce using rule 74 (term -> factor termA .)
+    )               reduce using rule 74 (term -> factor termA .)
+    ,               reduce using rule 74 (term -> factor termA .)
+    (               reduce using rule 74 (term -> factor termA .)
+    ID              reduce using rule 74 (term -> factor termA .)
+    CTE_INTEGER     reduce using rule 74 (term -> factor termA .)
+    CTE_FLOAT       reduce using rule 74 (term -> factor termA .)
+    TRUE            reduce using rule 74 (term -> factor termA .)
+    FALSE           reduce using rule 74 (term -> factor termA .)
+    =               reduce using rule 74 (term -> factor termA .)
+    <               reduce using rule 74 (term -> factor termA .)
+    >               reduce using rule 74 (term -> factor termA .)
+    AND             reduce using rule 74 (term -> factor termA .)
+    OR              reduce using rule 74 (term -> factor termA .)
+    RED             reduce using rule 74 (term -> factor termA .)
+    YELLOW          reduce using rule 74 (term -> factor termA .)
+    BLUE            reduce using rule 74 (term -> factor termA .)
+    GREEN           reduce using rule 74 (term -> factor termA .)
+    BLACK           reduce using rule 74 (term -> factor termA .)
+    ORANGE          reduce using rule 74 (term -> factor termA .)
+    PURPLE          reduce using rule 74 (term -> factor termA .)
+    CYAN            reduce using rule 74 (term -> factor termA .)
+    ]               reduce using rule 74 (term -> factor termA .)
+
+
 state 68
 
-    (74) termA -> termB .
+    (77) termA -> empty .
 
-    +               reduce using rule 74 (termA -> termB .)
-    -               reduce using rule 74 (termA -> termB .)
-    (               reduce using rule 74 (termA -> termB .)
-    ID              reduce using rule 74 (termA -> termB .)
-    CTE_INTEGER     reduce using rule 74 (termA -> termB .)
-    CTE_FLOAT       reduce using rule 74 (termA -> termB .)
-    TRUE            reduce using rule 74 (termA -> termB .)
-    FALSE           reduce using rule 74 (termA -> termB .)
-    =               reduce using rule 74 (termA -> termB .)
-    <               reduce using rule 74 (termA -> termB .)
-    >               reduce using rule 74 (termA -> termB .)
-    ;               reduce using rule 74 (termA -> termB .)
-    )               reduce using rule 74 (termA -> termB .)
-    RED             reduce using rule 74 (termA -> termB .)
-    YELLOW          reduce using rule 74 (termA -> termB .)
-    BLUE            reduce using rule 74 (termA -> termB .)
-    GREEN           reduce using rule 74 (termA -> termB .)
-    BLACK           reduce using rule 74 (termA -> termB .)
-    ORANGE          reduce using rule 74 (termA -> termB .)
-    PURPLE          reduce using rule 74 (termA -> termB .)
-    CYAN            reduce using rule 74 (termA -> termB .)
-    ,               reduce using rule 74 (termA -> termB .)
-    ]               reduce using rule 74 (termA -> termB .)
+    +               reduce using rule 77 (termA -> empty .)
+    -               reduce using rule 77 (termA -> empty .)
+    (               reduce using rule 77 (termA -> empty .)
+    ID              reduce using rule 77 (termA -> empty .)
+    CTE_INTEGER     reduce using rule 77 (termA -> empty .)
+    CTE_FLOAT       reduce using rule 77 (termA -> empty .)
+    TRUE            reduce using rule 77 (termA -> empty .)
+    FALSE           reduce using rule 77 (termA -> empty .)
+    =               reduce using rule 77 (termA -> empty .)
+    <               reduce using rule 77 (termA -> empty .)
+    >               reduce using rule 77 (termA -> empty .)
+    AND             reduce using rule 77 (termA -> empty .)
+    OR              reduce using rule 77 (termA -> empty .)
+    ;               reduce using rule 77 (termA -> empty .)
+    )               reduce using rule 77 (termA -> empty .)
+    RED             reduce using rule 77 (termA -> empty .)
+    YELLOW          reduce using rule 77 (termA -> empty .)
+    BLUE            reduce using rule 77 (termA -> empty .)
+    GREEN           reduce using rule 77 (termA -> empty .)
+    BLACK           reduce using rule 77 (termA -> empty .)
+    ORANGE          reduce using rule 77 (termA -> empty .)
+    PURPLE          reduce using rule 77 (termA -> empty .)
+    CYAN            reduce using rule 77 (termA -> empty .)
+    ,               reduce using rule 77 (termA -> empty .)
+    ]               reduce using rule 77 (termA -> empty .)
 
 
 state 69
-
-    (73) term -> factor termA .
-
-    +               reduce using rule 73 (term -> factor termA .)
-    -               reduce using rule 73 (term -> factor termA .)
-    ;               reduce using rule 73 (term -> factor termA .)
-    )               reduce using rule 73 (term -> factor termA .)
-    ,               reduce using rule 73 (term -> factor termA .)
-    (               reduce using rule 73 (term -> factor termA .)
-    ID              reduce using rule 73 (term -> factor termA .)
-    CTE_INTEGER     reduce using rule 73 (term -> factor termA .)
-    CTE_FLOAT       reduce using rule 73 (term -> factor termA .)
-    TRUE            reduce using rule 73 (term -> factor termA .)
-    FALSE           reduce using rule 73 (term -> factor termA .)
-    =               reduce using rule 73 (term -> factor termA .)
-    <               reduce using rule 73 (term -> factor termA .)
-    >               reduce using rule 73 (term -> factor termA .)
-    RED             reduce using rule 73 (term -> factor termA .)
-    YELLOW          reduce using rule 73 (term -> factor termA .)
-    BLUE            reduce using rule 73 (term -> factor termA .)
-    GREEN           reduce using rule 73 (term -> factor termA .)
-    BLACK           reduce using rule 73 (term -> factor termA .)
-    ORANGE          reduce using rule 73 (term -> factor termA .)
-    PURPLE          reduce using rule 73 (term -> factor termA .)
-    CYAN            reduce using rule 73 (term -> factor termA .)
-    ]               reduce using rule 73 (term -> factor termA .)
-
-
-state 70
-
-    (75) termA -> empty .
-
-    +               reduce using rule 75 (termA -> empty .)
-    -               reduce using rule 75 (termA -> empty .)
-    (               reduce using rule 75 (termA -> empty .)
-    ID              reduce using rule 75 (termA -> empty .)
-    CTE_INTEGER     reduce using rule 75 (termA -> empty .)
-    CTE_FLOAT       reduce using rule 75 (termA -> empty .)
-    TRUE            reduce using rule 75 (termA -> empty .)
-    FALSE           reduce using rule 75 (termA -> empty .)
-    =               reduce using rule 75 (termA -> empty .)
-    <               reduce using rule 75 (termA -> empty .)
-    >               reduce using rule 75 (termA -> empty .)
-    ;               reduce using rule 75 (termA -> empty .)
-    )               reduce using rule 75 (termA -> empty .)
-    RED             reduce using rule 75 (termA -> empty .)
-    YELLOW          reduce using rule 75 (termA -> empty .)
-    BLUE            reduce using rule 75 (termA -> empty .)
-    GREEN           reduce using rule 75 (termA -> empty .)
-    BLACK           reduce using rule 75 (termA -> empty .)
-    ORANGE          reduce using rule 75 (termA -> empty .)
-    PURPLE          reduce using rule 75 (termA -> empty .)
-    CYAN            reduce using rule 75 (termA -> empty .)
-    ,               reduce using rule 75 (termA -> empty .)
-    ]               reduce using rule 75 (termA -> empty .)
-
-
-state 71
 
     (56) repeat -> REPLAY CTE_INTEGER [ . repeatA ] ;
     (57) repeatA -> . command repeatB
@@ -1667,21 +1628,21 @@ state 71
     repeatA                        shift and go to state 108
     command                        shift and go to state 109
 
-state 72
+state 70
 
     (48) pipelineA -> COUNT . ;
 
     ;               shift and go to state 110
 
 
-state 73
+state 71
 
     (46) pipelineA -> IN . ( var_cte ) ;
 
     (               shift and go to state 111
 
 
-state 74
+state 72
 
     (44) pipeline -> PIPE ID pipelineA .
 
@@ -1704,12 +1665,12 @@ state 74
     }               reduce using rule 44 (pipeline -> PIPE ID pipelineA .)
 
 
-state 75
+state 73
 
     (45) pipelineA -> [ . pipelineB ] ;
     (49) pipelineB -> . exp pipelineC
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1731,22 +1692,22 @@ state 75
     exp                            shift and go to state 113
     factor                         shift and go to state 41
 
-state 76
+state 74
 
     (47) pipelineA -> OUT . ( ) ;
 
     (               shift and go to state 114
 
 
-state 77
+state 75
 
     (26) calling -> # ID ( . callingA
     (27) callingA -> . callingB ) ;
     (28) callingA -> . ) ;
     (29) callingB -> . expression callingC
     (60) expression -> . exp expressionA
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1771,36 +1732,18 @@ state 77
     factor                         shift and go to state 41
     expression                     shift and go to state 118
 
-state 78
+state 76
 
     (43) write -> " CTE_STRING " . ;
 
     ;               shift and go to state 119
 
 
-state 79
+state 77
 
-    (60) expression -> exp expressionA .
-
-    ,               reduce using rule 60 (expression -> exp expressionA .)
-    )               reduce using rule 60 (expression -> exp expressionA .)
-    ;               reduce using rule 60 (expression -> exp expressionA .)
-
-
-state 80
-
-    (61) expressionA -> = . = exp
-
-    =               shift and go to state 120
-
-
-state 81
-
-    (62) expressionA -> < . > exp
-    (63) expressionA -> < . = exp
-    (66) expressionA -> < . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (67) expressionA -> AND . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1809,8 +1752,40 @@ state 81
     (101) var_cte -> . TRUE
     (102) var_cte -> . FALSE
 
-    >               shift and go to state 123
-    =               shift and go to state 122
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 38
+    CTE_FLOAT       shift and go to state 36
+    TRUE            shift and go to state 39
+    FALSE           shift and go to state 34
+
+    term                           shift and go to state 33
+    exp                            shift and go to state 120
+    var_cte                        shift and go to state 37
+    factor                         shift and go to state 41
+
+state 78
+
+    (60) expression -> exp expressionA .
+
+    ,               reduce using rule 60 (expression -> exp expressionA .)
+    )               reduce using rule 60 (expression -> exp expressionA .)
+    ;               reduce using rule 60 (expression -> exp expressionA .)
+
+
+state 79
+
+    (68) expressionA -> OR . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
+    (78) factor -> . ( expression )
+    (79) factor -> . var_cte
+    (98) var_cte -> . ID
+    (99) var_cte -> . CTE_INTEGER
+    (100) var_cte -> . CTE_FLOAT
+    (101) var_cte -> . TRUE
+    (102) var_cte -> . FALSE
+
     (               shift and go to state 35
     ID              shift and go to state 42
     CTE_INTEGER     shift and go to state 38
@@ -1823,21 +1798,20 @@ state 81
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
-state 82
+state 80
 
-    (67) expressionA -> empty .
+    (61) expressionA -> = . = exp
 
-    ;               reduce using rule 67 (expressionA -> empty .)
-    )               reduce using rule 67 (expressionA -> empty .)
-    ,               reduce using rule 67 (expressionA -> empty .)
+    =               shift and go to state 122
 
 
-state 83
+state 81
 
-    (64) expressionA -> > . = exp
-    (65) expressionA -> > . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (62) expressionA -> < . > exp
+    (63) expressionA -> < . = exp
+    (66) expressionA -> < . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1846,7 +1820,8 @@ state 83
     (101) var_cte -> . TRUE
     (102) var_cte -> . FALSE
 
-    =               shift and go to state 125
+    >               shift and go to state 125
+    =               shift and go to state 124
     (               shift and go to state 35
     ID              shift and go to state 42
     CTE_INTEGER     shift and go to state 38
@@ -1855,7 +1830,43 @@ state 83
     FALSE           shift and go to state 34
 
     term                           shift and go to state 33
-    exp                            shift and go to state 124
+    exp                            shift and go to state 123
+    var_cte                        shift and go to state 37
+    factor                         shift and go to state 41
+
+state 82
+
+    (69) expressionA -> empty .
+
+    ;               reduce using rule 69 (expressionA -> empty .)
+    )               reduce using rule 69 (expressionA -> empty .)
+    ,               reduce using rule 69 (expressionA -> empty .)
+
+
+state 83
+
+    (64) expressionA -> > . = exp
+    (65) expressionA -> > . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
+    (78) factor -> . ( expression )
+    (79) factor -> . var_cte
+    (98) var_cte -> . ID
+    (99) var_cte -> . CTE_INTEGER
+    (100) var_cte -> . CTE_FLOAT
+    (101) var_cte -> . TRUE
+    (102) var_cte -> . FALSE
+
+    =               shift and go to state 127
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 38
+    CTE_FLOAT       shift and go to state 36
+    TRUE            shift and go to state 39
+    FALSE           shift and go to state 34
+
+    term                           shift and go to state 33
+    exp                            shift and go to state 126
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
@@ -1897,8 +1908,8 @@ state 85
 state 86
 
     (55) commandA -> OFF move . exp ;
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1915,7 +1926,7 @@ state 86
     FALSE           shift and go to state 34
 
     term                           shift and go to state 33
-    exp                            shift and go to state 126
+    exp                            shift and go to state 128
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
@@ -1958,8 +1969,8 @@ state 89
 state 90
 
     (54) commandA -> ON move . exp CTE_INTEGER color ;
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -1977,21 +1988,21 @@ state 90
 
     term                           shift and go to state 33
     var_cte                        shift and go to state 37
-    exp                            shift and go to state 127
+    exp                            shift and go to state 129
     factor                         shift and go to state 41
 
 state 91
 
     (38) assign -> ID = expression . ;
 
-    ;               shift and go to state 128
+    ;               shift and go to state 130
 
 
 state 92
 
     (39) condition -> IF ( expression . ) block conditionA
 
-    )               shift and go to state 129
+    )               shift and go to state 131
 
 
 state 93
@@ -2001,64 +2012,68 @@ state 93
     (19) moduleA -> . block
     (32) block -> . { blockA
 
-    (               shift and go to state 130
-    {               shift and go to state 132
+    (               shift and go to state 132
+    {               shift and go to state 134
 
-    block                          shift and go to state 131
-    moduleA                        shift and go to state 133
+    block                          shift and go to state 133
+    moduleA                        shift and go to state 135
 
 state 94
 
-    (71) expB -> + exp .
+    (71) expA -> + exp .
 
-    (               reduce using rule 71 (expB -> + exp .)
-    ID              reduce using rule 71 (expB -> + exp .)
-    CTE_INTEGER     reduce using rule 71 (expB -> + exp .)
-    CTE_FLOAT       reduce using rule 71 (expB -> + exp .)
-    TRUE            reduce using rule 71 (expB -> + exp .)
-    FALSE           reduce using rule 71 (expB -> + exp .)
-    =               reduce using rule 71 (expB -> + exp .)
-    <               reduce using rule 71 (expB -> + exp .)
-    >               reduce using rule 71 (expB -> + exp .)
-    ;               reduce using rule 71 (expB -> + exp .)
-    )               reduce using rule 71 (expB -> + exp .)
-    RED             reduce using rule 71 (expB -> + exp .)
-    YELLOW          reduce using rule 71 (expB -> + exp .)
-    BLUE            reduce using rule 71 (expB -> + exp .)
-    GREEN           reduce using rule 71 (expB -> + exp .)
-    BLACK           reduce using rule 71 (expB -> + exp .)
-    ORANGE          reduce using rule 71 (expB -> + exp .)
-    PURPLE          reduce using rule 71 (expB -> + exp .)
-    CYAN            reduce using rule 71 (expB -> + exp .)
-    ,               reduce using rule 71 (expB -> + exp .)
-    ]               reduce using rule 71 (expB -> + exp .)
+    (               reduce using rule 71 (expA -> + exp .)
+    ID              reduce using rule 71 (expA -> + exp .)
+    CTE_INTEGER     reduce using rule 71 (expA -> + exp .)
+    CTE_FLOAT       reduce using rule 71 (expA -> + exp .)
+    TRUE            reduce using rule 71 (expA -> + exp .)
+    FALSE           reduce using rule 71 (expA -> + exp .)
+    =               reduce using rule 71 (expA -> + exp .)
+    <               reduce using rule 71 (expA -> + exp .)
+    >               reduce using rule 71 (expA -> + exp .)
+    AND             reduce using rule 71 (expA -> + exp .)
+    OR              reduce using rule 71 (expA -> + exp .)
+    ;               reduce using rule 71 (expA -> + exp .)
+    )               reduce using rule 71 (expA -> + exp .)
+    RED             reduce using rule 71 (expA -> + exp .)
+    YELLOW          reduce using rule 71 (expA -> + exp .)
+    BLUE            reduce using rule 71 (expA -> + exp .)
+    GREEN           reduce using rule 71 (expA -> + exp .)
+    BLACK           reduce using rule 71 (expA -> + exp .)
+    ORANGE          reduce using rule 71 (expA -> + exp .)
+    PURPLE          reduce using rule 71 (expA -> + exp .)
+    CYAN            reduce using rule 71 (expA -> + exp .)
+    ,               reduce using rule 71 (expA -> + exp .)
+    ]               reduce using rule 71 (expA -> + exp .)
 
 
 state 95
 
-    (72) expB -> - exp .
+    (72) expA -> - exp .
 
-    (               reduce using rule 72 (expB -> - exp .)
-    ID              reduce using rule 72 (expB -> - exp .)
-    CTE_INTEGER     reduce using rule 72 (expB -> - exp .)
-    CTE_FLOAT       reduce using rule 72 (expB -> - exp .)
-    TRUE            reduce using rule 72 (expB -> - exp .)
-    FALSE           reduce using rule 72 (expB -> - exp .)
-    =               reduce using rule 72 (expB -> - exp .)
-    <               reduce using rule 72 (expB -> - exp .)
-    >               reduce using rule 72 (expB -> - exp .)
-    ;               reduce using rule 72 (expB -> - exp .)
-    )               reduce using rule 72 (expB -> - exp .)
-    RED             reduce using rule 72 (expB -> - exp .)
-    YELLOW          reduce using rule 72 (expB -> - exp .)
-    BLUE            reduce using rule 72 (expB -> - exp .)
-    GREEN           reduce using rule 72 (expB -> - exp .)
-    BLACK           reduce using rule 72 (expB -> - exp .)
-    ORANGE          reduce using rule 72 (expB -> - exp .)
-    PURPLE          reduce using rule 72 (expB -> - exp .)
-    CYAN            reduce using rule 72 (expB -> - exp .)
-    ,               reduce using rule 72 (expB -> - exp .)
-    ]               reduce using rule 72 (expB -> - exp .)
+    (               reduce using rule 72 (expA -> - exp .)
+    ID              reduce using rule 72 (expA -> - exp .)
+    CTE_INTEGER     reduce using rule 72 (expA -> - exp .)
+    CTE_FLOAT       reduce using rule 72 (expA -> - exp .)
+    TRUE            reduce using rule 72 (expA -> - exp .)
+    FALSE           reduce using rule 72 (expA -> - exp .)
+    =               reduce using rule 72 (expA -> - exp .)
+    <               reduce using rule 72 (expA -> - exp .)
+    >               reduce using rule 72 (expA -> - exp .)
+    AND             reduce using rule 72 (expA -> - exp .)
+    OR              reduce using rule 72 (expA -> - exp .)
+    ;               reduce using rule 72 (expA -> - exp .)
+    )               reduce using rule 72 (expA -> - exp .)
+    RED             reduce using rule 72 (expA -> - exp .)
+    YELLOW          reduce using rule 72 (expA -> - exp .)
+    BLUE            reduce using rule 72 (expA -> - exp .)
+    GREEN           reduce using rule 72 (expA -> - exp .)
+    BLACK           reduce using rule 72 (expA -> - exp .)
+    ORANGE          reduce using rule 72 (expA -> - exp .)
+    PURPLE          reduce using rule 72 (expA -> - exp .)
+    CYAN            reduce using rule 72 (expA -> - exp .)
+    ,               reduce using rule 72 (expA -> - exp .)
+    ]               reduce using rule 72 (expA -> - exp .)
 
 
 state 96
@@ -2069,11 +2084,14 @@ state 96
     /               reduce using rule 78 (factor -> ( expression ) .)
     +               reduce using rule 78 (factor -> ( expression ) .)
     -               reduce using rule 78 (factor -> ( expression ) .)
+    ,               reduce using rule 78 (factor -> ( expression ) .)
+    ]               reduce using rule 78 (factor -> ( expression ) .)
     =               reduce using rule 78 (factor -> ( expression ) .)
     <               reduce using rule 78 (factor -> ( expression ) .)
     >               reduce using rule 78 (factor -> ( expression ) .)
+    AND             reduce using rule 78 (factor -> ( expression ) .)
+    OR              reduce using rule 78 (factor -> ( expression ) .)
     )               reduce using rule 78 (factor -> ( expression ) .)
-    ,               reduce using rule 78 (factor -> ( expression ) .)
     ;               reduce using rule 78 (factor -> ( expression ) .)
     (               reduce using rule 78 (factor -> ( expression ) .)
     ID              reduce using rule 78 (factor -> ( expression ) .)
@@ -2089,7 +2107,6 @@ state 96
     ORANGE          reduce using rule 78 (factor -> ( expression ) .)
     PURPLE          reduce using rule 78 (factor -> ( expression ) .)
     CYAN            reduce using rule 78 (factor -> ( expression ) .)
-    ]               reduce using rule 78 (factor -> ( expression ) .)
 
 
 state 97
@@ -2103,7 +2120,7 @@ state 98
 
     (52) command -> figure exp exp color . ;
 
-    ;               shift and go to state 134
+    ;               shift and go to state 136
 
 
 state 99
@@ -2157,67 +2174,71 @@ state 105
 
 state 106
 
-    (76) termB -> * term .
+    (75) termA -> * term .
 
-    +               reduce using rule 76 (termB -> * term .)
-    -               reduce using rule 76 (termB -> * term .)
-    (               reduce using rule 76 (termB -> * term .)
-    ID              reduce using rule 76 (termB -> * term .)
-    CTE_INTEGER     reduce using rule 76 (termB -> * term .)
-    CTE_FLOAT       reduce using rule 76 (termB -> * term .)
-    TRUE            reduce using rule 76 (termB -> * term .)
-    FALSE           reduce using rule 76 (termB -> * term .)
-    =               reduce using rule 76 (termB -> * term .)
-    <               reduce using rule 76 (termB -> * term .)
-    >               reduce using rule 76 (termB -> * term .)
-    ;               reduce using rule 76 (termB -> * term .)
-    )               reduce using rule 76 (termB -> * term .)
-    RED             reduce using rule 76 (termB -> * term .)
-    YELLOW          reduce using rule 76 (termB -> * term .)
-    BLUE            reduce using rule 76 (termB -> * term .)
-    GREEN           reduce using rule 76 (termB -> * term .)
-    BLACK           reduce using rule 76 (termB -> * term .)
-    ORANGE          reduce using rule 76 (termB -> * term .)
-    PURPLE          reduce using rule 76 (termB -> * term .)
-    CYAN            reduce using rule 76 (termB -> * term .)
-    ,               reduce using rule 76 (termB -> * term .)
-    ]               reduce using rule 76 (termB -> * term .)
+    +               reduce using rule 75 (termA -> * term .)
+    -               reduce using rule 75 (termA -> * term .)
+    (               reduce using rule 75 (termA -> * term .)
+    ID              reduce using rule 75 (termA -> * term .)
+    CTE_INTEGER     reduce using rule 75 (termA -> * term .)
+    CTE_FLOAT       reduce using rule 75 (termA -> * term .)
+    TRUE            reduce using rule 75 (termA -> * term .)
+    FALSE           reduce using rule 75 (termA -> * term .)
+    =               reduce using rule 75 (termA -> * term .)
+    <               reduce using rule 75 (termA -> * term .)
+    >               reduce using rule 75 (termA -> * term .)
+    AND             reduce using rule 75 (termA -> * term .)
+    OR              reduce using rule 75 (termA -> * term .)
+    ;               reduce using rule 75 (termA -> * term .)
+    )               reduce using rule 75 (termA -> * term .)
+    RED             reduce using rule 75 (termA -> * term .)
+    YELLOW          reduce using rule 75 (termA -> * term .)
+    BLUE            reduce using rule 75 (termA -> * term .)
+    GREEN           reduce using rule 75 (termA -> * term .)
+    BLACK           reduce using rule 75 (termA -> * term .)
+    ORANGE          reduce using rule 75 (termA -> * term .)
+    PURPLE          reduce using rule 75 (termA -> * term .)
+    CYAN            reduce using rule 75 (termA -> * term .)
+    ,               reduce using rule 75 (termA -> * term .)
+    ]               reduce using rule 75 (termA -> * term .)
 
 
 state 107
 
-    (77) termB -> / term .
+    (76) termA -> / term .
 
-    +               reduce using rule 77 (termB -> / term .)
-    -               reduce using rule 77 (termB -> / term .)
-    (               reduce using rule 77 (termB -> / term .)
-    ID              reduce using rule 77 (termB -> / term .)
-    CTE_INTEGER     reduce using rule 77 (termB -> / term .)
-    CTE_FLOAT       reduce using rule 77 (termB -> / term .)
-    TRUE            reduce using rule 77 (termB -> / term .)
-    FALSE           reduce using rule 77 (termB -> / term .)
-    =               reduce using rule 77 (termB -> / term .)
-    <               reduce using rule 77 (termB -> / term .)
-    >               reduce using rule 77 (termB -> / term .)
-    ;               reduce using rule 77 (termB -> / term .)
-    )               reduce using rule 77 (termB -> / term .)
-    RED             reduce using rule 77 (termB -> / term .)
-    YELLOW          reduce using rule 77 (termB -> / term .)
-    BLUE            reduce using rule 77 (termB -> / term .)
-    GREEN           reduce using rule 77 (termB -> / term .)
-    BLACK           reduce using rule 77 (termB -> / term .)
-    ORANGE          reduce using rule 77 (termB -> / term .)
-    PURPLE          reduce using rule 77 (termB -> / term .)
-    CYAN            reduce using rule 77 (termB -> / term .)
-    ,               reduce using rule 77 (termB -> / term .)
-    ]               reduce using rule 77 (termB -> / term .)
+    +               reduce using rule 76 (termA -> / term .)
+    -               reduce using rule 76 (termA -> / term .)
+    (               reduce using rule 76 (termA -> / term .)
+    ID              reduce using rule 76 (termA -> / term .)
+    CTE_INTEGER     reduce using rule 76 (termA -> / term .)
+    CTE_FLOAT       reduce using rule 76 (termA -> / term .)
+    TRUE            reduce using rule 76 (termA -> / term .)
+    FALSE           reduce using rule 76 (termA -> / term .)
+    =               reduce using rule 76 (termA -> / term .)
+    <               reduce using rule 76 (termA -> / term .)
+    >               reduce using rule 76 (termA -> / term .)
+    AND             reduce using rule 76 (termA -> / term .)
+    OR              reduce using rule 76 (termA -> / term .)
+    ;               reduce using rule 76 (termA -> / term .)
+    )               reduce using rule 76 (termA -> / term .)
+    RED             reduce using rule 76 (termA -> / term .)
+    YELLOW          reduce using rule 76 (termA -> / term .)
+    BLUE            reduce using rule 76 (termA -> / term .)
+    GREEN           reduce using rule 76 (termA -> / term .)
+    BLACK           reduce using rule 76 (termA -> / term .)
+    ORANGE          reduce using rule 76 (termA -> / term .)
+    PURPLE          reduce using rule 76 (termA -> / term .)
+    CYAN            reduce using rule 76 (termA -> / term .)
+    ,               reduce using rule 76 (termA -> / term .)
+    ]               reduce using rule 76 (termA -> / term .)
 
 
 state 108
 
     (56) repeat -> REPLAY CTE_INTEGER [ repeatA . ] ;
 
-    ]               shift and go to state 135
+    ]               shift and go to state 137
 
 
 state 109
@@ -2242,10 +2263,10 @@ state 109
     ARC             shift and go to state 28
 
     figure                         shift and go to state 3
-    repeatA                        shift and go to state 136
-    repeatB                        shift and go to state 137
+    repeatA                        shift and go to state 138
+    repeatB                        shift and go to state 139
     command                        shift and go to state 109
-    empty                          shift and go to state 138
+    empty                          shift and go to state 140
 
 state 110
 
@@ -2285,13 +2306,13 @@ state 111
     TRUE            shift and go to state 39
     FALSE           shift and go to state 34
 
-    var_cte                        shift and go to state 139
+    var_cte                        shift and go to state 141
 
 state 112
 
     (45) pipelineA -> [ pipelineB . ] ;
 
-    ]               shift and go to state 140
+    ]               shift and go to state 142
 
 
 state 113
@@ -2301,31 +2322,30 @@ state 113
     (51) pipelineC -> . empty
     (103) empty -> .
 
-    ,               shift and go to state 143
+    ,               shift and go to state 145
     ]               reduce using rule 103 (empty -> .)
 
-    empty                          shift and go to state 141
-    pipelineC                      shift and go to state 142
+    empty                          shift and go to state 143
+    pipelineC                      shift and go to state 144
 
 state 114
 
     (47) pipelineA -> OUT ( . ) ;
 
-    )               shift and go to state 144
+    )               shift and go to state 146
 
 
 state 115
 
     (28) callingA -> ) . ;
 
-    ;               shift and go to state 145
+    ;               shift and go to state 147
 
 
 state 116
 
     (26) calling -> # ID ( callingA .
 
-    MOD             reduce using rule 26 (calling -> # ID ( callingA .)
     ID              reduce using rule 26 (calling -> # ID ( callingA .)
     IF              reduce using rule 26 (calling -> # ID ( callingA .)
     ECHO            reduce using rule 26 (calling -> # ID ( callingA .)
@@ -2340,15 +2360,16 @@ state 116
     TRIO            reduce using rule 26 (calling -> # ID ( callingA .)
     QUAD            reduce using rule 26 (calling -> # ID ( callingA .)
     ARC             reduce using rule 26 (calling -> # ID ( callingA .)
-    END             reduce using rule 26 (calling -> # ID ( callingA .)
     }               reduce using rule 26 (calling -> # ID ( callingA .)
+    MOD             reduce using rule 26 (calling -> # ID ( callingA .)
+    END             reduce using rule 26 (calling -> # ID ( callingA .)
 
 
 state 117
 
     (27) callingA -> callingB . ) ;
 
-    )               shift and go to state 146
+    )               shift and go to state 148
 
 
 state 118
@@ -2358,11 +2379,11 @@ state 118
     (31) callingC -> . empty
     (103) empty -> .
 
-    ,               shift and go to state 148
+    ,               shift and go to state 150
     )               reduce using rule 103 (empty -> .)
 
-    callingC                       shift and go to state 147
-    empty                          shift and go to state 149
+    callingC                       shift and go to state 149
+    empty                          shift and go to state 151
 
 state 119
 
@@ -2389,68 +2410,27 @@ state 119
 
 state 120
 
-    (61) expressionA -> = = . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
-    (78) factor -> . ( expression )
-    (79) factor -> . var_cte
-    (98) var_cte -> . ID
-    (99) var_cte -> . CTE_INTEGER
-    (100) var_cte -> . CTE_FLOAT
-    (101) var_cte -> . TRUE
-    (102) var_cte -> . FALSE
+    (67) expressionA -> AND exp .
 
-    (               shift and go to state 35
-    ID              shift and go to state 42
-    CTE_INTEGER     shift and go to state 38
-    CTE_FLOAT       shift and go to state 36
-    TRUE            shift and go to state 39
-    FALSE           shift and go to state 34
+    ;               reduce using rule 67 (expressionA -> AND exp .)
+    )               reduce using rule 67 (expressionA -> AND exp .)
+    ,               reduce using rule 67 (expressionA -> AND exp .)
 
-    term                           shift and go to state 33
-    exp                            shift and go to state 150
-    var_cte                        shift and go to state 37
-    factor                         shift and go to state 41
 
 state 121
 
-    (66) expressionA -> < exp .
+    (68) expressionA -> OR exp .
 
-    ;               reduce using rule 66 (expressionA -> < exp .)
-    )               reduce using rule 66 (expressionA -> < exp .)
-    ,               reduce using rule 66 (expressionA -> < exp .)
+    ;               reduce using rule 68 (expressionA -> OR exp .)
+    )               reduce using rule 68 (expressionA -> OR exp .)
+    ,               reduce using rule 68 (expressionA -> OR exp .)
 
 
 state 122
 
-    (63) expressionA -> < = . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
-    (78) factor -> . ( expression )
-    (79) factor -> . var_cte
-    (98) var_cte -> . ID
-    (99) var_cte -> . CTE_INTEGER
-    (100) var_cte -> . CTE_FLOAT
-    (101) var_cte -> . TRUE
-    (102) var_cte -> . FALSE
-
-    (               shift and go to state 35
-    ID              shift and go to state 42
-    CTE_INTEGER     shift and go to state 38
-    CTE_FLOAT       shift and go to state 36
-    TRUE            shift and go to state 39
-    FALSE           shift and go to state 34
-
-    term                           shift and go to state 33
-    exp                            shift and go to state 151
-    var_cte                        shift and go to state 37
-    factor                         shift and go to state 41
-
-state 123
-
-    (62) expressionA -> < > . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (61) expressionA -> = = . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -2471,20 +2451,20 @@ state 123
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
+state 123
+
+    (66) expressionA -> < exp .
+
+    ;               reduce using rule 66 (expressionA -> < exp .)
+    )               reduce using rule 66 (expressionA -> < exp .)
+    ,               reduce using rule 66 (expressionA -> < exp .)
+
+
 state 124
 
-    (65) expressionA -> > exp .
-
-    ;               reduce using rule 65 (expressionA -> > exp .)
-    )               reduce using rule 65 (expressionA -> > exp .)
-    ,               reduce using rule 65 (expressionA -> > exp .)
-
-
-state 125
-
-    (64) expressionA -> > = . exp
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (63) expressionA -> < = . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -2505,21 +2485,80 @@ state 125
     var_cte                        shift and go to state 37
     factor                         shift and go to state 41
 
+state 125
+
+    (62) expressionA -> < > . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
+    (78) factor -> . ( expression )
+    (79) factor -> . var_cte
+    (98) var_cte -> . ID
+    (99) var_cte -> . CTE_INTEGER
+    (100) var_cte -> . CTE_FLOAT
+    (101) var_cte -> . TRUE
+    (102) var_cte -> . FALSE
+
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 38
+    CTE_FLOAT       shift and go to state 36
+    TRUE            shift and go to state 39
+    FALSE           shift and go to state 34
+
+    term                           shift and go to state 33
+    exp                            shift and go to state 154
+    var_cte                        shift and go to state 37
+    factor                         shift and go to state 41
+
 state 126
 
-    (55) commandA -> OFF move exp . ;
+    (65) expressionA -> > exp .
 
-    ;               shift and go to state 154
+    ;               reduce using rule 65 (expressionA -> > exp .)
+    )               reduce using rule 65 (expressionA -> > exp .)
+    ,               reduce using rule 65 (expressionA -> > exp .)
 
 
 state 127
 
-    (54) commandA -> ON move exp . CTE_INTEGER color ;
+    (64) expressionA -> > = . exp
+    (70) exp -> . term expA
+    (74) term -> . factor termA
+    (78) factor -> . ( expression )
+    (79) factor -> . var_cte
+    (98) var_cte -> . ID
+    (99) var_cte -> . CTE_INTEGER
+    (100) var_cte -> . CTE_FLOAT
+    (101) var_cte -> . TRUE
+    (102) var_cte -> . FALSE
 
-    CTE_INTEGER     shift and go to state 155
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 38
+    CTE_FLOAT       shift and go to state 36
+    TRUE            shift and go to state 39
+    FALSE           shift and go to state 34
 
+    term                           shift and go to state 33
+    exp                            shift and go to state 155
+    var_cte                        shift and go to state 37
+    factor                         shift and go to state 41
 
 state 128
+
+    (55) commandA -> OFF move exp . ;
+
+    ;               shift and go to state 156
+
+
+state 129
+
+    (54) commandA -> ON move exp . CTE_INTEGER color ;
+
+    CTE_INTEGER     shift and go to state 157
+
+
+state 130
 
     (38) assign -> ID = expression ; .
 
@@ -2542,16 +2581,16 @@ state 128
     END             reduce using rule 38 (assign -> ID = expression ; .)
 
 
-state 129
+state 131
 
     (39) condition -> IF ( expression ) . block conditionA
     (32) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 134
 
-    block                          shift and go to state 156
+    block                          shift and go to state 158
 
-state 130
+state 132
 
     (18) moduleA -> ( . vars ) block
     (20) vars -> . type ID varsA
@@ -2559,14 +2598,14 @@ state 130
     (24) type -> . FLOAT
     (25) type -> . BOOL
 
-    INT             shift and go to state 159
-    FLOAT           shift and go to state 158
-    BOOL            shift and go to state 160
+    INT             shift and go to state 161
+    FLOAT           shift and go to state 160
+    BOOL            shift and go to state 162
 
-    type                           shift and go to state 161
-    vars                           shift and go to state 157
+    type                           shift and go to state 163
+    vars                           shift and go to state 159
 
-state 131
+state 133
 
     (19) moduleA -> block .
 
@@ -2588,7 +2627,7 @@ state 131
     END             reduce using rule 19 (moduleA -> block .)
 
 
-state 132
+state 134
 
     (32) block -> { . blockA
     (33) blockA -> . blockB }
@@ -2618,7 +2657,7 @@ state 132
     (82) figure -> . QUAD
     (83) figure -> . ARC
 
-    }               shift and go to state 163
+    }               shift and go to state 165
     ID              shift and go to state 22
     IF              shift and go to state 23
     ECHO            shift and go to state 17
@@ -2635,19 +2674,19 @@ state 132
     ARC             shift and go to state 28
 
     figure                         shift and go to state 3
-    blockA                         shift and go to state 165
+    blockA                         shift and go to state 167
     write                          shift and go to state 10
     command                        shift and go to state 29
     repeat                         shift and go to state 14
     screen                         shift and go to state 16
     condition                      shift and go to state 11
-    statute                        shift and go to state 162
+    statute                        shift and go to state 164
     pipeline                       shift and go to state 25
     calling                        shift and go to state 26
-    blockB                         shift and go to state 164
+    blockB                         shift and go to state 166
     assign                         shift and go to state 31
 
-state 133
+state 135
 
     (17) module -> MOD # ID moduleA .
 
@@ -2669,7 +2708,7 @@ state 133
     END             reduce using rule 17 (module -> MOD # ID moduleA .)
 
 
-state 134
+state 136
 
     (52) command -> figure exp exp color ; .
 
@@ -2679,6 +2718,7 @@ state 134
     QUAD            reduce using rule 52 (command -> figure exp exp color ; .)
     ARC             reduce using rule 52 (command -> figure exp exp color ; .)
     ]               reduce using rule 52 (command -> figure exp exp color ; .)
+    MOD             reduce using rule 52 (command -> figure exp exp color ; .)
     ID              reduce using rule 52 (command -> figure exp exp color ; .)
     IF              reduce using rule 52 (command -> figure exp exp color ; .)
     ECHO            reduce using rule 52 (command -> figure exp exp color ; .)
@@ -2688,73 +2728,72 @@ state 134
     PIPE            reduce using rule 52 (command -> figure exp exp color ; .)
     WHERE           reduce using rule 52 (command -> figure exp exp color ; .)
     CLEAR           reduce using rule 52 (command -> figure exp exp color ; .)
-    }               reduce using rule 52 (command -> figure exp exp color ; .)
-    MOD             reduce using rule 52 (command -> figure exp exp color ; .)
     END             reduce using rule 52 (command -> figure exp exp color ; .)
+    }               reduce using rule 52 (command -> figure exp exp color ; .)
 
 
-state 135
+state 137
 
     (56) repeat -> REPLAY CTE_INTEGER [ repeatA ] . ;
 
-    ;               shift and go to state 166
+    ;               shift and go to state 168
 
 
-state 136
+state 138
 
     (58) repeatB -> repeatA .
 
     ]               reduce using rule 58 (repeatB -> repeatA .)
 
 
-state 137
+state 139
 
     (57) repeatA -> command repeatB .
 
     ]               reduce using rule 57 (repeatA -> command repeatB .)
 
 
-state 138
+state 140
 
     (59) repeatB -> empty .
 
     ]               reduce using rule 59 (repeatB -> empty .)
 
 
-state 139
+state 141
 
     (46) pipelineA -> IN ( var_cte . ) ;
 
-    )               shift and go to state 167
+    )               shift and go to state 169
 
 
-state 140
+state 142
 
     (45) pipelineA -> [ pipelineB ] . ;
 
-    ;               shift and go to state 168
+    ;               shift and go to state 170
 
 
-state 141
+state 143
 
     (51) pipelineC -> empty .
 
     ]               reduce using rule 51 (pipelineC -> empty .)
 
 
-state 142
+state 144
 
     (49) pipelineB -> exp pipelineC .
 
     ]               reduce using rule 49 (pipelineB -> exp pipelineC .)
 
 
-state 143
+state 145
 
     (50) pipelineC -> , . pipelineB
     (49) pipelineB -> . exp pipelineC
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -2772,18 +2811,18 @@ state 143
 
     term                           shift and go to state 33
     var_cte                        shift and go to state 37
-    pipelineB                      shift and go to state 169
+    pipelineB                      shift and go to state 171
     exp                            shift and go to state 113
     factor                         shift and go to state 41
 
-state 144
+state 146
 
     (47) pipelineA -> OUT ( ) . ;
 
-    ;               shift and go to state 170
+    ;               shift and go to state 172
 
 
-state 145
+state 147
 
     (28) callingA -> ) ; .
 
@@ -2806,27 +2845,27 @@ state 145
     }               reduce using rule 28 (callingA -> ) ; .)
 
 
-state 146
+state 148
 
     (27) callingA -> callingB ) . ;
 
-    ;               shift and go to state 171
+    ;               shift and go to state 173
 
 
-state 147
+state 149
 
     (29) callingB -> expression callingC .
 
     )               reduce using rule 29 (callingB -> expression callingC .)
 
 
-state 148
+state 150
 
     (30) callingC -> , . callingB
     (29) callingB -> . expression callingC
     (60) expression -> . exp expressionA
-    (68) exp -> . term expA
-    (73) term -> . factor termA
+    (70) exp -> . term expA
+    (74) term -> . factor termA
     (78) factor -> . ( expression )
     (79) factor -> . var_cte
     (98) var_cte -> . ID
@@ -2844,19 +2883,19 @@ state 148
 
     term                           shift and go to state 33
     var_cte                        shift and go to state 37
-    callingB                       shift and go to state 172
+    callingB                       shift and go to state 174
     exp                            shift and go to state 47
     factor                         shift and go to state 41
     expression                     shift and go to state 118
 
-state 149
+state 151
 
     (31) callingC -> empty .
 
     )               reduce using rule 31 (callingC -> empty .)
 
 
-state 150
+state 152
 
     (61) expressionA -> = = exp .
 
@@ -2865,7 +2904,7 @@ state 150
     ,               reduce using rule 61 (expressionA -> = = exp .)
 
 
-state 151
+state 153
 
     (63) expressionA -> < = exp .
 
@@ -2874,7 +2913,7 @@ state 151
     ,               reduce using rule 63 (expressionA -> < = exp .)
 
 
-state 152
+state 154
 
     (62) expressionA -> < > exp .
 
@@ -2883,7 +2922,7 @@ state 152
     ,               reduce using rule 62 (expressionA -> < > exp .)
 
 
-state 153
+state 155
 
     (64) expressionA -> > = exp .
 
@@ -2892,7 +2931,7 @@ state 153
     ,               reduce using rule 64 (expressionA -> > = exp .)
 
 
-state 154
+state 156
 
     (55) commandA -> OFF move exp ; .
 
@@ -2916,7 +2955,7 @@ state 154
     }               reduce using rule 55 (commandA -> OFF move exp ; .)
 
 
-state 155
+state 157
 
     (54) commandA -> ON move exp CTE_INTEGER . color ;
     (88) color -> . RED
@@ -2937,16 +2976,16 @@ state 155
     PURPLE          shift and go to state 100
     CYAN            shift and go to state 102
 
-    color                          shift and go to state 173
+    color                          shift and go to state 175
 
-state 156
+state 158
 
     (39) condition -> IF ( expression ) block . conditionA
     (40) conditionA -> . ELSE block
     (41) conditionA -> . empty
     (103) empty -> .
 
-    ELSE            shift and go to state 175
+    ELSE            shift and go to state 177
     MOD             reduce using rule 103 (empty -> .)
     ID              reduce using rule 103 (empty -> .)
     IF              reduce using rule 103 (empty -> .)
@@ -2965,45 +3004,45 @@ state 156
     END             reduce using rule 103 (empty -> .)
     }               reduce using rule 103 (empty -> .)
 
-    empty                          shift and go to state 176
-    conditionA                     shift and go to state 174
+    empty                          shift and go to state 178
+    conditionA                     shift and go to state 176
 
-state 157
+state 159
 
     (18) moduleA -> ( vars . ) block
 
-    )               shift and go to state 177
+    )               shift and go to state 179
 
 
-state 158
+state 160
 
     (24) type -> FLOAT .
 
     ID              reduce using rule 24 (type -> FLOAT .)
 
 
-state 159
+state 161
 
     (23) type -> INT .
 
     ID              reduce using rule 23 (type -> INT .)
 
 
-state 160
+state 162
 
     (25) type -> BOOL .
 
     ID              reduce using rule 25 (type -> BOOL .)
 
 
-state 161
+state 163
 
     (20) vars -> type . ID varsA
 
-    ID              shift and go to state 178
+    ID              shift and go to state 180
 
 
-state 162
+state 164
 
     (35) blockB -> statute . blockC
     (36) blockC -> . blockB
@@ -3053,18 +3092,18 @@ state 162
     figure                         shift and go to state 3
     write                          shift and go to state 10
     command                        shift and go to state 29
-    empty                          shift and go to state 179
+    empty                          shift and go to state 181
     repeat                         shift and go to state 14
     screen                         shift and go to state 16
     condition                      shift and go to state 11
-    statute                        shift and go to state 162
+    statute                        shift and go to state 164
     pipeline                       shift and go to state 25
     calling                        shift and go to state 26
-    blockC                         shift and go to state 180
-    blockB                         shift and go to state 181
+    blockC                         shift and go to state 182
+    blockB                         shift and go to state 183
     assign                         shift and go to state 31
 
-state 163
+state 165
 
     (34) blockA -> } .
 
@@ -3088,14 +3127,14 @@ state 163
     }               reduce using rule 34 (blockA -> } .)
 
 
-state 164
+state 166
 
     (33) blockA -> blockB . }
 
-    }               shift and go to state 182
+    }               shift and go to state 184
 
 
-state 165
+state 167
 
     (32) block -> { blockA .
 
@@ -3119,7 +3158,7 @@ state 165
     }               reduce using rule 32 (block -> { blockA .)
 
 
-state 166
+state 168
 
     (56) repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .
 
@@ -3142,14 +3181,14 @@ state 166
     END             reduce using rule 56 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
 
 
-state 167
+state 169
 
     (46) pipelineA -> IN ( var_cte ) . ;
 
-    ;               shift and go to state 183
+    ;               shift and go to state 185
 
 
-state 168
+state 170
 
     (45) pipelineA -> [ pipelineB ] ; .
 
@@ -3172,14 +3211,14 @@ state 168
     }               reduce using rule 45 (pipelineA -> [ pipelineB ] ; .)
 
 
-state 169
+state 171
 
     (50) pipelineC -> , pipelineB .
 
     ]               reduce using rule 50 (pipelineC -> , pipelineB .)
 
 
-state 170
+state 172
 
     (47) pipelineA -> OUT ( ) ; .
 
@@ -3202,7 +3241,7 @@ state 170
     }               reduce using rule 47 (pipelineA -> OUT ( ) ; .)
 
 
-state 171
+state 173
 
     (27) callingA -> callingB ) ; .
 
@@ -3225,21 +3264,21 @@ state 171
     }               reduce using rule 27 (callingA -> callingB ) ; .)
 
 
-state 172
+state 174
 
     (30) callingC -> , callingB .
 
     )               reduce using rule 30 (callingC -> , callingB .)
 
 
-state 173
+state 175
 
     (54) commandA -> ON move exp CTE_INTEGER color . ;
 
-    ;               shift and go to state 184
+    ;               shift and go to state 186
 
 
-state 174
+state 176
 
     (39) condition -> IF ( expression ) block conditionA .
 
@@ -3262,16 +3301,16 @@ state 174
     }               reduce using rule 39 (condition -> IF ( expression ) block conditionA .)
 
 
-state 175
+state 177
 
     (40) conditionA -> ELSE . block
     (32) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 134
 
-    block                          shift and go to state 185
+    block                          shift and go to state 187
 
-state 176
+state 178
 
     (41) conditionA -> empty .
 
@@ -3294,50 +3333,50 @@ state 176
     }               reduce using rule 41 (conditionA -> empty .)
 
 
-state 177
+state 179
 
     (18) moduleA -> ( vars ) . block
     (32) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 134
 
-    block                          shift and go to state 186
+    block                          shift and go to state 188
 
-state 178
+state 180
 
     (20) vars -> type ID . varsA
     (21) varsA -> . , vars
     (22) varsA -> . empty
     (103) empty -> .
 
-    ,               shift and go to state 188
+    ,               shift and go to state 190
     )               reduce using rule 103 (empty -> .)
 
-    varsA                          shift and go to state 187
-    empty                          shift and go to state 189
+    varsA                          shift and go to state 189
+    empty                          shift and go to state 191
 
-state 179
+state 181
 
     (37) blockC -> empty .
 
     }               reduce using rule 37 (blockC -> empty .)
 
 
-state 180
+state 182
 
     (35) blockB -> statute blockC .
 
     }               reduce using rule 35 (blockB -> statute blockC .)
 
 
-state 181
+state 183
 
     (36) blockC -> blockB .
 
     }               reduce using rule 36 (blockC -> blockB .)
 
 
-state 182
+state 184
 
     (33) blockA -> blockB } .
 
@@ -3361,7 +3400,7 @@ state 182
     }               reduce using rule 33 (blockA -> blockB } .)
 
 
-state 183
+state 185
 
     (46) pipelineA -> IN ( var_cte ) ; .
 
@@ -3384,7 +3423,7 @@ state 183
     }               reduce using rule 46 (pipelineA -> IN ( var_cte ) ; .)
 
 
-state 184
+state 186
 
     (54) commandA -> ON move exp CTE_INTEGER color ; .
 
@@ -3408,7 +3447,7 @@ state 184
     }               reduce using rule 54 (commandA -> ON move exp CTE_INTEGER color ; .)
 
 
-state 185
+state 187
 
     (40) conditionA -> ELSE block .
 
@@ -3431,7 +3470,7 @@ state 185
     }               reduce using rule 40 (conditionA -> ELSE block .)
 
 
-state 186
+state 188
 
     (18) moduleA -> ( vars ) block .
 
@@ -3453,14 +3492,14 @@ state 186
     END             reduce using rule 18 (moduleA -> ( vars ) block .)
 
 
-state 187
+state 189
 
     (20) vars -> type ID varsA .
 
     )               reduce using rule 20 (vars -> type ID varsA .)
 
 
-state 188
+state 190
 
     (21) varsA -> , . vars
     (20) vars -> . type ID varsA
@@ -3468,21 +3507,21 @@ state 188
     (24) type -> . FLOAT
     (25) type -> . BOOL
 
-    INT             shift and go to state 159
-    FLOAT           shift and go to state 158
-    BOOL            shift and go to state 160
+    INT             shift and go to state 161
+    FLOAT           shift and go to state 160
+    BOOL            shift and go to state 162
 
-    type                           shift and go to state 161
-    vars                           shift and go to state 190
+    type                           shift and go to state 163
+    vars                           shift and go to state 192
 
-state 189
+state 191
 
     (22) varsA -> empty .
 
     )               reduce using rule 22 (varsA -> empty .)
 
 
-state 190
+state 192
 
     (21) varsA -> , vars .
 
