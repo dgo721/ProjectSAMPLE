@@ -25,7 +25,7 @@ class DirMods:
 		f = open('out-dir_mods', 'w')
 		print >> f, "Modulos".ljust(15) + "|".ljust(5) + "Parametros".ljust(25) + "|".ljust(5) + "# Var INTS".ljust(15) + "|".ljust(5) + "# Var FLOATS".ljust(15) + "|".ljust(5) + "# Var BOOLS".ljust(15) + "|".ljust(5)
 		print >> f, "---------------".ljust(15) + "|".ljust(5) + "-------------------------".ljust(25) + "|".ljust(5) + "---------------".ljust(15) + "|".ljust(5) + "---------------".ljust(15) + "|".ljust(5) + "---------------".ljust(15) + "|".ljust(5)
-		for key in sorted(self.data):
+		for key in self.data:
 			print >> f, key.ljust(15) + "|".ljust(5) + str(self.data[key][0]).ljust(25) + "|".ljust(5) + str(self.data[key][1]).ljust(15) + "|".ljust(5) + str(self.data[key][2]).ljust(15) + "|".ljust(5) + str(self.data[key][3]).ljust(15) + "|".ljust(5)
 		f.close()
 

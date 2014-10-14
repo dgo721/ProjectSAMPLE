@@ -12,7 +12,7 @@ class CodeGen:
 		self.x=self.x+1
 		self.t=self.t+1
 
-	def addassign(self, op, oper1, oper2):
+	def add3(self, op, oper1, oper2):
 		self.data[self.x]=[op, oper1, -1, oper2]
 		self.x=self.x+1
 

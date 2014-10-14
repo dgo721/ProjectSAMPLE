@@ -92,6 +92,11 @@ lex.lex()
 
 # Parser
 
+precedence = (
+    ('left','+','-'),
+    ('left','*','/'),
+    )
+
 def p_program(p):
     '''program : INIT programA'''
 
@@ -155,23 +160,23 @@ def p_type(p):
             | BOOL'''
     global id_type, contparam_int, contparam_float, contparam_bool
     if (p[1]=='int'):
-    	contparam_int=contparam_int+1 #Acumula un entero en contador
+        contparam_int=contparam_int+1 #Acumula un entero en contador
     elif (p[1]=='bool'):
-		contparam_bool=contparam_bool+1 #Acumula un boleano en contador
+        contparam_bool=contparam_bool+1 #Acumula un boleano en contador
     elif (p[1]=='float'):
-    	contparam_float=contparam_float+1 #Acumula un flotante en contador
+        contparam_float=contparam_float+1 #Acumula un flotante en contador
     id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT o FLOAT
     #print p[1],
 
 def p_calling(p):
-	'''calling : '#' ID '(' callingA'''
+    '''calling : '#' ID '(' callingA'''
 
 def p_callingA(p):
     '''callingA : callingB ')' ';'
             | ')' ';' '''
 
 def p_callingB(p):
-	'''callingB : expression callingC'''
+    '''callingB : expression callingC'''
 
 def p_callingC(p):
     '''callingC : ',' callingB
@@ -197,7 +202,7 @@ def p_assign(p):
     valor1 = idintfl.pop()
     tipo1 = listtipos.pop()
     ultimot = quads_gen.lasttemp()
-    quads_gen.addassign('=', ultimot, p[1])
+    quads_gen.add3('=', ultimot, p[1])
     tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
 
 def p_condition(p):
@@ -236,7 +241,7 @@ def p_commandA(p):
             | OFF move exp ';' '''
 
 def p_repeat(p):
-	'''repeat : REPLAY CTE_INTEGER '[' repeatA ']' ';' '''
+    '''repeat : REPLAY CTE_INTEGER '[' repeatA ']' ';' '''
 
 def p_repeatA(p):
     '''repeatA : command repeatB'''
@@ -268,18 +273,19 @@ def p_expA(p):
             | empty'''
     global idintfl, listtipos, quads_gen
     if p[1] == '+' or p[1] == '-':
-    	valor2=idintfl.pop()
-    	valor1=idintfl.pop()
-    	tipo2=listtipos.pop()
-    	tipo1=listtipos.pop()
-    	if p[1] == '+':
-    		tipoNuevo = semant_oper(tipo1, tipo2, 0)
-    	elif p[1] == '-':
-			tipoNuevo = semant_oper(tipo1, tipo2, 1)
-    	if tipoNuevo != -1:
-    		quads_gen.add(p[1], valor1, valor2)
-    		idintfl.append(quads_gen.lasttemp())
-    		listtipos.append(tipoNuevo)
+        print p[1]
+        valor2=idintfl.pop()
+        valor1=idintfl.pop()
+        tipo2=listtipos.pop()
+        tipo1=listtipos.pop()
+        if p[1] == '+':
+            tipoNuevo = semant_oper(tipo1, tipo2, 0)
+        elif p[1] == '-':
+            tipoNuevo = semant_oper(tipo1, tipo2, 1)
+        if tipoNuevo != -1:
+            quads_gen.add(p[1], valor1, valor2)
+            idintfl.append(quads_gen.lasttemp())
+            listtipos.append(tipoNuevo)
 
 def p_term(p):
     '''term : factor termA'''
@@ -290,25 +296,27 @@ def p_termA(p):
             | empty'''
     global idintfl, listtipos, quads_gen
     if p[1] == '*' or p[1] == '/':
-    	valor2=idintfl.pop()
-    	valor1=idintfl.pop()
-    	tipo2=listtipos.pop()
-    	tipo1=listtipos.pop()
-    	if p[1] == '*':
-    		tipoNuevo = semant_oper(tipo1, tipo2, 2)
-    	elif p[1] == '/':
-			tipoNuevo = semant_oper(tipo1, tipo2, 3)
-    	if tipoNuevo != -1:
-    		quads_gen.add(p[1], valor1, valor2)
-    		idintfl.append(quads_gen.lasttemp())
-    		listtipos.append(tipoNuevo)
+        print p[1]
+        valor2=idintfl.pop()
+        valor1=idintfl.pop()
+        tipo2=listtipos.pop()
+        tipo1=listtipos.pop()
+        if p[1] == '*':
+            tipoNuevo = semant_oper(tipo1, tipo2, 2)
+        elif p[1] == '/':
+            tipoNuevo = semant_oper(tipo1, tipo2, 3)
+        if tipoNuevo != -1:
+            quads_gen.add(p[1], valor1, valor2)
+            idintfl.append(quads_gen.lasttemp())
+            listtipos.append(tipoNuevo)
 
 def p_factor(p):
     '''factor : '(' expression ')'
-    		| var_cte '''
+            | var_cte '''
     global listoper, idintfl
+    print p[1]
     if p[1] != '(':
-    	idintfl.append(p[1])
+        idintfl.append(p[1])
 
 def p_figure(p):
     '''figure : OVAL
@@ -318,19 +326,19 @@ def p_figure(p):
 
 def p_move(p):
     '''move : UP
-    		| DOWN
-    		| LEFT
-    		| RIGHT'''
+            | DOWN
+            | LEFT
+            | RIGHT'''
 
 def p_color(p):
     '''color : RED
-    		| YELLOW
-    		| BLUE
-    		| GREEN
-    		| BLACK
-    		| ORANGE
-    		| PURPLE
-    		| CYAN'''
+            | YELLOW
+            | BLUE
+            | GREEN
+            | BLACK
+            | ORANGE
+            | PURPLE
+            | CYAN'''
 
 def p_screen(p):
     '''screen : WHERE
@@ -342,33 +350,38 @@ def p_var_cte(p):
                 | CTE_FLOAT
                 | TRUE
                 | FALSE'''
-    global assign_vars, listtipos
+    global assign_vars, listtipos, tab_constant
     if (type(p[1]) is int):
-    	assign_vars.append(0) #Encuentra un entero para asignar
-    	listtipos.append(0)
-    	p[0] = p[1]
-    	#print "--INT", p[1], idintfl
+        tab_constant = tabconstante(tab_constant, p[1])
+        assign_vars.append(0) #Encuentra un entero para asignar
+        listtipos.append(0)
+        p[0] = p[1]
+        #print "--INT", p[1], idintfl
     elif (type(p[1]) is float):
-    	assign_vars.append(1) #Encuentra un float para asignar
-    	listtipos.append(1)
-    	p[0] = p[1]
-    	#print "--FLOAT", p[1], idintfl
+        tab_constant = tabconstante(tab_constant, p[1])
+        assign_vars.append(1) #Encuentra un float para asignar
+        listtipos.append(1)
+        p[0] = p[1]
+        #print "--FLOAT", p[1], idintfl
     elif (p[1] == 'true'):
-    	assign_vars.append(2) #Encuentra un boleano para asignar
-    	listtipos.append(2)
-    	p[0] = p[1]
-    	#print "--TRUE", p[1], idintfl
+        tab_constant = tabconstante(tab_constant, p[1])
+        assign_vars.append(2) #Encuentra un boleano para asignar
+        listtipos.append(2)
+        p[0] = p[1]
+        #print "--TRUE", p[1], idintfl
     elif (p[1] == 'false'):
-    	assign_vars.append(2) #Encuentra un boleano para asignar
-    	listtipos.append(2)
-    	p[0] = p[1]
-    	#print "--FALSE", p[1], idintfl
+        tab_constant = tabconstante(tab_constant, p[1])
+        assign_vars.append(2) #Encuentra un boleano para asignar
+        listtipos.append(2)
+        p[0] = p[1]
+        #print "--FALSE", p[1], idintfl
     else:
-    	findtipo = tipoID(tab_valores, p[1])
-    	assign_vars.append(findtipo)
-    	listtipos.append(findtipo)
-    	p[0] = p[1]
-    	#print "--ID", p[1], idintfl
+        findtipo = tipoID(tab_valores, p[1])
+        tab_constant = tabconstante(tab_constant, p[1])
+        assign_vars.append(findtipo)
+        listtipos.append(findtipo)
+        p[0] = p[1]
+        #print "--ID", p[1], idintfl
 
 
 
@@ -386,21 +399,23 @@ def p_error(p):
 from ply import yacc
 yacc.yacc()
 from tabvars import *
+from tabconst import *
 from dirmods import *
-from cube_sem import *
-from codegen import *
+from cube_sem import semant_oper
+from codegen import CodeGen
 
 listtipos = list() #Almacena los tipos encontrados.
 idintfl = list() #Guarda las variables y contanstes utilizadas para una asignacion
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
-tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado
-dir_modulos=DirMods() #Instancia clase DirMods, directorio de modulos del programa
-quads_gen=CodeGen()
-contparam_int=0
-contparam_float=0
-contparam_bool=0
+tab_constant = TabConst() #Instancia clase TabConst, tabla de constantes del codigo seleccionado
+tab_valores = TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado
+dir_modulos = DirMods() #Instancia clase DirMods, directorio de modulos del programa
+quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para codigo intermedio
+contparam_int = 0
+contparam_float = 0
+contparam_bool = 0
 
 #'''
 
@@ -430,5 +445,6 @@ print("\n")
 #dir_modulos.echo() #Despliega directorio de modulos
 #dir_modulos.write()
 #print tab_valores.getDir("b")
-
+tab_constant.echo()
+print("\n")
 quads_gen.echo()
