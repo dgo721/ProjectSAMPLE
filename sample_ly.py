@@ -193,14 +193,15 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
-    global tab_valores, idintfl
-    idintfl.append(p[1])
-    #print "--ASIGNA ID", p[1], idintfl
+    global tab_valores, idintfl, listtipos, quads_gen
+    valor1 = idintfl.pop()
+    tipo1 = listtipos.pop()
+    ultimot = quads_gen.lasttemp()
+    quads_gen.addassign('=', ultimot, p[1])
     tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
-    print "ENTRA IF,",
 
 def p_conditionA(p):
     '''conditionA : ELSE block
@@ -246,7 +247,6 @@ def p_repeatB(p):
 
 def p_expression(p):
     '''expression : exp expressionA'''
-    print "--expression"
 
 def p_expressionA(p):
     '''expressionA : '=' '=' exp
@@ -258,60 +258,57 @@ def p_expressionA(p):
                 | AND exp
                 | OR exp
                 | empty'''
-    print "--expressionA", p[1]
 
 def p_exp(p):
     '''exp : term expA'''
-    print "--exp"
 
 def p_expA(p):
     '''expA : '+' exp
             | '-' exp
             | empty'''
-    global idintfl
-    if p[1] == '+':
+    global idintfl, listtipos, quads_gen
+    if p[1] == '+' or p[1] == '-':
     	valor2=idintfl.pop()
     	valor1=idintfl.pop()
-    	print valor1, p[1], valor2
-    	idintfl.append("e1")
-    elif p[1] == '-':
-    	valor2=idintfl.pop()
-    	valor1=idintfl.pop()
-    	print valor1, p[1], valor2
-    	idintfl.append("e1")
+    	tipo2=listtipos.pop()
+    	tipo1=listtipos.pop()
+    	if p[1] == '+':
+    		tipoNuevo = semant_oper(tipo1, tipo2, 0)
+    	elif p[1] == '-':
+			tipoNuevo = semant_oper(tipo1, tipo2, 1)
+    	if tipoNuevo != -1:
+    		quads_gen.add(p[1], valor1, valor2)
+    		idintfl.append(quads_gen.lasttemp())
+    		listtipos.append(tipoNuevo)
 
 def p_term(p):
     '''term : factor termA'''
-    print "--term"
 
 def p_termA(p):
     '''termA : '*' term
             | '/' term
             | empty'''
-    global idintfl
-    if p[1] == '*':
+    global idintfl, listtipos, quads_gen
+    if p[1] == '*' or p[1] == '/':
     	valor2=idintfl.pop()
     	valor1=idintfl.pop()
-    	print valor1, p[1], valor2
-    	idintfl.append("t1")
-    elif p[1] == '/':
-    	valor2=idintfl.pop()
-    	valor1=idintfl.pop()
-    	print valor1, p[1], valor2
-    	idintfl.append("t1")
+    	tipo2=listtipos.pop()
+    	tipo1=listtipos.pop()
+    	if p[1] == '*':
+    		tipoNuevo = semant_oper(tipo1, tipo2, 2)
+    	elif p[1] == '/':
+			tipoNuevo = semant_oper(tipo1, tipo2, 3)
+    	if tipoNuevo != -1:
+    		quads_gen.add(p[1], valor1, valor2)
+    		idintfl.append(quads_gen.lasttemp())
+    		listtipos.append(tipoNuevo)
 
 def p_factor(p):
     '''factor : '(' expression ')'
     		| var_cte '''
     global listoper, idintfl
-    if p[1] == '(':
-    	print p[1], p[2], p[3]
-    	#idintfl.append(p[1])
-    	#idintfl.append(p[3])
-    	#print "--FACTOR", p[1], idintfl
-    else:
+    if p[1] != '(':
     	idintfl.append(p[1])
-    	print "Factor,", p[1]
 
 def p_figure(p):
     '''figure : OVAL
@@ -345,26 +342,32 @@ def p_var_cte(p):
                 | CTE_FLOAT
                 | TRUE
                 | FALSE'''
-    global assign_vars
+    global assign_vars, listtipos
     if (type(p[1]) is int):
     	assign_vars.append(0) #Encuentra un entero para asignar
+    	listtipos.append(0)
     	p[0] = p[1]
     	#print "--INT", p[1], idintfl
     elif (type(p[1]) is float):
     	assign_vars.append(1) #Encuentra un float para asignar
+    	listtipos.append(1)
     	p[0] = p[1]
     	#print "--FLOAT", p[1], idintfl
     elif (p[1] == 'true'):
     	assign_vars.append(2) #Encuentra un boleano para asignar
+    	listtipos.append(2)
     	p[0] = p[1]
     	#print "--TRUE", p[1], idintfl
     elif (p[1] == 'false'):
-    	p[0] = p[1]
     	assign_vars.append(2) #Encuentra un boleano para asignar
+    	listtipos.append(2)
+    	p[0] = p[1]
     	#print "--FALSE", p[1], idintfl
     else:
+    	findtipo = tipoID(tab_valores, p[1])
+    	assign_vars.append(findtipo)
+    	listtipos.append(findtipo)
     	p[0] = p[1]
-    	assign_vars.append(tipoID(tab_valores, p[1]))
     	#print "--ID", p[1], idintfl
 
 
@@ -384,14 +387,17 @@ from ply import yacc
 yacc.yacc()
 from tabvars import *
 from dirmods import *
+from cube_sem import *
+from codegen import *
 
-listoper = list()
+listtipos = list() #Almacena los tipos encontrados.
 idintfl = list() #Guarda las variables y contanstes utilizadas para una asignacion
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
-tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado.
-dir_modulos=DirMods()
+tab_valores=TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado
+dir_modulos=DirMods() #Instancia clase DirMods, directorio de modulos del programa
+quads_gen=CodeGen()
 contparam_int=0
 contparam_float=0
 contparam_bool=0
@@ -423,5 +429,6 @@ tab_valores.echo() #Despliega tabla de valores
 print("\n")
 #dir_modulos.echo() #Despliega directorio de modulos
 #dir_modulos.write()
+#print tab_valores.getDir("b")
 
-print idintfl
+quads_gen.echo()

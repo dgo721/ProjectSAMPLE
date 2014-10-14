@@ -1,10 +1,21 @@
 class TabVars:
 
 	def __init__(self):
+		self.offsint = 2000
+		self.offsflo = 4000
+		self.offsbol = 6000
 		self.data = {}
 
 	def add(self, key, value):
-		self.data[key]=[value]
+		if value == 0:
+			self.data[key]=[value, self.offsint]
+			self.offsint = self.offsint + 1
+		elif value == 1:
+			self.data[key]=[value, self.offsflo]
+			self.offsflo = self.offsflo + 1
+		elif value == 2:
+			self.data[key]=[value, self.offsbol]
+			self.offsbol = self.offsbol + 1
 
 	def getKey(self, key):
 		for llave in self.data:
@@ -15,6 +26,9 @@ class TabVars:
 	def getType(self, key):
 		return self.data[key][0]
 
+	def getDir(self, key):
+		return self.data[key][1]
+
 	def lookup(self, key):
 		for llave in self.data:
 			if (llave==key):
@@ -22,28 +36,28 @@ class TabVars:
 		return False
 
 	def echo(self):
-		print "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5)
-		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
+		print "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5) + "Direccion".ljust(10) + "|".ljust(5)
+		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
 		for key in sorted(self.data):
 			if (self.data[key][0]==0):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5)
+				print key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5)
+				print key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==2):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5)
+				print key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 	
 	def write(self):
 		f = open('out-tabla_vars', 'w')
-		output = "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5)
+		output = "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5) + "Direccion".ljust(10) + "|".ljust(5)
 		print >> f, output
-		print >> f, "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
+		print >> f, "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
 		for key in sorted(self.data):
 			if (self.data[key][0]==0):
-				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5)
+				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
-				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5)
+				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==2):
-				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5)
+				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 		f.close()
 	
 	def __str__(self):
@@ -79,6 +93,7 @@ def vartipo_mod(tipo):
 		return 1
 	elif (tipo=="bool"):
 		return 2
+
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente
 def tabvar(tab_valores, nombre, tipo):
@@ -87,4 +102,3 @@ def tabvar(tab_valores, nombre, tipo):
 	else:
 		print "EXISTS, var not added"
 	return tab_valores
-
