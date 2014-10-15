@@ -1,8 +1,5 @@
 Modulos        |    Parametros               |    # Var INTS     |    # Var FLOATS   |    # Var BOOLS    |    
 ---------------|    -------------------------|    ---------------|    ---------------|    ---------------|    
-fifth          |    ['i', 'h']               |    1              |    0              |    1              |    
-first          |    []                       |    0              |    0              |    0              |    
-forth          |    ['g']                    |    0              |    0              |    1              |    
-second         |    ['d']                    |    1              |    0              |    0              |    
-seis           |    ['l', 'k', 'j']          |    1              |    1              |    1              |    
-third          |    ['f', 'e']               |    1              |    1              |    0              |    
+second         |    ['int']                  |    1              |    0              |    0              |    
+third          |    ['int', 'float']         |    1              |    1              |    1              |    
+first          |    []                       |    0              |    2              |    0              |    

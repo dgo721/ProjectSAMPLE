@@ -198,8 +198,7 @@ def p_assign(p):
         cont_vars[1] = cont_vars[1] + 1
     elif tipo1 == 2:
         cont_vars[2] = cont_vars[2] + 1
-    ultimot = quads_gen.lasttemp()
-    quads_gen.add3('=', ultimot, p[1])
+    quads_gen.add('=', valor1, -1, p[1])
     tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
 
 def p_condition(p):
@@ -270,7 +269,6 @@ def p_expA(p):
             | empty'''
     global pilaOpera, pilaTipos, quads_gen
     if p[1] == '+' or p[1] == '-':
-        print p[1]
         valor2=pilaOpera.pop()
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
@@ -280,7 +278,7 @@ def p_expA(p):
         elif p[1] == '-':
             tipoNuevo = semant_oper(tipo1, tipo2, 1)
         if tipoNuevo != -1:
-            quads_gen.add(p[1], valor1, valor2)
+            quads_gen.add(p[1], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
 
@@ -293,7 +291,6 @@ def p_termA(p):
             | empty'''
     global pilaOpera, pilaTipos, quads_gen
     if p[1] == '*' or p[1] == '/':
-        print p[1]
         valor2=pilaOpera.pop()
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
@@ -303,7 +300,7 @@ def p_termA(p):
         elif p[1] == '/':
             tipoNuevo = semant_oper(tipo1, tipo2, 3)
         if tipoNuevo != -1:
-            quads_gen.add(p[1], valor1, valor2)
+            quads_gen.add(p[1], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
 
@@ -311,7 +308,6 @@ def p_factor(p):
     '''factor : '(' expression ')'
             | var_cte '''
     global listoper, pilaOpera
-    print p[1]
     if p[1] != '(':
         pilaOpera.append(p[1])
 
@@ -374,7 +370,6 @@ def p_var_cte(p):
         #print "--FALSE", p[1], pilaOpera
     else:
         findtipo = tipoID(tab_valores, p[1])
-        tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
         p[0] = p[1]
@@ -433,14 +428,18 @@ for l in lines:
 yacc.parse(st)
 #print st
 f.close()
-#'''
-#print "TABLA FINAL", tab_valores
+
 tab_valores.echo() #Despliega tabla de valores
-#tab_valores.write() #Guarda en archivo la tabla de valores
+tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
-dir_modulos.echo() #Despliega directorio de modulos
+#dir_modulos.echo() #Despliega directorio de modulos
 #dir_modulos.write()
 #print tab_valores.getDir("b")
 print("\n")
 tab_constant.echo()
-#quads_gen.echo()
+tab_constant.write()
+print("\n")
+quads_gen.echo()
+quads_gen.write()
+quads_gen.echoQ(tab_valores, tab_constant)
+quads_gen.writeQ(tab_valores, tab_constant)
