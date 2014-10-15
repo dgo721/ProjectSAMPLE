@@ -92,6 +92,11 @@ lex.lex()
 
 # Parser
 
+precedence = (
+    ('left','+','-'),
+    ('left','*','/'),
+)
+
 def p_program(p):
     '''program : INIT programA'''
 
@@ -261,48 +266,33 @@ def p_expressionA(p):
                 | empty'''
 
 def p_exp(p):
-    '''exp : term expA'''
-
-def p_expA(p):
-    '''expA : '+' exp
-            | '-' exp
-            | empty'''
+    '''exp : exp '+' exp
+            | exp '-' exp
+            | exp '*' exp
+            | exp '/' exp
+            | factor empty'''
     global pilaOpera, pilaTipos, quads_gen
-    if p[1] == '+' or p[1] == '-':
+    if p[2] == '+' or p[2] == '-' or p[2] == '*' or p[2] == '/':
         valor2=pilaOpera.pop()
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
         tipo1=pilaTipos.pop()
-        if p[1] == '+':
+        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
+        if p[2] == '+':
             tipoNuevo = semant_oper(tipo1, tipo2, 0)
-        elif p[1] == '-':
+        elif p[2] == '-':
             tipoNuevo = semant_oper(tipo1, tipo2, 1)
-        if tipoNuevo != -1:
-            quads_gen.add(p[1], valor1, valor2, -1)
-            pilaOpera.append(quads_gen.lasttemp())
-            pilaTipos.append(tipoNuevo)
-
-def p_term(p):
-    '''term : factor termA'''
-
-def p_termA(p):
-    '''termA : '*' term
-            | '/' term
-            | empty'''
-    global pilaOpera, pilaTipos, quads_gen
-    if p[1] == '*' or p[1] == '/':
-        valor2=pilaOpera.pop()
-        valor1=pilaOpera.pop()
-        tipo2=pilaTipos.pop()
-        tipo1=pilaTipos.pop()
-        if p[1] == '*':
+        elif p[2] == '*':
             tipoNuevo = semant_oper(tipo1, tipo2, 2)
-        elif p[1] == '/':
+        elif p[2] == '/':
             tipoNuevo = semant_oper(tipo1, tipo2, 3)
+        print tipoNuevo
         if tipoNuevo != -1:
-            quads_gen.add(p[1], valor1, valor2, -1)
+            quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
+        else:
+            print "Error de tipo. Operacion no permitida."
 
 def p_factor(p):
     '''factor : '(' expression ')'
@@ -375,8 +365,6 @@ def p_var_cte(p):
         p[0] = p[1]
         #print "--ID", p[1], pilaOpera
 
-
-
 def p_empty(p):
     'empty :'
     pass
@@ -414,7 +402,7 @@ try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
-    Name = "ej7.txt"
+    Name = "ej/ej8.txt"
 
 s = Name
 
