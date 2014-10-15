@@ -1,0 +1,40 @@
+init
+
+var1 = 3;
+
+replay 9 [
+	sample off right 10;
+	sample on left 8 5 blue;
+	quad 5 5 yellow;
+	arc 3 2 cyan;
+];
+
+var3 = 6;
+
+mod # first {
+	var2 = 23;
+}
+
+if (var1 > var3) {
+	var4 = var1 + var3;
+}
+
+sample on up 7 4 red;
+sample off down 3;
+
+mod # second (int d) {
+	var5 = d;
+}
+
+trio 4 6 green;
+unbool = 4 * (3*1);
+
+mod # third (int e, float f) {
+	var6 = e*f;
+}
+
+# third (e,f);
+
+var7 = 1*2;
+
+end

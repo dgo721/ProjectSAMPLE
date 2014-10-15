@@ -1,0 +1,47 @@
+init
+
+var1 = 3;
+var3 = 67.34;
+
+sample on up 7 4 red;
+sample off down 3;
+
+trio 4 6 green;
+
+mod # first {
+	var2 = 23;
+}
+
+mod # second (int d) {
+	var5 = d;
+}
+
+mod # third (int e, float f) {
+	var6 = e*f;
+}
+
+# third (e,f);
+
+replay 9 [
+	sample off right 10;
+	sample on left 8 5 blue;
+	quad 5 5 yellow;
+	arc 3 2 cyan;
+];
+
+if (var1 > 2) {
+	var4 = var1 + var3;
+} else { 
+	if (var3 < 100) {
+		var4 = var1 - var3;
+	} else {
+		var4 = var1 * var3;
+	}
+}
+
+pipe ejemplofila [45, 56];
+pipe ejemplofila in(67);
+pipe ejemplofila out();
+pipe ejemplofila count;
+
+end

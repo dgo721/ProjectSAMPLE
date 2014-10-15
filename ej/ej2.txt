@@ -1,0 +1,23 @@
+init
+
+var1 = 3;
+var3 = 67.34;
+
+mod # first {
+	var2 = 23.3;
+	h = 34.4 + 233;
+}
+
+mod # second (int d) {
+	var5 = d;
+}
+
+mod # third (int e, float f) {
+	var6 = e*f;
+	l = 3 + 3;
+	v = true;
+}
+
+# third (e,f);
+
+end
