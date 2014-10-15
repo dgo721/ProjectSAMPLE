@@ -11,12 +11,24 @@ A graphical-output compiler that receives input commands, displaying drawing and
 
 **sample_ly.py** - Lex/Yacc analysis, including table/directory construction activities.
 
+**cube_sem.py** - Operator comparisson analysis
+
 **tabvars.py** - Python class TabVar, retains all variables found.
 
-**out-dir_mods** - TabVar output
+**out-tabla_vars** - TabVar output
+
+**tabconst.py** - Python class TabConst, retains all constants found.
+
+**out-tabla_const** - TabConst output
 
 **dirmods.py** - Python class DirMods, retains all modules found.
 
-**out-tabla_vars** - DirMods output
+**out-dir_mods** - DirMods output
 
-Input examples: *ej1-5*.txt
+**codegen.py** - Python class CodeGen, retains all generated quadruples.
+
+**out-quads** - CodeGen output
+
+**quads.smo** - Sample object file .smo
+
+Input examples: */ej*
