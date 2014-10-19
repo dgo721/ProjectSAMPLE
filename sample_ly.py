@@ -3,6 +3,8 @@
 import sys
 sys.path.insert(0,"../..")
 
+from error import senderror
+
 if sys.version_info[0] >= 3:
     raw_input = input
 
@@ -83,6 +85,7 @@ def t_newline(t):
     r'\n+'
 
 def t_error(t):
+    
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
     
@@ -99,17 +102,22 @@ precedence = (
 
 def p_program(p):
     '''program : INIT programA'''
+    global dir_modulos
+    dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores)
 
 def p_programA(p):
     '''programA : programB END
                 | END'''
+    p[0] = p[1]
 
 def p_programB(p):
     '''programB : workspace programC'''
+    #print "programB", p[1]
 
 def p_programC(p):
     '''programC : programB
             | empty'''
+    #print "programC", p[1]
 
 def p_workspace(p):
     '''workspace : statute
@@ -131,26 +139,43 @@ def p_statute(p):
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
-    global id_params, cont_vars, dir_modulos, list_params
-    print "modulo #", p[3]
+    global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
+    #print "modulo #", p[3]
+
+    templist = list()
+    print "SUMA", sum(cont_vars), pairs_idtype
+    print tab_valores
+    suma = sum(cont_vars)
+    while suma > 0:
+    	tempair = pairs_idtype.pop()
+    	print "ULTIMO PAR", tempair
+    	tab_valores.removelastKeyDir(tempair)
+    	suma = suma - 1
+
     dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], tab_valores)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
+    work_vars[0] = work_vars[0] - cont_vars[0]
+    work_vars[1] = work_vars[1] - cont_vars[1]
+    work_vars[2] = work_vars[2] - cont_vars[2]
     cont_vars = [0,0,0] #Reinicia contador
+    pairs_idtype = []
+    tab_lvalores.empty()
+    print tab_lvalores
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
             | block'''
-    print "modulo A"
 
 def p_vars(p):
     '''vars : type ID varsA'''
-    global id_type, tab_valores, id_params
+    global id_type, tab_lvalores, id_params
     #print p[2]
     id_params.append(p[2])
     #print id_type
     #print id_params
-    tab_valores = tabvar(tab_valores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
+    tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
+    print "TAB_LVALORES", tab_lvalores
 
 def p_varsA(p):
     '''varsA : ',' vars
@@ -166,6 +191,8 @@ def p_type(p):
 
 def p_calling(p):
     '''calling : '#' ID '(' callingA'''
+    #print dir_modulos.getParams(p[2])
+    #print "CALLING", assign_vars
 
 def p_callingA(p):
     '''callingA : callingB ')' ';'
@@ -173,6 +200,7 @@ def p_callingA(p):
 
 def p_callingB(p):
     '''callingB : expression callingC'''
+    #print "CALLING B", assign_vars
 
 def p_callingC(p):
     '''callingC : ',' callingB
@@ -194,17 +222,25 @@ def p_blockC(p):
 
 def p_assign(p):
     '''assign : ID '=' expression ';' '''
-    global tab_valores, pilaOpera, pilaTipos, quads_gen, cont_vars
+    global tab_valores, pilaOpera, pilaTipos, quads_gen, cont_vars, work_vars, pairs_idtype
+    #print pilaOpera, pilaTipos, assign_vars
     valor1 = pilaOpera.pop()
     tipo1 = pilaTipos.pop()
+    if tipo1 != vartipo_assign(assign_vars):
+    	senderror(3, p[1])
     if tipo1 == 0:
         cont_vars[0] = cont_vars[0] + 1
+        work_vars[0] = work_vars[0] + 1
     elif tipo1 == 1:
         cont_vars[1] = cont_vars[1] + 1
+        work_vars[1] = work_vars[1] + 1
     elif tipo1 == 2:
         cont_vars[2] = cont_vars[2] + 1
+        work_vars[2] = work_vars[2] + 1
+    print "NUEVO ID", p[1]
+    pairs_idtype.append([p[1], tipo1])
+    tab_valores = tabvar(tab_valores, p[1], tipo1)
     quads_gen.add('=', valor1, -1, p[1])
-    tab_valores = tabvar(tab_valores, p[1], vartipo_assign(assign_vars))
 
 def p_condition(p):
     '''condition : IF '(' expression ')' block conditionA'''
@@ -252,18 +288,42 @@ def p_repeatB(p):
             | empty'''
 
 def p_expression(p):
-    '''expression : exp expressionA'''
-
-def p_expressionA(p):
-    '''expressionA : '=' '=' exp
-                | '<' '>' exp
-                | '<' '=' exp
-                | '>' '=' exp
-                | '>' exp
-                | '<' exp
-                | AND exp
-                | OR exp
-                | empty'''
+    '''expression : exp '=' '=' exp
+                | exp '<' '>' exp
+                | exp '<' '=' exp
+                | exp '>' '=' exp
+                | exp '>' exp
+                | exp '<' exp
+                | exp AND exp
+                | exp OR exp
+                | exp empty'''
+    global pilaOpera, pilaTipos, quads_gen
+    if p[2] == '=' or p[2] == '<' or p[2] == '>' or p[2] == 'and' or p[2] == 'or':
+        valor2=pilaOpera.pop()
+        valor1=pilaOpera.pop()
+        tipo2=pilaTipos.pop()
+        tipo1=pilaTipos.pop()
+        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
+        if p[2] == '=' and p[3] == '=':
+            tipoNuevo = semant_oper(tipo1, tipo2, 8)
+        elif p[2] == '<' and p[3] == '>':
+            tipoNuevo = semant_oper(tipo1, tipo2, 9)
+        elif p[2] == '<' and p[3] == '=':
+            tipoNuevo = semant_oper(tipo1, tipo2, 6)
+        elif p[2] == '>' and p[3] == '=':
+            tipoNuevo = semant_oper(tipo1, tipo2, 7)
+        elif p[2] == '<':
+        	tipoNuevo = semant_oper(tipo1, tipo2, 4)
+    	elif p[2] == '>':
+        	tipoNuevo = semant_oper(tipo1, tipo2, 5)
+        #print tipoNuevo
+        if tipoNuevo != -1:
+            quads_gen.add(p[2], valor1, valor2, -1)
+            pilaOpera.append(quads_gen.lasttemp())
+            pilaTipos.append(tipoNuevo)
+            #print pilaOpera, pilaTipos
+        else:
+            senderror(2)
 
 def p_exp(p):
     '''exp : exp '+' exp
@@ -286,13 +346,13 @@ def p_exp(p):
             tipoNuevo = semant_oper(tipo1, tipo2, 2)
         elif p[2] == '/':
             tipoNuevo = semant_oper(tipo1, tipo2, 3)
-        print tipoNuevo
+        #print tipoNuevo
         if tipoNuevo != -1:
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
         else:
-            print "Error de tipo. Operacion no permitida."
+            senderror(2)
 
 def p_factor(p):
     '''factor : '(' expression ')'
@@ -371,9 +431,9 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        print("Syntax error at '%s'" % p.value)
+        senderror(1, p.value)
     else:
-        print("Syntax error at EOF")
+        senderror(1, "EOF")
 
 
 from ply import yacc
@@ -389,11 +449,14 @@ pilaOpera = list() #Guarda las variables y contanstes utilizadas para una asigna
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
+pairs_idtype = list()
 tab_constant = TabConst() #Instancia clase TabConst, tabla de constantes del codigo seleccionado
-tab_valores = TabVars() #Instancia clase TabVars, tabla de variables del codigo seleccionado
+tab_valores = TabVars(2000, 4000, 6000) #Instancia clase TabVars, tabla de variables del codigo seleccionado
+tab_lvalores = TabVars(1100, 1200, 1300)
 dir_modulos = DirMods() #Instancia clase DirMods, directorio de modulos del programa
 quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para codigo intermedio
 cont_vars = [0,0,0]
+work_vars = [0,0,0]
 list_params = []
 
 #'''
@@ -418,7 +481,7 @@ yacc.parse(st)
 f.close()
 
 tab_valores.echo() #Despliega tabla de valores
-tab_valores.write() #Guarda en archivo la tabla de valores
+#tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
 #dir_modulos.echo() #Despliega directorio de modulos
 #dir_modulos.write()
@@ -427,7 +490,8 @@ print("\n")
 tab_constant.echo()
 tab_constant.write()
 print("\n")
-quads_gen.echo()
-quads_gen.write()
-quads_gen.echoQ(tab_valores, tab_constant)
-quads_gen.writeQ(tab_valores, tab_constant)
+#quads_gen.echo()
+#quads_gen.write()
+print("\n")
+#quads_gen.echoQ(tab_valores, tab_constant)
+#quads_gen.writeQ(tab_valores, tab_constant)

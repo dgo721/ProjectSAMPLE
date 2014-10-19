@@ -1,12 +1,5 @@
 Variables |    Tipo      |    Direccion |    
 ----------|    ----------|    ----------|    
-var1      |    INT       |    2000      |    
-var2      |    INT       |    2001      |    
-var3      |    FLOAT     |    4000      |    
-var4      |    FLOAT     |    4001      |    
-var5      |    FLOAT     |    4002      |    
-var6      |    INT       |    2002      |    
-var7      |    INT       |    2003      |    
-var8      |    INT       |    2004      |    
-var9      |    FLOAT     |    4004      |    
-z         |    FLOAT     |    4003      |    
+d         |    INT       |    2000      |    
+e         |    INT       |    2001      |    
+f         |    FLOAT     |    4000      |    

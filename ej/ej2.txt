@@ -1,7 +1,7 @@
 init
 
 var1 = 3;
-var3 = 67.34;
+var3 = 67.34 + 3;
 
 mod # first {
 	var2 = 23.3;
@@ -9,15 +9,18 @@ mod # first {
 }
 
 mod # second (int d) {
-	var5 = d;
+	var5 = 12;
 }
 
 mod # third (int e, float f) {
-	var6 = e*f;
+	var6 = 7*89;
 	l = 3 + 3;
 	v = true;
 }
 
 # third (e,f);
+
+a = true;
+b = false;
 
 end

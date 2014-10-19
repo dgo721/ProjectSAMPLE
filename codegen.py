@@ -6,7 +6,6 @@ class CodeGen:
 		self.data = {}
 
 	def add(self, op, oper1, oper2, asigna):
-		print self.t
 		if oper2 != -1:
 			stmp=str(self.t)
 			tmp='t' + stmp

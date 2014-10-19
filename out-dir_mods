@@ -1,5 +1,5 @@
 Modulos        |    Parametros               |    # Var INTS     |    # Var FLOATS   |    # Var BOOLS    |    
 ---------------|    -------------------------|    ---------------|    ---------------|    ---------------|    
-second         |    ['int']                  |    1              |    0              |    0              |    
-third          |    ['int', 'float']         |    1              |    1              |    1              |    
-first          |    []                       |    0              |    2              |    0              |    
+second         |    ['int']                  |    0              |    0              |    0              |    
+workspace      |    []                       |    0              |    0              |    0              |    
+third          |    ['int', 'float']         |    0              |    0              |    0              |    

@@ -35,7 +35,7 @@ class TabConst:
 		print >> f, output
 		print >> f, "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
 		for key in self.data:
-			print >> f, str(key).ljust(10).ljust(10) + "|".ljust(5) + str(self.data[key][0]).ljust(10) + "|".ljust(5)
+			print >> f, str(key).ljust(10) + "|".ljust(5) + str(self.data[key][0]).ljust(10) + "|".ljust(5)
 		f.close()
 	
 	def __str__(self):

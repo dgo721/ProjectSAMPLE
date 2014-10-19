@@ -1,20 +1,20 @@
 class TabVars:
 
-	def __init__(self):
-		self.offsint = 2000
-		self.offsflo = 4000
-		self.offsbol = 6000
+	def __init__(self, dirint, dirfloat, dirbool):
+		self.offsint = dirint
+		self.offsflo = dirfloat
+		self.offsbol = dirbool
 		self.data = {}
 
 	def add(self, key, value):
 		if value == 0:
-			self.data[key]=[value, self.offsint]
+			self.data.update({key:[value, self.offsint]})
 			self.offsint = self.offsint + 1
 		elif value == 1:
-			self.data[key]=[value, self.offsflo]
+			self.data.update({key:[value, self.offsflo]})
 			self.offsflo = self.offsflo + 1
 		elif value == 2:
-			self.data[key]=[value, self.offsbol]
+			self.data.update({key:[value, self.offsbol]})
 			self.offsbol = self.offsbol + 1
 
 	def getKey(self, key):
@@ -35,16 +35,38 @@ class TabVars:
 				return True
 		return False
 
+	def empty(self):
+		self.data = {}
+
+	def removelastKeyDir(self, pair):
+		if pair[1] == 0:
+			limit = self.offsint - 1
+			self.offsint = self.offsint - 1
+		elif pair[1] == 1:
+			limit = self.offsflo - 1
+			self.offsflo = self.offsflo - 1
+		elif pair[1] == 2:
+			limit = self.offsbol - 1
+			self.offsbol = self.offsbol - 1
+		print "LIMIT--------", limit
+		for key in self.data:
+			if (self.data[key][1] == limit):
+				llave = key
+				print "LA LLAVE", llave
+				break
+		print "IM OUT"
+
+	
 	def echo(self):
 		print "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5) + "Direccion".ljust(10) + "|".ljust(5)
 		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
-		for key in sorted(self.data):
+		for key in self.data:
 			if (self.data[key][0]==0):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
+				print key.ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
+				print key.ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==2):
-				print key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
+				print key.ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 	
 	def write(self):
 		f = open('out-tabla_vars', 'w')
@@ -53,11 +75,11 @@ class TabVars:
 		print >> f, "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
 		for key in sorted(self.data):
 			if (self.data[key][0]==0):
-				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
+				print >> f, key.ljust(10) + "|".ljust(5) + "INT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==1):
-				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
+				print >> f, key.ljust(10) + "|".ljust(5) + "FLOAT".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 			elif (self.data[key][0]==2):
-				print >> f, key.ljust(10).ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
+				print >> f, key.ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 		f.close()
 	
 	def __str__(self):

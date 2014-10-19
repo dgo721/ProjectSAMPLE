@@ -1,0 +1,13 @@
+init
+
+mod # second (int d) {
+	
+}
+
+mod # third (int e, float f) {
+	
+}
+
+# third (3, 3.4);
+
+end
