@@ -1,10 +1,12 @@
+from tabvars import TabVars
+
 class DirMods:
 
 	def __init__(self):
 		self.data = {}
 
-	def add(self, key, params, xints, yfloats, zbools):
-		self.data[key]=[params, xints, yfloats, zbools]
+	def add(self, key, params, xints, yfloats, zbools, tabvalores):
+		self.data[key]=[params, xints, yfloats, zbools, tabvalores]
 
 	def getParams(self, key):
 		return self.data[key][0]
@@ -29,12 +31,17 @@ class DirMods:
 			print >> f, key.ljust(15) + "|".ljust(5) + str(self.data[key][0]).ljust(25) + "|".ljust(5) + str(self.data[key][1]).ljust(15) + "|".ljust(5) + str(self.data[key][2]).ljust(15) + "|".ljust(5) + str(self.data[key][3]).ljust(15) + "|".ljust(5)
 		f.close()
 
+	def echotables(self):
+		for key in self.data:
+			print "VARIABLES", key.ljust(15)
+			self.data[key][4].echo()
+
 	def __str__(self):
 		return repr(self.data)
 
 def dirmod(dir_modulos, nombre, params, conti, contf, contb, tab_valores):
 	if dir_modulos.lookup(nombre)!=True and tab_valores.lookup(nombre)!=True:
-		dir_modulos.add(nombre, params, conti, contf, contb)
+		dir_modulos.add(nombre, params, conti, contf, contb, tab_valores)
 	else:
 		print "EXISTS, module not added"
 	return dir_modulos

@@ -1,6 +1,6 @@
 # LEX
 
-import sys
+import sys, copy
 sys.path.insert(0,"../..")
 
 from error import senderror
@@ -122,8 +122,9 @@ def p_programC(p):
 def p_workspace(p):
     '''workspace : statute
             | module'''
-    global cont_vars
+    global cont_vars, pairs_idtype
     cont_vars = [0,0,0]
+    pairs_idtype = []
 
 def p_statute(p):
     '''statute : assign
@@ -143,16 +144,23 @@ def p_module(p):
     #print "modulo #", p[3]
 
     templist = list()
-    print "SUMA", sum(cont_vars), pairs_idtype
-    print tab_valores
+    #print "SUMA", sum(cont_vars), pairs_idtype
     suma = sum(cont_vars)
-    while suma > 0:
+    while (suma > 0):
     	tempair = pairs_idtype.pop()
-    	print "ULTIMO PAR", tempair
+    	#print "ULTIMO PAR", tempair
     	tab_valores.removelastKeyDir(tempair)
+    	templist.append(tempair)
     	suma = suma - 1
 
-    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], tab_valores)
+    #print "TEMPLIST", templist
+    suma = sum(cont_vars)
+    while suma > 0:
+    	par = templist.pop()
+    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
+    	suma = suma - 1
+
+    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores))
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
     work_vars[0] = work_vars[0] - cont_vars[0]
@@ -161,7 +169,6 @@ def p_module(p):
     cont_vars = [0,0,0] #Reinicia contador
     pairs_idtype = []
     tab_lvalores.empty()
-    print tab_lvalores
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -175,7 +182,6 @@ def p_vars(p):
     #print id_type
     #print id_params
     tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
-    print "TAB_LVALORES", tab_lvalores
 
 def p_varsA(p):
     '''varsA : ',' vars
@@ -237,7 +243,7 @@ def p_assign(p):
     elif tipo1 == 2:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
-    print "NUEVO ID", p[1]
+    #print "NUEVO ID", p[1]
     pairs_idtype.append([p[1], tipo1])
     tab_valores = tabvar(tab_valores, p[1], tipo1)
     quads_gen.add('=', valor1, -1, p[1])
@@ -480,7 +486,8 @@ yacc.parse(st)
 #print st
 f.close()
 
-tab_valores.echo() #Despliega tabla de valores
+dir_modulos.echotables()
+#tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
 #dir_modulos.echo() #Despliega directorio de modulos
@@ -488,7 +495,7 @@ print("\n")
 #print tab_valores.getDir("b")
 print("\n")
 tab_constant.echo()
-tab_constant.write()
+#tab_constant.write()
 print("\n")
 #quads_gen.echo()
 #quads_gen.write()

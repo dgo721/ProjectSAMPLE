@@ -8,6 +8,8 @@ mod # first {
 	h = 34.4 + 233;
 }
 
+valor = 45.3 + 45 - 34;
+
 mod # second (int d) {
 	var5 = 12;
 }
@@ -18,7 +20,7 @@ mod # third (int e, float f) {
 	v = true;
 }
 
-# third (e,f);
+# third (var1, var3);
 
 a = true;
 b = false;

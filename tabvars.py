@@ -48,13 +48,11 @@ class TabVars:
 		elif pair[1] == 2:
 			limit = self.offsbol - 1
 			self.offsbol = self.offsbol - 1
-		print "LIMIT--------", limit
 		for key in self.data:
 			if (self.data[key][1] == limit):
 				llave = key
-				print "LA LLAVE", llave
 				break
-		print "IM OUT"
+		self.data.pop(llave)
 
 	
 	def echo(self):
