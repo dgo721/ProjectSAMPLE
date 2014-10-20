@@ -35,6 +35,7 @@ class DirMods:
 		for key in self.data:
 			print "VARIABLES", key.ljust(15)
 			self.data[key][4].echo()
+			print "\n"
 
 	def __str__(self):
 		return repr(self.data)

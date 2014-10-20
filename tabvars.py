@@ -52,6 +52,7 @@ class TabVars:
 			if (self.data[key][1] == limit):
 				llave = key
 				break
+		#print "SE VA", llave, pair, self.data[key][1]
 		self.data.pop(llave)
 
 	
@@ -120,5 +121,28 @@ def tabvar(tab_valores, nombre, tipo):
 	if tab_valores.lookup(nombre)!=True:
 		tab_valores.add(nombre, tipo)
 	else:
+		print "ESTE EXISTE", nombre
 		print "EXISTS, var not added"
 	return tab_valores
+
+def buscaID(lista, idv):
+	x = 1
+	for l in lista:
+		print lista[-x][0]
+		if lista[-x][0] == idv:
+			return lista[-x][1]
+		x = x + 1
+	return -1
+
+def isduplicate(lista, par, contvars):
+	x = 1
+	#print "LISTA:", lista, par, contvars
+	while x < contvars:
+		#print lista[-x][0], par[0]
+		if lista[-x][0] == par[0]:
+			return 1
+		x = x + 1
+	return 0
+
+#lista = [['a',0],['b',1],['c',1]]
+#print isduplicate(lista, ['b',0], 3)

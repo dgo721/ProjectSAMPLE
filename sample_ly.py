@@ -102,7 +102,29 @@ precedence = (
 
 def p_program(p):
     '''program : INIT programA'''
-    global dir_modulos
+    global id_params, dir_modulos, work_vars, tab_valores, pairs_idtype
+    
+    templist = list()
+    #print "SUMA", sum(cont_vars), pairs_idtype
+    suma = sum(work_vars)
+    while (suma > 0):
+    	tempair = pairs_idtype.pop()
+    	#print "ULTIMO PAR", tempair
+    	dup = isduplicate(templist, tempair, len(templist))
+    	#print "DUP", dup
+    	if dup != 1:
+    		#tab_valores.removelastKeyDir(tempair)
+    		templist.append(tempair)
+    	suma = suma - 1
+    
+    #print "TEMPLIST", templist, tab_valores
+    suma = len(templist)
+    while suma > 0:
+    	par = templist.pop()
+    	tab_valores=tabvar(tab_valores, par[0], par[1])
+    	suma = suma - 1
+
+    print "TFL", tab_valores
     dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores)
 
 def p_programA(p):
@@ -124,7 +146,6 @@ def p_workspace(p):
             | module'''
     global cont_vars, pairs_idtype
     cont_vars = [0,0,0]
-    pairs_idtype = []
 
 def p_statute(p):
     '''statute : assign
@@ -141,7 +162,7 @@ def p_statute(p):
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
     global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
-    #print "modulo #", p[3]
+    print "modulo #", p[3]
 
     templist = list()
     #print "SUMA", sum(cont_vars), pairs_idtype
@@ -149,12 +170,15 @@ def p_module(p):
     while (suma > 0):
     	tempair = pairs_idtype.pop()
     	#print "ULTIMO PAR", tempair
-    	tab_valores.removelastKeyDir(tempair)
-    	templist.append(tempair)
+    	dup = isduplicate(templist, tempair, len(templist))
+    	#print "DUP", dup
+    	if dup != 1:
+    		#tab_valores.removelastKeyDir(tempair)
+    		templist.append(tempair)
     	suma = suma - 1
-
-    #print "TEMPLIST", templist
-    suma = sum(cont_vars)
+    
+    #print "TEMPLIST", templist, tab_valores
+    suma = len(templist)
     while suma > 0:
     	par = templist.pop()
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
@@ -167,7 +191,6 @@ def p_module(p):
     work_vars[1] = work_vars[1] - cont_vars[1]
     work_vars[2] = work_vars[2] - cont_vars[2]
     cont_vars = [0,0,0] #Reinicia contador
-    pairs_idtype = []
     tab_lvalores.empty()
 
 def p_moduleA(p):
@@ -245,7 +268,9 @@ def p_assign(p):
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
     pairs_idtype.append([p[1], tipo1])
-    tab_valores = tabvar(tab_valores, p[1], tipo1)
+    #print "PAIRS en assign", pairs_idtype
+    #tab_valores = tabvar(tab_valores, p[1], tipo1)
+    #print "TABVAL en assign", tab_valores
     quads_gen.add('=', valor1, -1, p[1])
 
 def p_condition(p):
@@ -343,7 +368,7 @@ def p_exp(p):
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
         tipo1=pilaTipos.pop()
-        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
+        print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
         if p[2] == '+':
             tipoNuevo = semant_oper(tipo1, tipo2, 0)
         elif p[2] == '-':
@@ -425,7 +450,8 @@ def p_var_cte(p):
         p[0] = p[1]
         #print "--FALSE", p[1], pilaOpera
     else:
-        findtipo = tipoID(tab_valores, p[1])
+        findtipo = buscaID(pairs_idtype, p[1])
+        print pairs_idtype, p[1], findtipo
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
         p[0] = p[1]
@@ -486,6 +512,7 @@ yacc.parse(st)
 #print st
 f.close()
 
+print pairs_idtype
 dir_modulos.echotables()
 #tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
