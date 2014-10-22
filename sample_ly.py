@@ -129,7 +129,7 @@ def p_program(p):
 def p_programA(p):
     '''programA : programB END
                 | END'''
-    p[0] = p[1]
+    quads_gen.addGoTo('end', -1, -1, -1)
 
 def p_programB(p):
     '''programB : workspace programC'''
@@ -157,7 +157,6 @@ def p_statute(p):
                 | screen'''
     global assign_vars
     assign_vars=[]
-    print "STATUTE", quads_gen.getX()
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
@@ -237,12 +236,10 @@ def p_callingC(p):
 
 def p_block(p):
     '''block : '{' blockA '''
-    print "block", p[1]
 
 def p_blockA(p):
     '''blockA : blockB '}'
                 | '}' '''
-    print "blockA", p[1]
 
 def p_blockB(p):
     '''blockB : statute blockC'''
@@ -276,13 +273,11 @@ def p_assign(p):
     quads_gen.add('=', valor1, -1, p[1])
 
 def p_condition(p):
-    '''condition : IF '(' expression ')' gotoFalse block conditionA'''
-    print "condition", p[1], p[3]
+    '''condition : IF '(' expression ')' gotoFalse block conditionA continueGo'''
 
 def p_conditionA(p):
-    '''conditionA : ELSE block
+    '''conditionA : ELSE gotoE block
                 | empty '''
-    print "conditionA", p[1]
 
 def p_write(p):
 	'''write : ECHO writeA ';' '''
@@ -370,7 +365,7 @@ def p_expression(p):
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
         tipo1=pilaTipos.pop()
-        print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
+        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
         if p[2] == '=' and p[3] == '=':
             tipoNuevo = semant_oper(tipo1, tipo2, 8)
             p[2] = p[2] + p[3]
@@ -408,7 +403,7 @@ def p_exp(p):
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
         tipo1=pilaTipos.pop()
-        print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
+        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
         if p[2] == '+':
             tipoNuevo = semant_oper(tipo1, tipo2, 0)
         elif p[2] == '-':
@@ -503,10 +498,18 @@ def p_var_cte(p):
 
 def p_gotoFalse(p):
 	'''gotoFalse : '''
-	global quads_gen, pilaOpera, pilaTipos
+	global pilaOpera, pilaTipos
 	if pilaTipos.pop() != 2:
 		senderror(5)
-	quads_gen.addQ('gotoF', pilaOpera.pop(), -1, -1)
+	quads_gen.addGoTo('goToF', pilaOpera.pop(), -1, -1)
+
+def p_gotoE(p):
+	'''gotoE : '''
+	quads_gen.addGoToE('goTo', -1, -1, -1)
+
+def p_continueGo(p):
+	'''continueGo : '''
+	quads_gen.addcontinueG()
 
 def p_empty(p):
     'empty :'

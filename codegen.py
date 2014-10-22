@@ -4,6 +4,7 @@ class CodeGen:
 		self.x = 1
 		self.t = 1
 		self.data = {}
+		self.pilaSaltos = []
 
 	def add(self, op, oper1, oper2, asigna):
 		if oper2 != -1:
@@ -19,6 +20,24 @@ class CodeGen:
 	def addQ(self, op, oper1, oper2, oper3):
 		self.data[self.x]=[op, oper1, oper2, oper3]
 		self.x=self.x+1
+
+	def addGoTo(self, op, oper1, oper2, oper3):
+		self.data[self.x]=[op, oper1, oper2, oper3]
+		self.pilaSaltos.append(self.x)
+		self.x=self.x+1
+
+	def addGoToE(self, op, oper1, oper2, oper3):
+		self.data[self.x]=[op, oper1, oper2, oper3]
+		quadro = self.pilaSaltos.pop()
+		self.pilaSaltos.append(self.x)
+		self.x=self.x+1
+		self.data[quadro][3] = self.x
+
+	def addcontinueG(self):
+		print "PILA SALTOS", self.pilaSaltos
+		print self.x
+		quadro = self.pilaSaltos.pop()
+		self.data[quadro][3] = self.x
 
 	def getKey(self, key):
 		for llave in self.data:
