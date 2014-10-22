@@ -16,6 +16,10 @@ class CodeGen:
 			self.data[self.x]=[op, oper1, oper2, asigna]
 			self.x=self.x+1
 
+	def addQ(self, op, oper1, oper2, oper3):
+		self.data[self.x]=[op, oper1, oper2, oper3]
+		self.x=self.x+1
+
 	def getKey(self, key):
 		for llave in self.data:
 			if (llave==key):
@@ -25,11 +29,19 @@ class CodeGen:
 	def getQuad(self, key):
 		return self.data[key]
 
+	def getX(self):
+		return self.x - 1
+
 	def lasttemp(self):
 		ltemp=self.t-1
 		stmp=str(ltemp)
 		tmp='t' + stmp
 		return tmp
+
+	def empty(self):
+		self.x = 1
+		self.t = 1
+		self.data = {}
 
 	def echo(self):
 		print "QUAD".ljust(4) + "|".ljust(4) + "OP".ljust(4) + "|".ljust(4) + "OPR1".ljust(4) + "|".ljust(4) + "OPR2".ljust(4) + "|".ljust(4) + "TEMP".ljust(4) + "|".ljust(4)

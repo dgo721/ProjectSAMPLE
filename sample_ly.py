@@ -124,7 +124,6 @@ def p_program(p):
     	tab_valores=tabvar(tab_valores, par[0], par[1])
     	suma = suma - 1
 
-    print "TFL", tab_valores
     dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores)
 
 def p_programA(p):
@@ -158,6 +157,7 @@ def p_statute(p):
                 | screen'''
     global assign_vars
     assign_vars=[]
+    print "STATUTE", quads_gen.getX()
 
 def p_module(p):
     '''module : MOD '#' ID moduleA'''
@@ -237,10 +237,12 @@ def p_callingC(p):
 
 def p_block(p):
     '''block : '{' blockA '''
+    print "block", p[1]
 
 def p_blockA(p):
     '''blockA : blockB '}'
                 | '}' '''
+    print "blockA", p[1]
 
 def p_blockB(p):
     '''blockB : statute blockC'''
@@ -274,15 +276,28 @@ def p_assign(p):
     quads_gen.add('=', valor1, -1, p[1])
 
 def p_condition(p):
-    '''condition : IF '(' expression ')' block conditionA'''
+    '''condition : IF '(' expression ')' gotoFalse block conditionA'''
+    print "condition", p[1], p[3]
 
 def p_conditionA(p):
     '''conditionA : ELSE block
                 | empty '''
+    print "conditionA", p[1]
 
 def p_write(p):
-    '''write : ECHO expression ';'
-            | '"' CTE_STRING '"' ';' '''
+	'''write : ECHO writeA ';' '''
+	global tab_constant
+	if p[2] != None:
+		print "write", p[2]
+		tab_constant = tabconstante(tab_constant, p[2])
+		quads_gen.addQ(p[1], p[2], -1, -1)
+	else:
+		quads_gen.addQ(p[1], pilaOpera.pop(), -1, -1)
+
+def p_writeA(p):
+    '''writeA : expression
+            | CTE_STRING '''
+    p[0] = p[1]
 
 def p_pipeline(p):
     '''pipeline : PIPE ID pipelineA'''
@@ -303,10 +318,31 @@ def p_pipelineC(p):
 def p_command(p):
     '''command : figure exp exp color ';'
             | SAMPLE commandA '''
-
+    global quads_gen, pilaOpera, pilaTipos
+    if p[1] == 'sample':
+    	if p[2][0] == 'on':
+    		quads_gen.addQ('sample1', p[2][3], p[2][4], -1)
+    		quads_gen.addQ('sample2', p[2][0], p[2][1], p[2][2])
+    	elif p[2][0] == 'off':
+			quads_gen.addQ('sample', p[2][0], p[2][1], p[2][2])
+    else:
+    	tipo2 = pilaTipos.pop()
+    	tipo1 = pilaTipos.pop()
+    	if tipo1 == 2 or tipo2 == 2:
+    		print "ERROR TIPO OPERACION"
+    	valor2 = pilaOpera.pop()
+    	valor1 = pilaOpera.pop()
+    	quads_gen.addQ(p[1], valor1, valor2, p[4])
+    
 def p_commandA(p):
     '''commandA : ON move exp CTE_INTEGER color ';'
             | OFF move exp ';' '''
+    if pilaTipos.pop() == 2:
+    	print "ERROR TIPO OPERACION"
+    if p[1] == 'on':
+    	p[0] = [p[1], p[2], pilaOpera.pop(), p[4], p[5]]
+    else:
+		p[0] = [p[1], p[2], pilaOpera.pop()]
 
 def p_repeat(p):
     '''repeat : REPLAY CTE_INTEGER '[' repeatA ']' ';' '''
@@ -334,15 +370,19 @@ def p_expression(p):
         valor1=pilaOpera.pop()
         tipo2=pilaTipos.pop()
         tipo1=pilaTipos.pop()
-        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
+        print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
         if p[2] == '=' and p[3] == '=':
             tipoNuevo = semant_oper(tipo1, tipo2, 8)
+            p[2] = p[2] + p[3]
         elif p[2] == '<' and p[3] == '>':
             tipoNuevo = semant_oper(tipo1, tipo2, 9)
+            p[2] = p[2] + p[3]
         elif p[2] == '<' and p[3] == '=':
             tipoNuevo = semant_oper(tipo1, tipo2, 6)
+            p[2] = p[2] + p[3]
         elif p[2] == '>' and p[3] == '=':
             tipoNuevo = semant_oper(tipo1, tipo2, 7)
+            p[2] = p[2] + p[3]
         elif p[2] == '<':
         	tipoNuevo = semant_oper(tipo1, tipo2, 4)
     	elif p[2] == '>':
@@ -391,18 +431,21 @@ def p_factor(p):
     global listoper, pilaOpera
     if p[1] != '(':
         pilaOpera.append(p[1])
+    p[0] = p[1]
 
 def p_figure(p):
     '''figure : OVAL
             | TRIO
             | QUAD
             | ARC'''
+    p[0] = p[1]
 
 def p_move(p):
     '''move : UP
             | DOWN
             | LEFT
             | RIGHT'''
+    p[0] = p[1]
 
 def p_color(p):
     '''color : RED
@@ -413,6 +456,7 @@ def p_color(p):
             | ORANGE
             | PURPLE
             | CYAN'''
+    p[0] = p[1]
 
 def p_screen(p):
     '''screen : WHERE
@@ -456,6 +500,13 @@ def p_var_cte(p):
         pilaTipos.append(findtipo)
         p[0] = p[1]
         #print "--ID", p[1], pilaOpera
+
+def p_gotoFalse(p):
+	'''gotoFalse : '''
+	global quads_gen, pilaOpera, pilaTipos
+	if pilaTipos.pop() != 2:
+		senderror(5)
+	quads_gen.addQ('gotoF', pilaOpera.pop(), -1, -1)
 
 def p_empty(p):
     'empty :'
@@ -512,8 +563,7 @@ yacc.parse(st)
 #print st
 f.close()
 
-print pairs_idtype
-dir_modulos.echotables()
+#dir_modulos.echotables()
 #tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
@@ -524,7 +574,7 @@ print("\n")
 tab_constant.echo()
 #tab_constant.write()
 print("\n")
-#quads_gen.echo()
+quads_gen.echo()
 #quads_gen.write()
 print("\n")
 #quads_gen.echoQ(tab_valores, tab_constant)

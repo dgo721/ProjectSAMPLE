@@ -1,0 +1,10 @@
+init
+
+i = 7 + 9;
+j = i - 10;
+
+trio i 6 green;
+quad 5 j yellow;
+arc 3 2 cyan;
+
+end

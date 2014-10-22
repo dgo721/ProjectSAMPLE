@@ -1,0 +1,9 @@
+init
+
+a = 3 + 4;
+b = 4 + 5;
+
+echo 6*7;
+echo "Ejemplo a describir";
+
+end

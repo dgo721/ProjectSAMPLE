@@ -9,4 +9,6 @@ def senderror(x, *resto):
 		print("ERROR // Assignation type in '%s'" % resto[0])
 	elif x == 4:
 		print("ERROR // VAR not found" % resto[0])
+	elif x == 5:
+		print("ERROR // IF-ELSE requires boolean compare" % resto[0])
 	sys.exit()
