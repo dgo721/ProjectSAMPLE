@@ -35,6 +35,7 @@ reserva = {
     'where' : 'WHERE',
     'if' : 'IF',
     'else' : 'ELSE',
+    'while' : 'WHILE',
     'replay' : 'REPLAY',
     'pipe' : 'PIPE',
     'in' : 'IN',
@@ -150,6 +151,7 @@ def p_statute(p):
     '''statute : assign
                 | condition
                 | write
+                | cycle
                 | repeat
                 | command
                 | calling
@@ -339,6 +341,9 @@ def p_commandA(p):
     else:
 		p[0] = [p[1], p[2], pilaOpera.pop()]
 
+def p_cycle(p):
+    '''cycle : WHILE gotoW '(' expression ')' gotoFalse block continueGoW'''
+
 def p_repeat(p):
     '''repeat : REPLAY CTE_INTEGER '[' repeatA ']' ';' '''
 
@@ -507,9 +512,17 @@ def p_gotoE(p):
 	'''gotoE : '''
 	quads_gen.addGoToE('goTo', -1, -1, -1)
 
+def p_gotoW(p):
+	'''gotoW : '''
+	quads_gen.addGoToW()
+
 def p_continueGo(p):
 	'''continueGo : '''
 	quads_gen.addcontinueG()
+
+def p_continueGoW(p):
+	'''continueGoW : '''
+	quads_gen.addcontinueW()
 
 def p_empty(p):
     'empty :'

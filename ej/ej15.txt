@@ -1,0 +1,23 @@
+init
+
+var1=0;
+
+while (var1 < 3){
+	
+	while (var1 < 2){
+		if (1 > 2) {
+			var3 = 3;
+		} else { 
+			if (4 < 100) {
+				var4 = 3.41;
+			} else {
+				var4 = 1234;
+			}
+		}
+	}
+	var3 = 2;
+}
+
+a = var1 + var3;
+
+end

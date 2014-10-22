@@ -34,10 +34,18 @@ class CodeGen:
 		self.data[quadro][3] = self.x
 
 	def addcontinueG(self):
-		print "PILA SALTOS", self.pilaSaltos
-		print self.x
 		quadro = self.pilaSaltos.pop()
 		self.data[quadro][3] = self.x
+
+	def addcontinueW(self):
+		salida = self.pilaSaltos.pop()
+		retorno = self.pilaSaltos.pop()
+		self.data[self.x]=['goTo', -1, -1, retorno]
+		self.x=self.x+1
+		self.data[salida][3] = self.x
+
+	def addGoToW(self):
+		self.pilaSaltos.append(self.x)
 
 	def getKey(self, key):
 		for llave in self.data:
