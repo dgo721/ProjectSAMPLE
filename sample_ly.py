@@ -105,25 +105,10 @@ def p_program(p):
     '''program : INIT programA'''
     global id_params, dir_modulos, work_vars, tab_valores, pairs_idtype
     
-    templist = list()
-    #print "SUMA", sum(cont_vars), pairs_idtype
-    suma = sum(work_vars)
-    while (suma > 0):
-    	tempair = pairs_idtype.pop()
-    	#print "ULTIMO PAR", tempair
-    	dup = isduplicate(templist, tempair, len(templist))
-    	#print "DUP", dup
-    	if dup != 1:
-    		#tab_valores.removelastKeyDir(tempair)
-    		templist.append(tempair)
-    	suma = suma - 1
-    
-    #print "TEMPLIST", templist, tab_valores
-    suma = len(templist)
-    while suma > 0:
-    	par = templist.pop()
+    while (pairs_idtype):
+    	par = pairs_idtype.pop(0)
+    	print "ULTIMO PAR - WORK", par, len(pairs_idtype)
     	tab_valores=tabvar(tab_valores, par[0], par[1])
-    	suma = suma - 1
     
     dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores)
 
@@ -164,11 +149,10 @@ def p_module(p):
     '''module : MOD '#' ID moduleA'''
     global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
     print "modulo #", p[3]
-
     print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     x = sum(work_vars) - sum(cont_vars)
-    suma = sum(cont_vars)
-    while (x <= suma and pairs_idtype):
+    suma = sum(work_vars)
+    while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
     	print "ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])

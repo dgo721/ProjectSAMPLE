@@ -1,19 +1,43 @@
 init
 
+h = 34;
+
+h = 3.45;
+n = h + h + h;
+h = n;
+a = 3 + h * (n - 2);
+
 mod # first {
 	h = 3.4;
 }
+
+b = 3.4;
 
 mod # second (int d) {
 	h = 4.5;
 }
 
+c = false;
+
 mod # third (int e, float f) {
 	h = 4;
+	if (h <> 4){
+		m = false;
+	} else {
+		otravariables = 23.838798233897;
+	}
 }
+
+d = true;
 
 # third (var1, var3);
 
-h=true;
+f = c <> d;
+
+if (f){
+	d = false;
+} else {
+	cvblsjfle = 23;
+}
 
 end
