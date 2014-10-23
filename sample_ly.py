@@ -124,7 +124,7 @@ def p_program(p):
     	par = templist.pop()
     	tab_valores=tabvar(tab_valores, par[0], par[1])
     	suma = suma - 1
-
+    
     dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores)
 
 def p_programA(p):
@@ -165,23 +165,12 @@ def p_module(p):
     global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
     print "modulo #", p[3]
 
-    templist = list()
-    #print "SUMA", sum(cont_vars), pairs_idtype
+    print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
+    x = sum(work_vars) - sum(cont_vars)
     suma = sum(cont_vars)
-    while (suma > 0):
-    	tempair = pairs_idtype.pop()
-    	#print "ULTIMO PAR", tempair
-    	dup = isduplicate(templist, tempair, len(templist))
-    	#print "DUP", dup
-    	if dup != 1:
-    		#tab_valores.removelastKeyDir(tempair)
-    		templist.append(tempair)
-    	suma = suma - 1
-    
-    #print "TEMPLIST", templist, tab_valores
-    suma = len(templist)
-    while suma > 0:
-    	par = templist.pop()
+    while (x <= suma and pairs_idtype):
+    	par = pairs_idtype.pop(x)
+    	print "ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
     	suma = suma - 1
 
@@ -192,7 +181,7 @@ def p_module(p):
     work_vars[1] = work_vars[1] - cont_vars[1]
     work_vars[2] = work_vars[2] - cont_vars[2]
     cont_vars = [0,0,0] #Reinicia contador
-    tab_lvalores.empty()
+    tab_lvalores = TabVars(1200, 1400, 1600)
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -256,7 +245,9 @@ def p_assign(p):
     #print pilaOpera, pilaTipos, assign_vars
     valor1 = pilaOpera.pop()
     tipo1 = pilaTipos.pop()
-    if tipo1 != vartipo_assign(assign_vars):
+    index = vartipo_assign(assign_vars)
+    print "ASSIGN--", valor1, tipo1, index
+    if tipo1 != index:
     	senderror(3, p[1])
     if tipo1 == 0:
         cont_vars[0] = cont_vars[0] + 1
@@ -269,7 +260,7 @@ def p_assign(p):
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
     pairs_idtype.append([p[1], tipo1])
-    #print "PAIRS en assign", pairs_idtype
+    print "ASSIGN-- PAIRS", pairs_idtype, pairs_idtype[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
     #tab_valores = tabvar(tab_valores, p[1], tipo1)
     #print "TABVAL en assign", tab_valores
     quads_gen.add('=', valor1, -1, p[1])
@@ -285,7 +276,7 @@ def p_write(p):
 	'''write : ECHO writeA ';' '''
 	global tab_constant
 	if p[2] != None:
-		print "write", p[2]
+		#print "write", p[2]
 		tab_constant = tabconstante(tab_constant, p[2])
 		quads_gen.addQ(p[1], p[2], -1, -1)
 	else:
@@ -345,7 +336,8 @@ def p_cycle(p):
     '''cycle : WHILE gotoW '(' expression ')' gotoFalse block continueGoW'''
 
 def p_repeat(p):
-    '''repeat : REPLAY CTE_INTEGER '[' repeatA ']' ';' '''
+    '''repeat : REPLAY CTE_INTEGER gotoR '[' repeatA ']' ';' '''
+    quads_gen.addcontinueR(p[2])
 
 def p_repeatA(p):
     '''repeatA : command repeatB'''
@@ -495,7 +487,7 @@ def p_var_cte(p):
         #print "--FALSE", p[1], pilaOpera
     else:
         findtipo = buscaID(pairs_idtype, p[1])
-        print pairs_idtype, p[1], findtipo
+        #print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
         p[0] = p[1]
@@ -515,6 +507,10 @@ def p_gotoE(p):
 def p_gotoW(p):
 	'''gotoW : '''
 	quads_gen.addGoToW()
+
+def p_gotoR(p):
+	'''gotoR : '''
+	quads_gen.addGoToR()
 
 def p_continueGo(p):
 	'''continueGo : '''
@@ -548,15 +544,15 @@ pilaOpera = list() #Guarda las variables y contanstes utilizadas para una asigna
 id_type = list() #Para VARS, guarda los tipos de variable encontrados en parametros
 id_params = list() #Para MODULE-VARS, guarda los id recibidos como parametros en los modulos
 assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados en una asignacion
-pairs_idtype = list()
+pairs_idtype = list() #Almacena las variables en par id-tipo, utlizados para distincion entre variables locales/globales
 tab_constant = TabConst() #Instancia clase TabConst, tabla de constantes del codigo seleccionado
 tab_valores = TabVars(2000, 4000, 6000) #Instancia clase TabVars, tabla de variables del codigo seleccionado
-tab_lvalores = TabVars(1100, 1200, 1300)
+tab_lvalores = TabVars(1200, 1400, 1600) #Instancia clase TabVars, tabla de variables locales, distinta por cada modulo
 dir_modulos = DirMods() #Instancia clase DirMods, directorio de modulos del programa
 quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para codigo intermedio
-cont_vars = [0,0,0]
-work_vars = [0,0,0]
-list_params = []
+cont_vars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
+work_vars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
+list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
 
 #'''
 
@@ -579,7 +575,7 @@ yacc.parse(st)
 #print st
 f.close()
 
-#dir_modulos.echotables()
+dir_modulos.echotables()
 #tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
@@ -587,10 +583,10 @@ print("\n")
 #dir_modulos.write()
 #print tab_valores.getDir("b")
 print("\n")
-tab_constant.echo()
+#tab_constant.echo()
 #tab_constant.write()
 print("\n")
-quads_gen.echo()
+#quads_gen.echo()
 #quads_gen.write()
 print("\n")
 #quads_gen.echoQ(tab_valores, tab_constant)

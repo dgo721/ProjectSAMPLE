@@ -128,7 +128,7 @@ def tabvar(tab_valores, nombre, tipo):
 def buscaID(lista, idv):
 	x = 1
 	for l in lista:
-		print lista[-x][0]
+		#print lista[-x][0]
 		if lista[-x][0] == idv:
 			return lista[-x][1]
 		x = x + 1

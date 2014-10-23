@@ -44,8 +44,35 @@ class CodeGen:
 		self.x=self.x+1
 		self.data[salida][3] = self.x
 
+	def addcontinueR(self, cte):
+		temporal = self.pilaSaltos.pop()
+		regreso = self.pilaSaltos.pop()
+		stmp=str(self.t)
+		tmp='t' + stmp
+		self.data[self.x]=['+', temporal, 1, tmp]
+		self.x=self.x+1
+		self.t=self.t+1
+		self.data[self.x]=['=', tmp, -1, temporal]
+		self.x=self.x+1
+		stmp=str(self.t)
+		tmp='t' + stmp
+		self.data[self.x]=['==', temporal, cte, tmp]
+		self.x=self.x+1
+		self.t=self.t+1
+		self.data[self.x]=['goToF', tmp, -1, regreso]
+		self.x=self.x+1
+
 	def addGoToW(self):
 		self.pilaSaltos.append(self.x)
+
+	def addGoToR(self):
+		stmp=str(self.t)
+		tmp='t' + stmp
+		self.data[self.x]=['=', 0, -1, tmp]
+		self.x=self.x+1
+		self.t=self.t+1
+		self.pilaSaltos.append(self.x)
+		self.pilaSaltos.append(tmp)
 
 	def getKey(self, key):
 		for llave in self.data:
@@ -58,6 +85,9 @@ class CodeGen:
 
 	def getX(self):
 		return self.x - 1
+
+	def getnextX(self):
+		return self.x
 
 	def lasttemp(self):
 		ltemp=self.t-1

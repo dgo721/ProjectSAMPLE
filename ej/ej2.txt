@@ -1,34 +1,19 @@
 init
 
-var1 = 3;
-var3 = 67.34 + 3;
-var2 = true;
-var2 = 3.3;
-var2 = 5;
-
 mod # first {
-	var2 = 23;
-	var1 = 2.3;
-	var2 = 353 + var2;
-	h = 4.3 + 233;
-	h = h + 1;
+	h = 3.4;
 }
 
-var5 = 45.3 + 45 - 34;
-
 mod # second (int d) {
-	var5 = 12;
+	h = 4.5;
 }
 
 mod # third (int e, float f) {
-	var6 = 7*89;
-	l = 3 + 3;
-	v = true;
+	h = 4;
 }
 
 # third (var1, var3);
 
-a = true;
-b = false;
+h=true;
 
 end

@@ -61,7 +61,7 @@ Rule 55    command -> SAMPLE commandA
 Rule 56    commandA -> ON move exp CTE_INTEGER color ;
 Rule 57    commandA -> OFF move exp ;
 Rule 58    cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW
-Rule 59    repeat -> REPLAY CTE_INTEGER [ repeatA ] ;
+Rule 59    repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ;
 Rule 60    repeatA -> command repeatB
 Rule 61    repeatB -> repeatA
 Rule 62    repeatB -> empty
@@ -107,9 +107,10 @@ Rule 101   var_cte -> FALSE
 Rule 102   gotoFalse -> <empty>
 Rule 103   gotoE -> <empty>
 Rule 104   gotoW -> <empty>
-Rule 105   continueGo -> <empty>
-Rule 106   continueGoW -> <empty>
-Rule 107   empty -> <empty>
+Rule 105   gotoR -> <empty>
+Rule 106   continueGo -> <empty>
+Rule 107   continueGoW -> <empty>
+Rule 108   empty -> <empty>
 
 Terminals, with rules where they appear
 
@@ -201,6 +202,7 @@ factor               : 76
 figure               : 54
 gotoE                : 41
 gotoFalse            : 40 58
+gotoR                : 59
 gotoW                : 58
 module               : 8
 moduleA              : 18
@@ -259,7 +261,7 @@ state 1
     (40) condition -> . IF ( expression ) gotoFalse block conditionA continueGo
     (43) write -> . ECHO writeA ;
     (58) cycle -> . WHILE gotoW ( expression ) gotoFalse block continueGoW
-    (59) repeat -> . REPLAY CTE_INTEGER [ repeatA ] ;
+    (59) repeat -> . REPLAY CTE_INTEGER gotoR [ repeatA ] ;
     (54) command -> . figure exp exp color ;
     (55) command -> . SAMPLE commandA
     (27) calling -> . # ID ( callingA
@@ -382,7 +384,7 @@ state 6
 
 state 7
 
-    (59) repeat -> REPLAY . CTE_INTEGER [ repeatA ] ;
+    (59) repeat -> REPLAY . CTE_INTEGER gotoR [ repeatA ] ;
 
     CTE_INTEGER     shift and go to state 44
 
@@ -405,7 +407,6 @@ state 10
 
     (11) statute -> write .
 
-    MOD             reduce using rule 11 (statute -> write .)
     ID              reduce using rule 11 (statute -> write .)
     IF              reduce using rule 11 (statute -> write .)
     ECHO            reduce using rule 11 (statute -> write .)
@@ -420,15 +421,15 @@ state 10
     TRIO            reduce using rule 11 (statute -> write .)
     QUAD            reduce using rule 11 (statute -> write .)
     ARC             reduce using rule 11 (statute -> write .)
-    END             reduce using rule 11 (statute -> write .)
     }               reduce using rule 11 (statute -> write .)
+    MOD             reduce using rule 11 (statute -> write .)
+    END             reduce using rule 11 (statute -> write .)
 
 
 state 11
 
     (10) statute -> condition .
 
-    MOD             reduce using rule 10 (statute -> condition .)
     ID              reduce using rule 10 (statute -> condition .)
     IF              reduce using rule 10 (statute -> condition .)
     ECHO            reduce using rule 10 (statute -> condition .)
@@ -443,8 +444,9 @@ state 11
     TRIO            reduce using rule 10 (statute -> condition .)
     QUAD            reduce using rule 10 (statute -> condition .)
     ARC             reduce using rule 10 (statute -> condition .)
-    END             reduce using rule 10 (statute -> condition .)
     }               reduce using rule 10 (statute -> condition .)
+    MOD             reduce using rule 10 (statute -> condition .)
+    END             reduce using rule 10 (statute -> condition .)
 
 
 state 12
@@ -493,7 +495,6 @@ state 15
 
     (13) statute -> repeat .
 
-    MOD             reduce using rule 13 (statute -> repeat .)
     ID              reduce using rule 13 (statute -> repeat .)
     IF              reduce using rule 13 (statute -> repeat .)
     ECHO            reduce using rule 13 (statute -> repeat .)
@@ -508,8 +509,9 @@ state 15
     TRIO            reduce using rule 13 (statute -> repeat .)
     QUAD            reduce using rule 13 (statute -> repeat .)
     ARC             reduce using rule 13 (statute -> repeat .)
-    END             reduce using rule 13 (statute -> repeat .)
     }               reduce using rule 13 (statute -> repeat .)
+    MOD             reduce using rule 13 (statute -> repeat .)
+    END             reduce using rule 13 (statute -> repeat .)
 
 
 state 16
@@ -523,7 +525,6 @@ state 17
 
     (17) statute -> screen .
 
-    MOD             reduce using rule 17 (statute -> screen .)
     ID              reduce using rule 17 (statute -> screen .)
     IF              reduce using rule 17 (statute -> screen .)
     ECHO            reduce using rule 17 (statute -> screen .)
@@ -538,8 +539,9 @@ state 17
     TRIO            reduce using rule 17 (statute -> screen .)
     QUAD            reduce using rule 17 (statute -> screen .)
     ARC             reduce using rule 17 (statute -> screen .)
-    END             reduce using rule 17 (statute -> screen .)
     }               reduce using rule 17 (statute -> screen .)
+    MOD             reduce using rule 17 (statute -> screen .)
+    END             reduce using rule 17 (statute -> screen .)
 
 
 state 18
@@ -631,7 +633,6 @@ state 24
 
     (12) statute -> cycle .
 
-    MOD             reduce using rule 12 (statute -> cycle .)
     ID              reduce using rule 12 (statute -> cycle .)
     IF              reduce using rule 12 (statute -> cycle .)
     ECHO            reduce using rule 12 (statute -> cycle .)
@@ -646,8 +647,9 @@ state 24
     TRIO            reduce using rule 12 (statute -> cycle .)
     QUAD            reduce using rule 12 (statute -> cycle .)
     ARC             reduce using rule 12 (statute -> cycle .)
-    END             reduce using rule 12 (statute -> cycle .)
     }               reduce using rule 12 (statute -> cycle .)
+    MOD             reduce using rule 12 (statute -> cycle .)
+    END             reduce using rule 12 (statute -> cycle .)
 
 
 state 25
@@ -676,7 +678,6 @@ state 26
 
     (16) statute -> pipeline .
 
-    MOD             reduce using rule 16 (statute -> pipeline .)
     ID              reduce using rule 16 (statute -> pipeline .)
     IF              reduce using rule 16 (statute -> pipeline .)
     ECHO            reduce using rule 16 (statute -> pipeline .)
@@ -691,15 +692,15 @@ state 26
     TRIO            reduce using rule 16 (statute -> pipeline .)
     QUAD            reduce using rule 16 (statute -> pipeline .)
     ARC             reduce using rule 16 (statute -> pipeline .)
-    END             reduce using rule 16 (statute -> pipeline .)
     }               reduce using rule 16 (statute -> pipeline .)
+    MOD             reduce using rule 16 (statute -> pipeline .)
+    END             reduce using rule 16 (statute -> pipeline .)
 
 
 state 27
 
     (15) statute -> calling .
 
-    MOD             reduce using rule 15 (statute -> calling .)
     ID              reduce using rule 15 (statute -> calling .)
     IF              reduce using rule 15 (statute -> calling .)
     ECHO            reduce using rule 15 (statute -> calling .)
@@ -714,8 +715,9 @@ state 27
     TRIO            reduce using rule 15 (statute -> calling .)
     QUAD            reduce using rule 15 (statute -> calling .)
     ARC             reduce using rule 15 (statute -> calling .)
-    END             reduce using rule 15 (statute -> calling .)
     }               reduce using rule 15 (statute -> calling .)
+    MOD             reduce using rule 15 (statute -> calling .)
+    END             reduce using rule 15 (statute -> calling .)
 
 
 state 28
@@ -757,7 +759,6 @@ state 30
 
     (14) statute -> command .
 
-    MOD             reduce using rule 14 (statute -> command .)
     ID              reduce using rule 14 (statute -> command .)
     IF              reduce using rule 14 (statute -> command .)
     ECHO            reduce using rule 14 (statute -> command .)
@@ -772,8 +773,9 @@ state 30
     TRIO            reduce using rule 14 (statute -> command .)
     QUAD            reduce using rule 14 (statute -> command .)
     ARC             reduce using rule 14 (statute -> command .)
-    END             reduce using rule 14 (statute -> command .)
     }               reduce using rule 14 (statute -> command .)
+    MOD             reduce using rule 14 (statute -> command .)
+    END             reduce using rule 14 (statute -> command .)
 
 
 state 31
@@ -782,7 +784,7 @@ state 31
     (5) programC -> . programB
     (6) programC -> . empty
     (4) programB -> . workspace programC
-    (107) empty -> .
+    (108) empty -> .
     (7) workspace -> . statute
     (8) workspace -> . module
     (9) statute -> . assign
@@ -799,7 +801,7 @@ state 31
     (40) condition -> . IF ( expression ) gotoFalse block conditionA continueGo
     (43) write -> . ECHO writeA ;
     (58) cycle -> . WHILE gotoW ( expression ) gotoFalse block continueGoW
-    (59) repeat -> . REPLAY CTE_INTEGER [ repeatA ] ;
+    (59) repeat -> . REPLAY CTE_INTEGER gotoR [ repeatA ] ;
     (54) command -> . figure exp exp color ;
     (55) command -> . SAMPLE commandA
     (27) calling -> . # ID ( callingA
@@ -811,7 +813,7 @@ state 31
     (81) figure -> . QUAD
     (82) figure -> . ARC
 
-    END             reduce using rule 107 (empty -> .)
+    END             reduce using rule 108 (empty -> .)
     MOD             shift and go to state 33
     ID              shift and go to state 23
     IF              shift and go to state 12
@@ -849,7 +851,6 @@ state 32
 
     (9) statute -> assign .
 
-    MOD             reduce using rule 9 (statute -> assign .)
     ID              reduce using rule 9 (statute -> assign .)
     IF              reduce using rule 9 (statute -> assign .)
     ECHO            reduce using rule 9 (statute -> assign .)
@@ -864,8 +865,9 @@ state 32
     TRIO            reduce using rule 9 (statute -> assign .)
     QUAD            reduce using rule 9 (statute -> assign .)
     ARC             reduce using rule 9 (statute -> assign .)
-    END             reduce using rule 9 (statute -> assign .)
     }               reduce using rule 9 (statute -> assign .)
+    MOD             reduce using rule 9 (statute -> assign .)
+    END             reduce using rule 9 (statute -> assign .)
 
 
 state 33
@@ -1082,35 +1084,35 @@ state 39
 state 40
 
     (76) exp -> factor . empty
-    (107) empty -> .
+    (108) empty -> .
 
-    +               reduce using rule 107 (empty -> .)
-    -               reduce using rule 107 (empty -> .)
-    *               reduce using rule 107 (empty -> .)
-    /               reduce using rule 107 (empty -> .)
-    (               reduce using rule 107 (empty -> .)
-    ID              reduce using rule 107 (empty -> .)
-    CTE_INTEGER     reduce using rule 107 (empty -> .)
-    CTE_FLOAT       reduce using rule 107 (empty -> .)
-    TRUE            reduce using rule 107 (empty -> .)
-    FALSE           reduce using rule 107 (empty -> .)
-    =               reduce using rule 107 (empty -> .)
-    <               reduce using rule 107 (empty -> .)
-    >               reduce using rule 107 (empty -> .)
-    AND             reduce using rule 107 (empty -> .)
-    OR              reduce using rule 107 (empty -> .)
-    ;               reduce using rule 107 (empty -> .)
-    )               reduce using rule 107 (empty -> .)
-    RED             reduce using rule 107 (empty -> .)
-    YELLOW          reduce using rule 107 (empty -> .)
-    BLUE            reduce using rule 107 (empty -> .)
-    GREEN           reduce using rule 107 (empty -> .)
-    BLACK           reduce using rule 107 (empty -> .)
-    ORANGE          reduce using rule 107 (empty -> .)
-    PURPLE          reduce using rule 107 (empty -> .)
-    CYAN            reduce using rule 107 (empty -> .)
-    ,               reduce using rule 107 (empty -> .)
-    ]               reduce using rule 107 (empty -> .)
+    +               reduce using rule 108 (empty -> .)
+    -               reduce using rule 108 (empty -> .)
+    *               reduce using rule 108 (empty -> .)
+    /               reduce using rule 108 (empty -> .)
+    (               reduce using rule 108 (empty -> .)
+    ID              reduce using rule 108 (empty -> .)
+    CTE_INTEGER     reduce using rule 108 (empty -> .)
+    CTE_FLOAT       reduce using rule 108 (empty -> .)
+    TRUE            reduce using rule 108 (empty -> .)
+    FALSE           reduce using rule 108 (empty -> .)
+    =               reduce using rule 108 (empty -> .)
+    <               reduce using rule 108 (empty -> .)
+    >               reduce using rule 108 (empty -> .)
+    AND             reduce using rule 108 (empty -> .)
+    OR              reduce using rule 108 (empty -> .)
+    ;               reduce using rule 108 (empty -> .)
+    )               reduce using rule 108 (empty -> .)
+    RED             reduce using rule 108 (empty -> .)
+    YELLOW          reduce using rule 108 (empty -> .)
+    BLUE            reduce using rule 108 (empty -> .)
+    GREEN           reduce using rule 108 (empty -> .)
+    BLACK           reduce using rule 108 (empty -> .)
+    ORANGE          reduce using rule 108 (empty -> .)
+    PURPLE          reduce using rule 108 (empty -> .)
+    CYAN            reduce using rule 108 (empty -> .)
+    ,               reduce using rule 108 (empty -> .)
+    ]               reduce using rule 108 (empty -> .)
 
     empty                          shift and go to state 67
 
@@ -1189,10 +1191,12 @@ state 43
 
 state 44
 
-    (59) repeat -> REPLAY CTE_INTEGER . [ repeatA ] ;
+    (59) repeat -> REPLAY CTE_INTEGER . gotoR [ repeatA ] ;
+    (105) gotoR -> .
 
-    [               shift and go to state 69
+    [               reduce using rule 105 (gotoR -> .)
 
+    gotoR                          shift and go to state 69
 
 state 45
 
@@ -1282,7 +1286,7 @@ state 50
     (73) exp -> exp . - exp
     (74) exp -> exp . * exp
     (75) exp -> exp . / exp
-    (107) empty -> .
+    (108) empty -> .
 
     =               shift and go to state 80
     <               shift and go to state 79
@@ -1293,9 +1297,9 @@ state 50
     -               shift and go to state 64
     *               shift and go to state 63
     /               shift and go to state 65
-    ;               reduce using rule 107 (empty -> .)
-    )               reduce using rule 107 (empty -> .)
-    ,               reduce using rule 107 (empty -> .)
+    ;               reduce using rule 108 (empty -> .)
+    )               reduce using rule 108 (empty -> .)
+    ,               reduce using rule 108 (empty -> .)
 
     empty                          shift and go to state 82
 
@@ -1310,24 +1314,24 @@ state 52
 
     (55) command -> SAMPLE commandA .
 
-    MOD             reduce using rule 55 (command -> SAMPLE commandA .)
+    SAMPLE          reduce using rule 55 (command -> SAMPLE commandA .)
+    OVAL            reduce using rule 55 (command -> SAMPLE commandA .)
+    TRIO            reduce using rule 55 (command -> SAMPLE commandA .)
+    QUAD            reduce using rule 55 (command -> SAMPLE commandA .)
+    ARC             reduce using rule 55 (command -> SAMPLE commandA .)
+    ]               reduce using rule 55 (command -> SAMPLE commandA .)
     ID              reduce using rule 55 (command -> SAMPLE commandA .)
     IF              reduce using rule 55 (command -> SAMPLE commandA .)
     ECHO            reduce using rule 55 (command -> SAMPLE commandA .)
     WHILE           reduce using rule 55 (command -> SAMPLE commandA .)
     REPLAY          reduce using rule 55 (command -> SAMPLE commandA .)
-    SAMPLE          reduce using rule 55 (command -> SAMPLE commandA .)
     #               reduce using rule 55 (command -> SAMPLE commandA .)
     PIPE            reduce using rule 55 (command -> SAMPLE commandA .)
     WHERE           reduce using rule 55 (command -> SAMPLE commandA .)
     CLEAR           reduce using rule 55 (command -> SAMPLE commandA .)
-    OVAL            reduce using rule 55 (command -> SAMPLE commandA .)
-    TRIO            reduce using rule 55 (command -> SAMPLE commandA .)
-    QUAD            reduce using rule 55 (command -> SAMPLE commandA .)
-    ARC             reduce using rule 55 (command -> SAMPLE commandA .)
-    END             reduce using rule 55 (command -> SAMPLE commandA .)
-    ]               reduce using rule 55 (command -> SAMPLE commandA .)
     }               reduce using rule 55 (command -> SAMPLE commandA .)
+    MOD             reduce using rule 55 (command -> SAMPLE commandA .)
+    END             reduce using rule 55 (command -> SAMPLE commandA .)
 
 
 state 53
@@ -1650,37 +1654,23 @@ state 68
 
 state 69
 
-    (59) repeat -> REPLAY CTE_INTEGER [ . repeatA ] ;
-    (60) repeatA -> . command repeatB
-    (54) command -> . figure exp exp color ;
-    (55) command -> . SAMPLE commandA
-    (79) figure -> . OVAL
-    (80) figure -> . TRIO
-    (81) figure -> . QUAD
-    (82) figure -> . ARC
+    (59) repeat -> REPLAY CTE_INTEGER gotoR . [ repeatA ] ;
 
-    SAMPLE          shift and go to state 19
-    OVAL            shift and go to state 5
-    TRIO            shift and go to state 14
-    QUAD            shift and go to state 22
-    ARC             shift and go to state 29
+    [               shift and go to state 107
 
-    figure                         shift and go to state 3
-    repeatA                        shift and go to state 107
-    command                        shift and go to state 108
 
 state 70
 
     (50) pipelineA -> COUNT . ;
 
-    ;               shift and go to state 109
+    ;               shift and go to state 108
 
 
 state 71
 
     (48) pipelineA -> IN . ( var_cte ) ;
 
-    (               shift and go to state 110
+    (               shift and go to state 109
 
 
 state 72
@@ -1731,15 +1721,15 @@ state 73
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    pipelineB                      shift and go to state 111
-    exp                            shift and go to state 112
+    pipelineB                      shift and go to state 110
+    exp                            shift and go to state 111
     factor                         shift and go to state 40
 
 state 74
 
     (49) pipelineA -> OUT . ( ) ;
 
-    (               shift and go to state 113
+    (               shift and go to state 112
 
 
 state 75
@@ -1770,7 +1760,7 @@ state 75
     (100) var_cte -> . TRUE
     (101) var_cte -> . FALSE
 
-    )               shift and go to state 114
+    )               shift and go to state 113
     (               shift and go to state 35
     ID              shift and go to state 42
     CTE_INTEGER     shift and go to state 37
@@ -1779,17 +1769,17 @@ state 75
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    callingA                       shift and go to state 115
-    callingB                       shift and go to state 116
+    callingA                       shift and go to state 114
+    callingB                       shift and go to state 115
     exp                            shift and go to state 50
     factor                         shift and go to state 40
-    expression                     shift and go to state 117
+    expression                     shift and go to state 116
 
 state 76
 
     (40) condition -> IF ( expression . ) gotoFalse block conditionA continueGo
 
-    )               shift and go to state 118
+    )               shift and go to state 117
 
 
 state 77
@@ -1839,7 +1829,7 @@ state 78
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    exp                            shift and go to state 119
+    exp                            shift and go to state 118
     factor                         shift and go to state 40
 
 state 79
@@ -1860,8 +1850,8 @@ state 79
     (100) var_cte -> . TRUE
     (101) var_cte -> . FALSE
 
-    >               shift and go to state 122
-    =               shift and go to state 121
+    >               shift and go to state 121
+    =               shift and go to state 120
     (               shift and go to state 35
     ID              shift and go to state 42
     CTE_INTEGER     shift and go to state 37
@@ -1870,14 +1860,14 @@ state 79
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    exp                            shift and go to state 120
+    exp                            shift and go to state 119
     factor                         shift and go to state 40
 
 state 80
 
     (63) expression -> exp = . = exp
 
-    =               shift and go to state 123
+    =               shift and go to state 122
 
 
 state 81
@@ -1904,7 +1894,7 @@ state 81
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    exp                            shift and go to state 124
+    exp                            shift and go to state 123
     factor                         shift and go to state 40
 
 state 82
@@ -1933,7 +1923,7 @@ state 83
     (100) var_cte -> . TRUE
     (101) var_cte -> . FALSE
 
-    =               shift and go to state 126
+    =               shift and go to state 125
     (               shift and go to state 35
     ID              shift and go to state 42
     CTE_INTEGER     shift and go to state 37
@@ -1942,7 +1932,7 @@ state 83
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    exp                            shift and go to state 125
+    exp                            shift and go to state 124
     factor                         shift and go to state 40
 
 state 84
@@ -1981,7 +1971,7 @@ state 85
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    exp                            shift and go to state 127
+    exp                            shift and go to state 126
     factor                         shift and go to state 40
 
 state 86
@@ -2044,14 +2034,14 @@ state 89
     FALSE           shift and go to state 41
 
     var_cte                        shift and go to state 36
-    exp                            shift and go to state 128
+    exp                            shift and go to state 127
     factor                         shift and go to state 40
 
 state 90
 
     (39) assign -> ID = expression . ;
 
-    ;               shift and go to state 129
+    ;               shift and go to state 128
 
 
 state 91
@@ -2061,11 +2051,11 @@ state 91
     (20) moduleA -> . block
     (33) block -> . { blockA
 
-    (               shift and go to state 130
-    {               shift and go to state 132
+    (               shift and go to state 129
+    {               shift and go to state 131
 
-    block                          shift and go to state 131
-    moduleA                        shift and go to state 133
+    block                          shift and go to state 130
+    moduleA                        shift and go to state 132
 
 state 92
 
@@ -2279,7 +2269,7 @@ state 98
 
     (54) command -> figure exp exp color . ;
 
-    ;               shift and go to state 134
+    ;               shift and go to state 133
 
 
 state 99
@@ -2335,23 +2325,13 @@ state 106
 
     (58) cycle -> WHILE gotoW ( expression . ) gotoFalse block continueGoW
 
-    )               shift and go to state 135
+    )               shift and go to state 134
 
 
 state 107
 
-    (59) repeat -> REPLAY CTE_INTEGER [ repeatA . ] ;
-
-    ]               shift and go to state 136
-
-
-state 108
-
-    (60) repeatA -> command . repeatB
-    (61) repeatB -> . repeatA
-    (62) repeatB -> . empty
+    (59) repeat -> REPLAY CTE_INTEGER gotoR [ . repeatA ] ;
     (60) repeatA -> . command repeatB
-    (107) empty -> .
     (54) command -> . figure exp exp color ;
     (55) command -> . SAMPLE commandA
     (79) figure -> . OVAL
@@ -2359,7 +2339,6 @@ state 108
     (81) figure -> . QUAD
     (82) figure -> . ARC
 
-    ]               reduce using rule 107 (empty -> .)
     SAMPLE          shift and go to state 19
     OVAL            shift and go to state 5
     TRIO            shift and go to state 14
@@ -2367,12 +2346,10 @@ state 108
     ARC             shift and go to state 29
 
     figure                         shift and go to state 3
-    repeatA                        shift and go to state 137
-    repeatB                        shift and go to state 138
-    command                        shift and go to state 108
-    empty                          shift and go to state 139
+    repeatA                        shift and go to state 135
+    command                        shift and go to state 136
 
-state 109
+state 108
 
     (50) pipelineA -> COUNT ; .
 
@@ -2395,7 +2372,7 @@ state 109
     }               reduce using rule 50 (pipelineA -> COUNT ; .)
 
 
-state 110
+state 109
 
     (48) pipelineA -> IN ( . var_cte ) ;
     (97) var_cte -> . ID
@@ -2410,16 +2387,16 @@ state 110
     TRUE            shift and go to state 38
     FALSE           shift and go to state 41
 
-    var_cte                        shift and go to state 140
+    var_cte                        shift and go to state 137
 
-state 111
+state 110
 
     (47) pipelineA -> [ pipelineB . ] ;
 
-    ]               shift and go to state 141
+    ]               shift and go to state 138
 
 
-state 112
+state 111
 
     (51) pipelineB -> exp . pipelineC
     (72) exp -> exp . + exp
@@ -2428,37 +2405,36 @@ state 112
     (75) exp -> exp . / exp
     (52) pipelineC -> . , pipelineB
     (53) pipelineC -> . empty
-    (107) empty -> .
+    (108) empty -> .
 
     +               shift and go to state 62
     -               shift and go to state 64
     *               shift and go to state 63
     /               shift and go to state 65
-    ,               shift and go to state 142
-    ]               reduce using rule 107 (empty -> .)
+    ,               shift and go to state 139
+    ]               reduce using rule 108 (empty -> .)
 
-    empty                          shift and go to state 144
-    pipelineC                      shift and go to state 143
+    empty                          shift and go to state 141
+    pipelineC                      shift and go to state 140
 
-state 113
+state 112
 
     (49) pipelineA -> OUT ( . ) ;
 
-    )               shift and go to state 145
+    )               shift and go to state 142
+
+
+state 113
+
+    (29) callingA -> ) . ;
+
+    ;               shift and go to state 143
 
 
 state 114
 
-    (29) callingA -> ) . ;
-
-    ;               shift and go to state 146
-
-
-state 115
-
     (27) calling -> # ID ( callingA .
 
-    MOD             reduce using rule 27 (calling -> # ID ( callingA .)
     ID              reduce using rule 27 (calling -> # ID ( callingA .)
     IF              reduce using rule 27 (calling -> # ID ( callingA .)
     ECHO            reduce using rule 27 (calling -> # ID ( callingA .)
@@ -2473,40 +2449,41 @@ state 115
     TRIO            reduce using rule 27 (calling -> # ID ( callingA .)
     QUAD            reduce using rule 27 (calling -> # ID ( callingA .)
     ARC             reduce using rule 27 (calling -> # ID ( callingA .)
-    END             reduce using rule 27 (calling -> # ID ( callingA .)
     }               reduce using rule 27 (calling -> # ID ( callingA .)
+    MOD             reduce using rule 27 (calling -> # ID ( callingA .)
+    END             reduce using rule 27 (calling -> # ID ( callingA .)
+
+
+state 115
+
+    (28) callingA -> callingB . ) ;
+
+    )               shift and go to state 144
 
 
 state 116
 
-    (28) callingA -> callingB . ) ;
-
-    )               shift and go to state 147
-
-
-state 117
-
     (30) callingB -> expression . callingC
     (31) callingC -> . , callingB
     (32) callingC -> . empty
-    (107) empty -> .
+    (108) empty -> .
 
-    ,               shift and go to state 149
-    )               reduce using rule 107 (empty -> .)
+    ,               shift and go to state 146
+    )               reduce using rule 108 (empty -> .)
 
-    callingC                       shift and go to state 148
-    empty                          shift and go to state 150
+    callingC                       shift and go to state 145
+    empty                          shift and go to state 147
 
-state 118
+state 117
 
     (40) condition -> IF ( expression ) . gotoFalse block conditionA continueGo
     (102) gotoFalse -> .
 
     {               reduce using rule 102 (gotoFalse -> .)
 
-    gotoFalse                      shift and go to state 151
+    gotoFalse                      shift and go to state 148
 
-state 119
+state 118
 
     (69) expression -> exp AND exp .
     (72) exp -> exp . + exp
@@ -2523,7 +2500,7 @@ state 119
     /               shift and go to state 65
 
 
-state 120
+state 119
 
     (68) expression -> exp < exp .
     (72) exp -> exp . + exp
@@ -2540,9 +2517,124 @@ state 120
     /               shift and go to state 65
 
 
-state 121
+state 120
 
     (65) expression -> exp < = . exp
+    (72) exp -> . exp + exp
+    (73) exp -> . exp - exp
+    (74) exp -> . exp * exp
+    (75) exp -> . exp / exp
+    (76) exp -> . factor empty
+    (77) factor -> . ( expression )
+    (78) factor -> . var_cte
+    (97) var_cte -> . ID
+    (98) var_cte -> . CTE_INTEGER
+    (99) var_cte -> . CTE_FLOAT
+    (100) var_cte -> . TRUE
+    (101) var_cte -> . FALSE
+
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 37
+    CTE_FLOAT       shift and go to state 34
+    TRUE            shift and go to state 38
+    FALSE           shift and go to state 41
+
+    var_cte                        shift and go to state 36
+    exp                            shift and go to state 149
+    factor                         shift and go to state 40
+
+state 121
+
+    (64) expression -> exp < > . exp
+    (72) exp -> . exp + exp
+    (73) exp -> . exp - exp
+    (74) exp -> . exp * exp
+    (75) exp -> . exp / exp
+    (76) exp -> . factor empty
+    (77) factor -> . ( expression )
+    (78) factor -> . var_cte
+    (97) var_cte -> . ID
+    (98) var_cte -> . CTE_INTEGER
+    (99) var_cte -> . CTE_FLOAT
+    (100) var_cte -> . TRUE
+    (101) var_cte -> . FALSE
+
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 37
+    CTE_FLOAT       shift and go to state 34
+    TRUE            shift and go to state 38
+    FALSE           shift and go to state 41
+
+    var_cte                        shift and go to state 36
+    exp                            shift and go to state 150
+    factor                         shift and go to state 40
+
+state 122
+
+    (63) expression -> exp = = . exp
+    (72) exp -> . exp + exp
+    (73) exp -> . exp - exp
+    (74) exp -> . exp * exp
+    (75) exp -> . exp / exp
+    (76) exp -> . factor empty
+    (77) factor -> . ( expression )
+    (78) factor -> . var_cte
+    (97) var_cte -> . ID
+    (98) var_cte -> . CTE_INTEGER
+    (99) var_cte -> . CTE_FLOAT
+    (100) var_cte -> . TRUE
+    (101) var_cte -> . FALSE
+
+    (               shift and go to state 35
+    ID              shift and go to state 42
+    CTE_INTEGER     shift and go to state 37
+    CTE_FLOAT       shift and go to state 34
+    TRUE            shift and go to state 38
+    FALSE           shift and go to state 41
+
+    var_cte                        shift and go to state 36
+    exp                            shift and go to state 151
+    factor                         shift and go to state 40
+
+state 123
+
+    (70) expression -> exp OR exp .
+    (72) exp -> exp . + exp
+    (73) exp -> exp . - exp
+    (74) exp -> exp . * exp
+    (75) exp -> exp . / exp
+
+    )               reduce using rule 70 (expression -> exp OR exp .)
+    ;               reduce using rule 70 (expression -> exp OR exp .)
+    ,               reduce using rule 70 (expression -> exp OR exp .)
+    +               shift and go to state 62
+    -               shift and go to state 64
+    *               shift and go to state 63
+    /               shift and go to state 65
+
+
+state 124
+
+    (67) expression -> exp > exp .
+    (72) exp -> exp . + exp
+    (73) exp -> exp . - exp
+    (74) exp -> exp . * exp
+    (75) exp -> exp . / exp
+
+    )               reduce using rule 67 (expression -> exp > exp .)
+    ;               reduce using rule 67 (expression -> exp > exp .)
+    ,               reduce using rule 67 (expression -> exp > exp .)
+    +               shift and go to state 62
+    -               shift and go to state 64
+    *               shift and go to state 63
+    /               shift and go to state 65
+
+
+state 125
+
+    (66) expression -> exp > = . exp
     (72) exp -> . exp + exp
     (73) exp -> . exp - exp
     (74) exp -> . exp * exp
@@ -2567,122 +2659,7 @@ state 121
     exp                            shift and go to state 152
     factor                         shift and go to state 40
 
-state 122
-
-    (64) expression -> exp < > . exp
-    (72) exp -> . exp + exp
-    (73) exp -> . exp - exp
-    (74) exp -> . exp * exp
-    (75) exp -> . exp / exp
-    (76) exp -> . factor empty
-    (77) factor -> . ( expression )
-    (78) factor -> . var_cte
-    (97) var_cte -> . ID
-    (98) var_cte -> . CTE_INTEGER
-    (99) var_cte -> . CTE_FLOAT
-    (100) var_cte -> . TRUE
-    (101) var_cte -> . FALSE
-
-    (               shift and go to state 35
-    ID              shift and go to state 42
-    CTE_INTEGER     shift and go to state 37
-    CTE_FLOAT       shift and go to state 34
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 41
-
-    var_cte                        shift and go to state 36
-    exp                            shift and go to state 153
-    factor                         shift and go to state 40
-
-state 123
-
-    (63) expression -> exp = = . exp
-    (72) exp -> . exp + exp
-    (73) exp -> . exp - exp
-    (74) exp -> . exp * exp
-    (75) exp -> . exp / exp
-    (76) exp -> . factor empty
-    (77) factor -> . ( expression )
-    (78) factor -> . var_cte
-    (97) var_cte -> . ID
-    (98) var_cte -> . CTE_INTEGER
-    (99) var_cte -> . CTE_FLOAT
-    (100) var_cte -> . TRUE
-    (101) var_cte -> . FALSE
-
-    (               shift and go to state 35
-    ID              shift and go to state 42
-    CTE_INTEGER     shift and go to state 37
-    CTE_FLOAT       shift and go to state 34
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 41
-
-    var_cte                        shift and go to state 36
-    exp                            shift and go to state 154
-    factor                         shift and go to state 40
-
-state 124
-
-    (70) expression -> exp OR exp .
-    (72) exp -> exp . + exp
-    (73) exp -> exp . - exp
-    (74) exp -> exp . * exp
-    (75) exp -> exp . / exp
-
-    )               reduce using rule 70 (expression -> exp OR exp .)
-    ;               reduce using rule 70 (expression -> exp OR exp .)
-    ,               reduce using rule 70 (expression -> exp OR exp .)
-    +               shift and go to state 62
-    -               shift and go to state 64
-    *               shift and go to state 63
-    /               shift and go to state 65
-
-
-state 125
-
-    (67) expression -> exp > exp .
-    (72) exp -> exp . + exp
-    (73) exp -> exp . - exp
-    (74) exp -> exp . * exp
-    (75) exp -> exp . / exp
-
-    )               reduce using rule 67 (expression -> exp > exp .)
-    ;               reduce using rule 67 (expression -> exp > exp .)
-    ,               reduce using rule 67 (expression -> exp > exp .)
-    +               shift and go to state 62
-    -               shift and go to state 64
-    *               shift and go to state 63
-    /               shift and go to state 65
-
-
 state 126
-
-    (66) expression -> exp > = . exp
-    (72) exp -> . exp + exp
-    (73) exp -> . exp - exp
-    (74) exp -> . exp * exp
-    (75) exp -> . exp / exp
-    (76) exp -> . factor empty
-    (77) factor -> . ( expression )
-    (78) factor -> . var_cte
-    (97) var_cte -> . ID
-    (98) var_cte -> . CTE_INTEGER
-    (99) var_cte -> . CTE_FLOAT
-    (100) var_cte -> . TRUE
-    (101) var_cte -> . FALSE
-
-    (               shift and go to state 35
-    ID              shift and go to state 42
-    CTE_INTEGER     shift and go to state 37
-    CTE_FLOAT       shift and go to state 34
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 41
-
-    var_cte                        shift and go to state 36
-    exp                            shift and go to state 155
-    factor                         shift and go to state 40
-
-state 127
 
     (57) commandA -> OFF move exp . ;
     (72) exp -> exp . + exp
@@ -2690,14 +2667,14 @@ state 127
     (74) exp -> exp . * exp
     (75) exp -> exp . / exp
 
-    ;               shift and go to state 156
+    ;               shift and go to state 153
     +               shift and go to state 62
     -               shift and go to state 64
     *               shift and go to state 63
     /               shift and go to state 65
 
 
-state 128
+state 127
 
     (56) commandA -> ON move exp . CTE_INTEGER color ;
     (72) exp -> exp . + exp
@@ -2705,14 +2682,14 @@ state 128
     (74) exp -> exp . * exp
     (75) exp -> exp . / exp
 
-    CTE_INTEGER     shift and go to state 157
+    CTE_INTEGER     shift and go to state 154
     +               shift and go to state 62
     -               shift and go to state 64
     *               shift and go to state 63
     /               shift and go to state 65
 
 
-state 129
+state 128
 
     (39) assign -> ID = expression ; .
 
@@ -2735,7 +2712,7 @@ state 129
     }               reduce using rule 39 (assign -> ID = expression ; .)
 
 
-state 130
+state 129
 
     (19) moduleA -> ( . vars ) block
     (21) vars -> . type ID varsA
@@ -2743,14 +2720,14 @@ state 130
     (25) type -> . FLOAT
     (26) type -> . BOOL
 
-    INT             shift and go to state 160
-    FLOAT           shift and go to state 159
-    BOOL            shift and go to state 161
+    INT             shift and go to state 157
+    FLOAT           shift and go to state 156
+    BOOL            shift and go to state 158
 
-    type                           shift and go to state 162
-    vars                           shift and go to state 158
+    type                           shift and go to state 159
+    vars                           shift and go to state 155
 
-state 131
+state 130
 
     (20) moduleA -> block .
 
@@ -2772,7 +2749,7 @@ state 131
     END             reduce using rule 20 (moduleA -> block .)
 
 
-state 132
+state 131
 
     (33) block -> { . blockA
     (34) blockA -> . blockB }
@@ -2791,7 +2768,7 @@ state 132
     (40) condition -> . IF ( expression ) gotoFalse block conditionA continueGo
     (43) write -> . ECHO writeA ;
     (58) cycle -> . WHILE gotoW ( expression ) gotoFalse block continueGoW
-    (59) repeat -> . REPLAY CTE_INTEGER [ repeatA ] ;
+    (59) repeat -> . REPLAY CTE_INTEGER gotoR [ repeatA ] ;
     (54) command -> . figure exp exp color ;
     (55) command -> . SAMPLE commandA
     (27) calling -> . # ID ( callingA
@@ -2803,7 +2780,7 @@ state 132
     (81) figure -> . QUAD
     (82) figure -> . ARC
 
-    }               shift and go to state 164
+    }               shift and go to state 161
     ID              shift and go to state 23
     IF              shift and go to state 12
     ECHO            shift and go to state 18
@@ -2826,14 +2803,14 @@ state 132
     screen                         shift and go to state 17
     condition                      shift and go to state 11
     cycle                          shift and go to state 24
-    statute                        shift and go to state 163
+    statute                        shift and go to state 160
     pipeline                       shift and go to state 26
     calling                        shift and go to state 27
-    blockB                         shift and go to state 165
-    blockA                         shift and go to state 166
+    blockB                         shift and go to state 162
+    blockA                         shift and go to state 163
     assign                         shift and go to state 32
 
-state 133
+state 132
 
     (18) module -> MOD # ID moduleA .
 
@@ -2855,82 +2832,88 @@ state 133
     END             reduce using rule 18 (module -> MOD # ID moduleA .)
 
 
-state 134
+state 133
 
     (54) command -> figure exp exp color ; .
 
-    MOD             reduce using rule 54 (command -> figure exp exp color ; .)
+    SAMPLE          reduce using rule 54 (command -> figure exp exp color ; .)
+    OVAL            reduce using rule 54 (command -> figure exp exp color ; .)
+    TRIO            reduce using rule 54 (command -> figure exp exp color ; .)
+    QUAD            reduce using rule 54 (command -> figure exp exp color ; .)
+    ARC             reduce using rule 54 (command -> figure exp exp color ; .)
+    ]               reduce using rule 54 (command -> figure exp exp color ; .)
     ID              reduce using rule 54 (command -> figure exp exp color ; .)
     IF              reduce using rule 54 (command -> figure exp exp color ; .)
     ECHO            reduce using rule 54 (command -> figure exp exp color ; .)
     WHILE           reduce using rule 54 (command -> figure exp exp color ; .)
     REPLAY          reduce using rule 54 (command -> figure exp exp color ; .)
-    SAMPLE          reduce using rule 54 (command -> figure exp exp color ; .)
     #               reduce using rule 54 (command -> figure exp exp color ; .)
     PIPE            reduce using rule 54 (command -> figure exp exp color ; .)
     WHERE           reduce using rule 54 (command -> figure exp exp color ; .)
     CLEAR           reduce using rule 54 (command -> figure exp exp color ; .)
-    OVAL            reduce using rule 54 (command -> figure exp exp color ; .)
-    TRIO            reduce using rule 54 (command -> figure exp exp color ; .)
-    QUAD            reduce using rule 54 (command -> figure exp exp color ; .)
-    ARC             reduce using rule 54 (command -> figure exp exp color ; .)
-    END             reduce using rule 54 (command -> figure exp exp color ; .)
-    ]               reduce using rule 54 (command -> figure exp exp color ; .)
     }               reduce using rule 54 (command -> figure exp exp color ; .)
+    MOD             reduce using rule 54 (command -> figure exp exp color ; .)
+    END             reduce using rule 54 (command -> figure exp exp color ; .)
 
 
-state 135
+state 134
 
     (58) cycle -> WHILE gotoW ( expression ) . gotoFalse block continueGoW
     (102) gotoFalse -> .
 
     {               reduce using rule 102 (gotoFalse -> .)
 
-    gotoFalse                      shift and go to state 167
+    gotoFalse                      shift and go to state 164
+
+state 135
+
+    (59) repeat -> REPLAY CTE_INTEGER gotoR [ repeatA . ] ;
+
+    ]               shift and go to state 165
+
 
 state 136
 
-    (59) repeat -> REPLAY CTE_INTEGER [ repeatA ] . ;
+    (60) repeatA -> command . repeatB
+    (61) repeatB -> . repeatA
+    (62) repeatB -> . empty
+    (60) repeatA -> . command repeatB
+    (108) empty -> .
+    (54) command -> . figure exp exp color ;
+    (55) command -> . SAMPLE commandA
+    (79) figure -> . OVAL
+    (80) figure -> . TRIO
+    (81) figure -> . QUAD
+    (82) figure -> . ARC
 
-    ;               shift and go to state 168
+    ]               reduce using rule 108 (empty -> .)
+    SAMPLE          shift and go to state 19
+    OVAL            shift and go to state 5
+    TRIO            shift and go to state 14
+    QUAD            shift and go to state 22
+    ARC             shift and go to state 29
 
+    figure                         shift and go to state 3
+    repeatA                        shift and go to state 166
+    repeatB                        shift and go to state 167
+    command                        shift and go to state 136
+    empty                          shift and go to state 168
 
 state 137
-
-    (61) repeatB -> repeatA .
-
-    ]               reduce using rule 61 (repeatB -> repeatA .)
-
-
-state 138
-
-    (60) repeatA -> command repeatB .
-
-    ]               reduce using rule 60 (repeatA -> command repeatB .)
-
-
-state 139
-
-    (62) repeatB -> empty .
-
-    ]               reduce using rule 62 (repeatB -> empty .)
-
-
-state 140
 
     (48) pipelineA -> IN ( var_cte . ) ;
 
     )               shift and go to state 169
 
 
-state 141
+state 138
 
     (47) pipelineA -> [ pipelineB ] . ;
 
     ;               shift and go to state 170
 
 
-state 142
+state 139
 
     (52) pipelineC -> , . pipelineB
     (51) pipelineB -> . exp pipelineC
@@ -2956,31 +2939,31 @@ state 142
 
     var_cte                        shift and go to state 36
     pipelineB                      shift and go to state 171
-    exp                            shift and go to state 112
+    exp                            shift and go to state 111
     factor                         shift and go to state 40
 
-state 143
+state 140
 
     (51) pipelineB -> exp pipelineC .
 
     ]               reduce using rule 51 (pipelineB -> exp pipelineC .)
 
 
-state 144
+state 141
 
     (53) pipelineC -> empty .
 
     ]               reduce using rule 53 (pipelineC -> empty .)
 
 
-state 145
+state 142
 
     (49) pipelineA -> OUT ( ) . ;
 
     ;               shift and go to state 172
 
 
-state 146
+state 143
 
     (29) callingA -> ) ; .
 
@@ -3003,21 +2986,21 @@ state 146
     }               reduce using rule 29 (callingA -> ) ; .)
 
 
-state 147
+state 144
 
     (28) callingA -> callingB ) . ;
 
     ;               shift and go to state 173
 
 
-state 148
+state 145
 
     (30) callingB -> expression callingC .
 
     )               reduce using rule 30 (callingB -> expression callingC .)
 
 
-state 149
+state 146
 
     (31) callingC -> , . callingB
     (30) callingB -> . expression callingC
@@ -3054,25 +3037,25 @@ state 149
     callingB                       shift and go to state 174
     exp                            shift and go to state 50
     factor                         shift and go to state 40
-    expression                     shift and go to state 117
+    expression                     shift and go to state 116
 
-state 150
+state 147
 
     (32) callingC -> empty .
 
     )               reduce using rule 32 (callingC -> empty .)
 
 
-state 151
+state 148
 
     (40) condition -> IF ( expression ) gotoFalse . block conditionA continueGo
     (33) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 131
 
     block                          shift and go to state 175
 
-state 152
+state 149
 
     (65) expression -> exp < = exp .
     (72) exp -> exp . + exp
@@ -3089,7 +3072,7 @@ state 152
     /               shift and go to state 65
 
 
-state 153
+state 150
 
     (64) expression -> exp < > exp .
     (72) exp -> exp . + exp
@@ -3106,7 +3089,7 @@ state 153
     /               shift and go to state 65
 
 
-state 154
+state 151
 
     (63) expression -> exp = = exp .
     (72) exp -> exp . + exp
@@ -3123,7 +3106,7 @@ state 154
     /               shift and go to state 65
 
 
-state 155
+state 152
 
     (66) expression -> exp > = exp .
     (72) exp -> exp . + exp
@@ -3140,7 +3123,7 @@ state 155
     /               shift and go to state 65
 
 
-state 156
+state 153
 
     (57) commandA -> OFF move exp ; .
 
@@ -3164,7 +3147,7 @@ state 156
     }               reduce using rule 57 (commandA -> OFF move exp ; .)
 
 
-state 157
+state 154
 
     (56) commandA -> ON move exp CTE_INTEGER . color ;
     (87) color -> . RED
@@ -3187,48 +3170,48 @@ state 157
 
     color                          shift and go to state 176
 
-state 158
+state 155
 
     (19) moduleA -> ( vars . ) block
 
     )               shift and go to state 177
 
 
-state 159
+state 156
 
     (25) type -> FLOAT .
 
     ID              reduce using rule 25 (type -> FLOAT .)
 
 
-state 160
+state 157
 
     (24) type -> INT .
 
     ID              reduce using rule 24 (type -> INT .)
 
 
-state 161
+state 158
 
     (26) type -> BOOL .
 
     ID              reduce using rule 26 (type -> BOOL .)
 
 
-state 162
+state 159
 
     (21) vars -> type . ID varsA
 
     ID              shift and go to state 178
 
 
-state 163
+state 160
 
     (36) blockB -> statute . blockC
     (37) blockC -> . blockB
     (38) blockC -> . empty
     (36) blockB -> . statute blockC
-    (107) empty -> .
+    (108) empty -> .
     (9) statute -> . assign
     (10) statute -> . condition
     (11) statute -> . write
@@ -3242,7 +3225,7 @@ state 163
     (40) condition -> . IF ( expression ) gotoFalse block conditionA continueGo
     (43) write -> . ECHO writeA ;
     (58) cycle -> . WHILE gotoW ( expression ) gotoFalse block continueGoW
-    (59) repeat -> . REPLAY CTE_INTEGER [ repeatA ] ;
+    (59) repeat -> . REPLAY CTE_INTEGER gotoR [ repeatA ] ;
     (54) command -> . figure exp exp color ;
     (55) command -> . SAMPLE commandA
     (27) calling -> . # ID ( callingA
@@ -3254,7 +3237,7 @@ state 163
     (81) figure -> . QUAD
     (82) figure -> . ARC
 
-    }               reduce using rule 107 (empty -> .)
+    }               reduce using rule 108 (empty -> .)
     ID              shift and go to state 23
     IF              shift and go to state 12
     ECHO            shift and go to state 18
@@ -3278,14 +3261,14 @@ state 163
     screen                         shift and go to state 17
     condition                      shift and go to state 11
     cycle                          shift and go to state 24
-    statute                        shift and go to state 163
+    statute                        shift and go to state 160
     pipeline                       shift and go to state 26
     calling                        shift and go to state 27
     blockC                         shift and go to state 180
     blockB                         shift and go to state 181
     assign                         shift and go to state 32
 
-state 164
+state 161
 
     (35) blockA -> } .
 
@@ -3309,14 +3292,14 @@ state 164
     }               reduce using rule 35 (blockA -> } .)
 
 
-state 165
+state 162
 
     (34) blockA -> blockB . }
 
     }               shift and go to state 182
 
 
-state 166
+state 163
 
     (33) block -> { blockA .
 
@@ -3336,47 +3319,52 @@ state 166
     QUAD            reduce using rule 33 (block -> { blockA .)
     ARC             reduce using rule 33 (block -> { blockA .)
     END             reduce using rule 33 (block -> { blockA .)
-    }               reduce using rule 33 (block -> { blockA .)
     ELSE            reduce using rule 33 (block -> { blockA .)
+    }               reduce using rule 33 (block -> { blockA .)
 
 
-state 167
+state 164
 
     (58) cycle -> WHILE gotoW ( expression ) gotoFalse . block continueGoW
     (33) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 131
 
     block                          shift and go to state 183
 
+state 165
+
+    (59) repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] . ;
+
+    ;               shift and go to state 184
+
+
+state 166
+
+    (61) repeatB -> repeatA .
+
+    ]               reduce using rule 61 (repeatB -> repeatA .)
+
+
+state 167
+
+    (60) repeatA -> command repeatB .
+
+    ]               reduce using rule 60 (repeatA -> command repeatB .)
+
+
 state 168
 
-    (59) repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .
+    (62) repeatB -> empty .
 
-    ID              reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    IF              reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    ECHO            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    WHILE           reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    REPLAY          reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    SAMPLE          reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    #               reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    PIPE            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    WHERE           reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    CLEAR           reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    OVAL            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    TRIO            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    QUAD            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    ARC             reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    }               reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    MOD             reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
-    END             reduce using rule 59 (repeat -> REPLAY CTE_INTEGER [ repeatA ] ; .)
+    ]               reduce using rule 62 (repeatB -> empty .)
 
 
 state 169
 
     (48) pipelineA -> IN ( var_cte ) . ;
 
-    ;               shift and go to state 184
+    ;               shift and go to state 185
 
 
 state 170
@@ -3467,35 +3455,35 @@ state 175
     (40) condition -> IF ( expression ) gotoFalse block . conditionA continueGo
     (41) conditionA -> . ELSE gotoE block
     (42) conditionA -> . empty
-    (107) empty -> .
+    (108) empty -> .
 
-    ELSE            shift and go to state 187
-    MOD             reduce using rule 107 (empty -> .)
-    ID              reduce using rule 107 (empty -> .)
-    IF              reduce using rule 107 (empty -> .)
-    ECHO            reduce using rule 107 (empty -> .)
-    WHILE           reduce using rule 107 (empty -> .)
-    REPLAY          reduce using rule 107 (empty -> .)
-    SAMPLE          reduce using rule 107 (empty -> .)
-    #               reduce using rule 107 (empty -> .)
-    PIPE            reduce using rule 107 (empty -> .)
-    WHERE           reduce using rule 107 (empty -> .)
-    CLEAR           reduce using rule 107 (empty -> .)
-    OVAL            reduce using rule 107 (empty -> .)
-    TRIO            reduce using rule 107 (empty -> .)
-    QUAD            reduce using rule 107 (empty -> .)
-    ARC             reduce using rule 107 (empty -> .)
-    END             reduce using rule 107 (empty -> .)
-    }               reduce using rule 107 (empty -> .)
+    ELSE            shift and go to state 188
+    MOD             reduce using rule 108 (empty -> .)
+    ID              reduce using rule 108 (empty -> .)
+    IF              reduce using rule 108 (empty -> .)
+    ECHO            reduce using rule 108 (empty -> .)
+    WHILE           reduce using rule 108 (empty -> .)
+    REPLAY          reduce using rule 108 (empty -> .)
+    SAMPLE          reduce using rule 108 (empty -> .)
+    #               reduce using rule 108 (empty -> .)
+    PIPE            reduce using rule 108 (empty -> .)
+    WHERE           reduce using rule 108 (empty -> .)
+    CLEAR           reduce using rule 108 (empty -> .)
+    OVAL            reduce using rule 108 (empty -> .)
+    TRIO            reduce using rule 108 (empty -> .)
+    QUAD            reduce using rule 108 (empty -> .)
+    ARC             reduce using rule 108 (empty -> .)
+    END             reduce using rule 108 (empty -> .)
+    }               reduce using rule 108 (empty -> .)
 
-    conditionA                     shift and go to state 185
-    empty                          shift and go to state 186
+    conditionA                     shift and go to state 186
+    empty                          shift and go to state 187
 
 state 176
 
     (56) commandA -> ON move exp CTE_INTEGER color . ;
 
-    ;               shift and go to state 188
+    ;               shift and go to state 189
 
 
 state 177
@@ -3503,22 +3491,22 @@ state 177
     (19) moduleA -> ( vars ) . block
     (33) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 131
 
-    block                          shift and go to state 189
+    block                          shift and go to state 190
 
 state 178
 
     (21) vars -> type ID . varsA
     (22) varsA -> . , vars
     (23) varsA -> . empty
-    (107) empty -> .
+    (108) empty -> .
 
-    ,               shift and go to state 191
-    )               reduce using rule 107 (empty -> .)
+    ,               shift and go to state 192
+    )               reduce using rule 108 (empty -> .)
 
-    varsA                          shift and go to state 190
-    empty                          shift and go to state 192
+    varsA                          shift and go to state 191
+    empty                          shift and go to state 193
 
 state 179
 
@@ -3568,29 +3556,52 @@ state 182
 state 183
 
     (58) cycle -> WHILE gotoW ( expression ) gotoFalse block . continueGoW
-    (106) continueGoW -> .
+    (107) continueGoW -> .
 
-    MOD             reduce using rule 106 (continueGoW -> .)
-    ID              reduce using rule 106 (continueGoW -> .)
-    IF              reduce using rule 106 (continueGoW -> .)
-    ECHO            reduce using rule 106 (continueGoW -> .)
-    WHILE           reduce using rule 106 (continueGoW -> .)
-    REPLAY          reduce using rule 106 (continueGoW -> .)
-    SAMPLE          reduce using rule 106 (continueGoW -> .)
-    #               reduce using rule 106 (continueGoW -> .)
-    PIPE            reduce using rule 106 (continueGoW -> .)
-    WHERE           reduce using rule 106 (continueGoW -> .)
-    CLEAR           reduce using rule 106 (continueGoW -> .)
-    OVAL            reduce using rule 106 (continueGoW -> .)
-    TRIO            reduce using rule 106 (continueGoW -> .)
-    QUAD            reduce using rule 106 (continueGoW -> .)
-    ARC             reduce using rule 106 (continueGoW -> .)
-    END             reduce using rule 106 (continueGoW -> .)
-    }               reduce using rule 106 (continueGoW -> .)
+    MOD             reduce using rule 107 (continueGoW -> .)
+    ID              reduce using rule 107 (continueGoW -> .)
+    IF              reduce using rule 107 (continueGoW -> .)
+    ECHO            reduce using rule 107 (continueGoW -> .)
+    WHILE           reduce using rule 107 (continueGoW -> .)
+    REPLAY          reduce using rule 107 (continueGoW -> .)
+    SAMPLE          reduce using rule 107 (continueGoW -> .)
+    #               reduce using rule 107 (continueGoW -> .)
+    PIPE            reduce using rule 107 (continueGoW -> .)
+    WHERE           reduce using rule 107 (continueGoW -> .)
+    CLEAR           reduce using rule 107 (continueGoW -> .)
+    OVAL            reduce using rule 107 (continueGoW -> .)
+    TRIO            reduce using rule 107 (continueGoW -> .)
+    QUAD            reduce using rule 107 (continueGoW -> .)
+    ARC             reduce using rule 107 (continueGoW -> .)
+    END             reduce using rule 107 (continueGoW -> .)
+    }               reduce using rule 107 (continueGoW -> .)
 
-    continueGoW                    shift and go to state 193
+    continueGoW                    shift and go to state 194
 
 state 184
+
+    (59) repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .
+
+    MOD             reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    ID              reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    IF              reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    ECHO            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    WHILE           reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    REPLAY          reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    SAMPLE          reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    #               reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    PIPE            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    WHERE           reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    CLEAR           reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    OVAL            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    TRIO            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    QUAD            reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    ARC             reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    END             reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+    }               reduce using rule 59 (repeat -> REPLAY CTE_INTEGER gotoR [ repeatA ] ; .)
+
+
+state 185
 
     (48) pipelineA -> IN ( var_cte ) ; .
 
@@ -3613,32 +3624,32 @@ state 184
     }               reduce using rule 48 (pipelineA -> IN ( var_cte ) ; .)
 
 
-state 185
+state 186
 
     (40) condition -> IF ( expression ) gotoFalse block conditionA . continueGo
-    (105) continueGo -> .
+    (106) continueGo -> .
 
-    MOD             reduce using rule 105 (continueGo -> .)
-    ID              reduce using rule 105 (continueGo -> .)
-    IF              reduce using rule 105 (continueGo -> .)
-    ECHO            reduce using rule 105 (continueGo -> .)
-    WHILE           reduce using rule 105 (continueGo -> .)
-    REPLAY          reduce using rule 105 (continueGo -> .)
-    SAMPLE          reduce using rule 105 (continueGo -> .)
-    #               reduce using rule 105 (continueGo -> .)
-    PIPE            reduce using rule 105 (continueGo -> .)
-    WHERE           reduce using rule 105 (continueGo -> .)
-    CLEAR           reduce using rule 105 (continueGo -> .)
-    OVAL            reduce using rule 105 (continueGo -> .)
-    TRIO            reduce using rule 105 (continueGo -> .)
-    QUAD            reduce using rule 105 (continueGo -> .)
-    ARC             reduce using rule 105 (continueGo -> .)
-    END             reduce using rule 105 (continueGo -> .)
-    }               reduce using rule 105 (continueGo -> .)
+    MOD             reduce using rule 106 (continueGo -> .)
+    ID              reduce using rule 106 (continueGo -> .)
+    IF              reduce using rule 106 (continueGo -> .)
+    ECHO            reduce using rule 106 (continueGo -> .)
+    WHILE           reduce using rule 106 (continueGo -> .)
+    REPLAY          reduce using rule 106 (continueGo -> .)
+    SAMPLE          reduce using rule 106 (continueGo -> .)
+    #               reduce using rule 106 (continueGo -> .)
+    PIPE            reduce using rule 106 (continueGo -> .)
+    WHERE           reduce using rule 106 (continueGo -> .)
+    CLEAR           reduce using rule 106 (continueGo -> .)
+    OVAL            reduce using rule 106 (continueGo -> .)
+    TRIO            reduce using rule 106 (continueGo -> .)
+    QUAD            reduce using rule 106 (continueGo -> .)
+    ARC             reduce using rule 106 (continueGo -> .)
+    END             reduce using rule 106 (continueGo -> .)
+    }               reduce using rule 106 (continueGo -> .)
 
-    continueGo                     shift and go to state 194
+    continueGo                     shift and go to state 195
 
-state 186
+state 187
 
     (42) conditionA -> empty .
 
@@ -3661,16 +3672,16 @@ state 186
     }               reduce using rule 42 (conditionA -> empty .)
 
 
-state 187
+state 188
 
     (41) conditionA -> ELSE . gotoE block
     (103) gotoE -> .
 
     {               reduce using rule 103 (gotoE -> .)
 
-    gotoE                          shift and go to state 195
+    gotoE                          shift and go to state 196
 
-state 188
+state 189
 
     (56) commandA -> ON move exp CTE_INTEGER color ; .
 
@@ -3694,7 +3705,7 @@ state 188
     }               reduce using rule 56 (commandA -> ON move exp CTE_INTEGER color ; .)
 
 
-state 189
+state 190
 
     (19) moduleA -> ( vars ) block .
 
@@ -3716,14 +3727,14 @@ state 189
     END             reduce using rule 19 (moduleA -> ( vars ) block .)
 
 
-state 190
+state 191
 
     (21) vars -> type ID varsA .
 
     )               reduce using rule 21 (vars -> type ID varsA .)
 
 
-state 191
+state 192
 
     (22) varsA -> , . vars
     (21) vars -> . type ID varsA
@@ -3731,24 +3742,25 @@ state 191
     (25) type -> . FLOAT
     (26) type -> . BOOL
 
-    INT             shift and go to state 160
-    FLOAT           shift and go to state 159
-    BOOL            shift and go to state 161
+    INT             shift and go to state 157
+    FLOAT           shift and go to state 156
+    BOOL            shift and go to state 158
 
-    type                           shift and go to state 162
-    vars                           shift and go to state 196
+    type                           shift and go to state 159
+    vars                           shift and go to state 197
 
-state 192
+state 193
 
     (23) varsA -> empty .
 
     )               reduce using rule 23 (varsA -> empty .)
 
 
-state 193
+state 194
 
     (58) cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .
 
+    MOD             reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
     ID              reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
     IF              reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
     ECHO            reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
@@ -3763,16 +3775,14 @@ state 193
     TRIO            reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
     QUAD            reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
     ARC             reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
-    }               reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
-    MOD             reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
     END             reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
+    }               reduce using rule 58 (cycle -> WHILE gotoW ( expression ) gotoFalse block continueGoW .)
 
 
-state 194
+state 195
 
     (40) condition -> IF ( expression ) gotoFalse block conditionA continueGo .
 
-    MOD             reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
     ID              reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
     IF              reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
     ECHO            reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
@@ -3787,27 +3797,28 @@ state 194
     TRIO            reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
     QUAD            reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
     ARC             reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
-    END             reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
     }               reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
+    MOD             reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
+    END             reduce using rule 40 (condition -> IF ( expression ) gotoFalse block conditionA continueGo .)
 
 
-state 195
+state 196
 
     (41) conditionA -> ELSE gotoE . block
     (33) block -> . { blockA
 
-    {               shift and go to state 132
+    {               shift and go to state 131
 
-    block                          shift and go to state 197
+    block                          shift and go to state 198
 
-state 196
+state 197
 
     (22) varsA -> , vars .
 
     )               reduce using rule 22 (varsA -> , vars .)
 
 
-state 197
+state 198
 
     (41) conditionA -> ELSE gotoE block .
 
