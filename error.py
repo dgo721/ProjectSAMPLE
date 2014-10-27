@@ -11,4 +11,6 @@ def senderror(x, *resto):
 		print("ERROR // VAR not found" % resto[0])
 	elif x == 5:
 		print("ERROR // IF-ELSE requires boolean compare" % resto[0])
+	elif x == 6:
+		print("ERROR // Variable %s already assign with type %s" % (resto[0], resto[1]))
 	sys.exit()

@@ -1,3 +1,5 @@
+from error import senderror
+
 class TabVars:
 
 	def __init__(self, dirint, dirfloat, dirbool):
@@ -115,14 +117,23 @@ def vartipo_mod(tipo):
 	elif (tipo=="bool"):
 		return 2
 
+#Inverso al metodo vartipo_mod, devuelve el formato string de un tipo de dato.
+def invartipo_mod(tipo):
+	if (tipo==0):
+		return "INT"
+	elif (tipo==1):
+		return "FLOAT"
+	elif (tipo==2):
+		return "BOOLEAN"
+
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente
 def tabvar(tab_valores, nombre, tipo):
 	if tab_valores.lookup(nombre)!=True:
 		tab_valores.add(nombre, tipo)
 	else:
-		print "ESTE EXISTE", nombre
-		print "EXISTS, var not added"
+		if tab_valores.getType(nombre) != tipo:
+			senderror(6, nombre, invartipo_mod(tab_valores.getType(nombre)))
 	return tab_valores
 
 def buscaID(lista, idv):

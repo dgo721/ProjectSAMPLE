@@ -245,6 +245,7 @@ def p_assign(p):
     #print "NUEVO ID", p[1]
     pairs_idtype.append([p[1], tipo1])
     print "ASSIGN-- PAIRS", pairs_idtype, pairs_idtype[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
+    print "ASSIGN-- PAIRS", cont_vars, work_vars
     #tab_valores = tabvar(tab_valores, p[1], tipo1)
     #print "TABVAL en assign", tab_valores
     quads_gen.add('=', valor1, -1, p[1])
