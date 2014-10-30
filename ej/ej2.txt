@@ -4,7 +4,6 @@ h = 34;
 
 h = 3.45;
 n = h + h + h;
-h = n;
 a = 3 + h * (n - 2);
 
 mod # first {

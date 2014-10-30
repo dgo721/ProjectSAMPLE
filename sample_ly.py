@@ -107,10 +107,10 @@ def p_program(p):
     
     while (pairs_idtype):
     	par = pairs_idtype.pop(0)
-    	print "ULTIMO PAR - WORK", par, len(pairs_idtype)
+    	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
     	tab_valores=tabvar(tab_valores, par[0], par[1])
     
-    dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores)
+    dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None)
 
 def p_programA(p):
     '''programA : programB END
@@ -146,19 +146,19 @@ def p_statute(p):
     assign_vars=[]
 
 def p_module(p):
-    '''module : MOD '#' ID moduleA'''
+    '''module : MOD '#' ID insertQuadMod moduleA endMod'''
     global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
     print "modulo #", p[3]
-    print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
+    #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
-    	print "ULTIMO PAR", par, len(pairs_idtype)
+    	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
     	suma = suma - 1
 
-    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores))
+    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
     work_vars[0] = work_vars[0] - cont_vars[0]
@@ -182,7 +182,7 @@ def p_vars(p):
 
 def p_varsA(p):
     '''varsA : ',' vars
-            | empty'''
+             | empty'''
 
 def p_type(p):
     '''type : INT
@@ -193,21 +193,58 @@ def p_type(p):
     id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT, FLOAT, BOOL
 
 def p_calling(p):
-    '''calling : '#' ID '(' callingA'''
+    '''calling : '#' callID '(' insertEra callingA'''
     #print dir_modulos.getParams(p[2])
     #print "CALLING", assign_vars
 
+def p_callID(p):
+    '''callID : ID'''
+    global id_mod, xparam, contparam
+    if dir_modulos.lookup(p[1]) == False:
+    	print "ERROR // Modulo %s no encontrado" % p[1]
+    	sys.exit()
+    id_mod = p[1]
+
+def p_insertEra(p):
+    '''insertEra : '''
+    global list_params
+    quads_gen.addQ('era',id_mod,-1,-1)
+    list_params = dir_modulos.getParams(id_mod)
+    print "INSERERA--",  list_params
+    contparam = len(list_params)
+    if contparam != 0:
+    	xparam = 0
+    else:
+    	xparam = -1
+
 def p_callingA(p):
     '''callingA : callingB ')' ';'
-            | ')' ';' '''
+                | ')' ';' '''
+    if p[2] == ')' and (xparam + 1) != contparam:
+    	print "ERROR // Module expects %d parameters" % contparam
+    	sys.exit()
 
 def p_callingB(p):
-    '''callingB : expression callingC'''
-    #print "CALLING B", assign_vars
+    '''callingB : expression checkParam callingC'''
+
+def p_checkParam(p):
+    '''checkParam : '''
+    argum = pilaOpera.pop()
+    tipo = pilaTipos.pop()
+    print "CHECK PARAM--", xparam, list_params, tipo
+    if list_params[xparam] == tipo:
+    	prm = "param" + str(xparam + 1)
+    	quads_gen.addQ('param',argum,-1,prm)
+    else:
+    	print "ERROR // Parametro de tipo incorrecto"
+    	sys.exit()
 
 def p_callingC(p):
     '''callingC : ',' callingB
             | empty '''
+    global xparam
+    if p[1] == ',':
+    	xparam = xparam + 1
 
 def p_block(p):
     '''block : '{' blockA '''
@@ -230,7 +267,7 @@ def p_assign(p):
     valor1 = pilaOpera.pop()
     tipo1 = pilaTipos.pop()
     index = vartipo_assign(assign_vars)
-    print "ASSIGN--", valor1, tipo1, index
+    #print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
     	senderror(3, p[1])
     if tipo1 == 0:
@@ -244,8 +281,8 @@ def p_assign(p):
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
     pairs_idtype.append([p[1], tipo1])
-    print "ASSIGN-- PAIRS", pairs_idtype, pairs_idtype[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
-    print "ASSIGN-- PAIRS", cont_vars, work_vars
+    #print "ASSIGN--1 PAIRS", pairs_idtype, pairs_idtype[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
+    #print "ASSIGN--2 PAIRS", cont_vars, work_vars
     #tab_valores = tabvar(tab_valores, p[1], tipo1)
     #print "TABVAL en assign", tab_valores
     quads_gen.add('=', valor1, -1, p[1])
@@ -505,6 +542,15 @@ def p_continueGoW(p):
 	'''continueGoW : '''
 	quads_gen.addcontinueW()
 
+def p_insertQuadMod(p):
+	'''insertQuadMod : '''
+	global quad_mod
+	quad_mod = quads_gen.getnextX()
+
+def p_endMod(p):
+	'''endMod : '''
+	quads_gen.addQ('ret',-1,-1,-1)
+
 def p_empty(p):
     'empty :'
     pass
@@ -538,6 +584,10 @@ quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para cod
 cont_vars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
 work_vars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
+quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
+id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
+contparam = 0
+xparam = 0
 
 #'''
 
@@ -560,18 +610,19 @@ yacc.parse(st)
 #print st
 f.close()
 
+print("\n")
 dir_modulos.echotables()
 #tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
-#dir_modulos.echo() #Despliega directorio de modulos
+dir_modulos.echo() #Despliega directorio de modulos
 #dir_modulos.write()
 #print tab_valores.getDir("b")
 print("\n")
 #tab_constant.echo()
 #tab_constant.write()
 print("\n")
-#quads_gen.echo()
+quads_gen.echo()
 #quads_gen.write()
 print("\n")
 #quads_gen.echoQ(tab_valores, tab_constant)
