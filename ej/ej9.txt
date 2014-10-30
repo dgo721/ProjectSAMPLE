@@ -5,15 +5,18 @@ mod # first {
 }
 
 mod # second (int d) {
-	var3 = 0.0;
 	var4 = 1.23;
+	var3 = d;
 }
 
 mod # third (int e, float f) {
-	var13 = 22.23;
-	var14 = 23+45;
+	var13 = 12;
+	var14 = 23;
 }
 
-# third ();
+e=23;
+r=34.3;
+
+# third (e,r);
 
 end

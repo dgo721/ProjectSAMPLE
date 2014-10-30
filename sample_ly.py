@@ -173,12 +173,25 @@ def p_moduleA(p):
 
 def p_vars(p):
     '''vars : type ID varsA'''
-    global id_type, tab_lvalores, id_params
+    global id_type, tab_lvalores, id_params, pairs_idtype
     #print p[2]
     id_params.append(p[2])
     #print id_type
     #print id_params
-    tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
+    tipo1 = vartipo_mod(id_type.pop())
+    if tipo1 == 0:
+        cont_vars[0] = cont_vars[0] + 1
+        work_vars[0] = work_vars[0] + 1
+    elif tipo1 == 1:
+        cont_vars[1] = cont_vars[1] + 1
+        work_vars[1] = work_vars[1] + 1
+    elif tipo1 == 2:
+        cont_vars[2] = cont_vars[2] + 1
+        work_vars[2] = work_vars[2] + 1
+    #print "NUEVO ID", p[1]
+    pairs_idtype.append([p[2], tipo1])
+    print "MODULEA--",pairs_idtype
+    #tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
 def p_varsA(p):
     '''varsA : ',' vars
@@ -194,25 +207,25 @@ def p_type(p):
 
 def p_calling(p):
     '''calling : '#' callID '(' insertEra callingA'''
+    quads_gen.addQ('gosub',id_mod,-1,-1)
+    list_params = []
     #print dir_modulos.getParams(p[2])
     #print "CALLING", assign_vars
 
 def p_callID(p):
     '''callID : ID'''
-    global id_mod, xparam, contparam
+    global id_mod
     if dir_modulos.lookup(p[1]) == False:
-    	print "ERROR // Modulo %s no encontrado" % p[1]
-    	sys.exit()
+    	senderror(7, p[1])
     id_mod = p[1]
 
 def p_insertEra(p):
     '''insertEra : '''
     global list_params
     quads_gen.addQ('era',id_mod,-1,-1)
-    list_params = dir_modulos.getParams(id_mod)
-    print "INSERERA--",  list_params
-    contparam = len(list_params)
-    if contparam != 0:
+    list_params = dir_modulos.getParamsNum(id_mod)
+    print "INSERERA--",  list_params, len(list_params)
+    if len(list_params) != 0:
     	xparam = 0
     else:
     	xparam = -1
@@ -220,9 +233,8 @@ def p_insertEra(p):
 def p_callingA(p):
     '''callingA : callingB ')' ';'
                 | ')' ';' '''
-    if p[2] == ')' and (xparam + 1) != contparam:
-    	print "ERROR // Module expects %d parameters" % contparam
-    	sys.exit()
+    if (p[1] == ')' or p[2] == ')') and (xparam + 1) != len(list_params):
+    	senderror(9, id_mod, len(list_params))
 
 def p_callingB(p):
     '''callingB : expression checkParam callingC'''
@@ -231,20 +243,21 @@ def p_checkParam(p):
     '''checkParam : '''
     argum = pilaOpera.pop()
     tipo = pilaTipos.pop()
-    print "CHECK PARAM--", xparam, list_params, tipo
+    print "CHECK PARAM--1-", xparam, list_params, argum, tipo
     if list_params[xparam] == tipo:
     	prm = "param" + str(xparam + 1)
     	quads_gen.addQ('param',argum,-1,prm)
     else:
-    	print "ERROR // Parametro de tipo incorrecto"
-    	sys.exit()
+    	senderror(8, invartipo_mod(list_params[xparam]))
 
 def p_callingC(p):
-    '''callingC : ',' callingB
+    '''callingC : ',' sumXparam callingB
             | empty '''
-    global xparam
-    if p[1] == ',':
-    	xparam = xparam + 1
+
+def p_sumXparam(p):
+	'''sumXparam : '''
+	global xparam
+	xparam = xparam + 1
 
 def p_block(p):
     '''block : '{' blockA '''
@@ -509,7 +522,7 @@ def p_var_cte(p):
         #print "--FALSE", p[1], pilaOpera
     else:
         findtipo = buscaID(pairs_idtype, p[1])
-        #print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
+        print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
         p[0] = p[1]
@@ -586,8 +599,7 @@ work_vars = [0,0,0] #Contador de variables en el workspace, en el orden entero/f
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
 quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
 id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
-contparam = 0
-xparam = 0
+xparam = 0 #Variable entera en funcion de apuntador de parametros
 
 #'''
 

@@ -11,6 +11,17 @@ class DirMods:
 	def getParams(self, key):
 		return self.data[key][0]
 
+	def getParamsNum(self, key):
+		lista = list()
+		for i in self.data[key][0]:
+			if (i == 'int'):
+				lista.append(0)
+			elif (i == 'float'):
+				lista.append(1)
+			elif (i == 'bool'):
+				lista.append(2)
+		return lista
+
 	def lookup(self, key):
 		for llave in self.data:
 			if (llave==key):

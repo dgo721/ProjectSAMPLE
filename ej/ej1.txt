@@ -33,6 +33,9 @@ mod # third (int e, float f) {
 	var6 = e*f;
 }
 
+e=23;
+f=34.3;
+
 # third (e,f);
 
 var7 = 1*2;

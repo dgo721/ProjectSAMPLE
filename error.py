@@ -13,4 +13,10 @@ def senderror(x, *resto):
 		print("ERROR // IF-ELSE requires boolean compare" % resto[0])
 	elif x == 6:
 		print("ERROR // Variable %s already assign with type %s" % (resto[0], resto[1]))
+	elif x == 7:
+		print("ERROR // Module %s not found" % resto[0])
+	elif x == 8:
+		print("ERROR // Parameter type %s is expected" % resto[0])
+	elif x == 9:
+		print("ERROR // Module %s expects %d parameters" % (resto[0], resto[1]))
 	sys.exit()
