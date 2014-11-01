@@ -8,7 +8,7 @@ def senderror(x, *resto):
 	elif x == 3:
 		print("ERROR // Assignation type in '%s'" % resto[0])
 	elif x == 4:
-		print("ERROR // VAR not found" % resto[0])
+		print("ERROR // VAR %s not found" % resto[0])
 	elif x == 5:
 		print("ERROR // IF-ELSE requires boolean compare" % resto[0])
 	elif x == 6:

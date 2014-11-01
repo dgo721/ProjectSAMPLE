@@ -5,29 +5,30 @@ class CodeGen:
 		self.t = 1
 		self.data = {}
 		self.pilaSaltos = []
+		self.scope = "*work*"
 
 	def add(self, op, oper1, oper2, asigna):
 		if oper2 != -1:
 			stmp=str(self.t)
 			tmp='t' + stmp
-			self.data[self.x]=[op, oper1, oper2, tmp]
+			self.data[self.x]=[op, oper1, oper2, tmp, self.scope]
 			self.x=self.x+1
 			self.t=self.t+1
 		else:
-			self.data[self.x]=[op, oper1, oper2, asigna]
+			self.data[self.x]=[op, oper1, oper2, asigna, self.scope]
 			self.x=self.x+1
 
 	def addQ(self, op, oper1, oper2, oper3):
-		self.data[self.x]=[op, oper1, oper2, oper3]
+		self.data[self.x]=[op, oper1, oper2, oper3, self.scope]
 		self.x=self.x+1
 
 	def addGoTo(self, op, oper1, oper2, oper3):
-		self.data[self.x]=[op, oper1, oper2, oper3]
+		self.data[self.x]=[op, oper1, oper2, oper3, self.scope]
 		self.pilaSaltos.append(self.x)
 		self.x=self.x+1
 
 	def addGoToE(self, op, oper1, oper2, oper3):
-		self.data[self.x]=[op, oper1, oper2, oper3]
+		self.data[self.x]=[op, oper1, oper2, oper3, self.scope]
 		quadro = self.pilaSaltos.pop()
 		self.pilaSaltos.append(self.x)
 		self.x=self.x+1
@@ -40,7 +41,7 @@ class CodeGen:
 	def addcontinueW(self):
 		salida = self.pilaSaltos.pop()
 		retorno = self.pilaSaltos.pop()
-		self.data[self.x]=['goTo', -1, -1, retorno]
+		self.data[self.x]=['goTo', -1, -1, retorno, self.scope]
 		self.x=self.x+1
 		self.data[salida][3] = self.x
 
@@ -49,17 +50,17 @@ class CodeGen:
 		regreso = self.pilaSaltos.pop()
 		stmp=str(self.t)
 		tmp='t' + stmp
-		self.data[self.x]=['+', temporal, 1, tmp]
+		self.data[self.x]=['+', temporal, 1, tmp, self.scope]
 		self.x=self.x+1
 		self.t=self.t+1
-		self.data[self.x]=['=', tmp, -1, temporal]
+		self.data[self.x]=['=', tmp, -1, temporal, self.scope]
 		self.x=self.x+1
 		stmp=str(self.t)
 		tmp='t' + stmp
-		self.data[self.x]=['==', temporal, cte, tmp]
+		self.data[self.x]=['==', temporal, cte, tmp, self.scope]
 		self.x=self.x+1
 		self.t=self.t+1
-		self.data[self.x]=['goToF', tmp, -1, regreso]
+		self.data[self.x]=['goToF', tmp, -1, regreso, self.scope]
 		self.x=self.x+1
 
 	def addGoToW(self):
@@ -68,7 +69,7 @@ class CodeGen:
 	def addGoToR(self):
 		stmp=str(self.t)
 		tmp='t' + stmp
-		self.data[self.x]=['=', 0, -1, tmp]
+		self.data[self.x]=['=', 0, -1, tmp, self.scope]
 		self.x=self.x+1
 		self.t=self.t+1
 		self.pilaSaltos.append(self.x)
@@ -95,16 +96,22 @@ class CodeGen:
 		tmp='t' + stmp
 		return tmp
 
+	def getScope(self):
+		return self.scope
+
+	def setScope(self, name):
+		self.scope = name
+
 	def empty(self):
 		self.x = 1
 		self.t = 1
 		self.data = {}
 
 	def echo(self):
-		print "QUAD".ljust(4) + "|".ljust(4) + "OP".ljust(4) + "|".ljust(4) + "OPR1".ljust(4) + "|".ljust(4) + "OPR2".ljust(4) + "|".ljust(4) + "TEMP".ljust(4) + "|".ljust(4)
-		print "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4)
+		print "QUAD".ljust(4) + "|".ljust(4) + "OP".ljust(4) + "|".ljust(4) + "OPR1".ljust(4) + "|".ljust(4) + "OPR2".ljust(4) + "|".ljust(4) + "TEMP".ljust(4) + "|".ljust(4) + "SCOPE".ljust(4) + "|".ljust(4)
+		print "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4)
 		for key in sorted(self.data):
-			print str(key).rjust(4) + "|".ljust(4) + str(self.data[key][0]).ljust(4) + "|".ljust(4) + str(self.data[key][1]).ljust(4) + "|".ljust(4) + str(self.data[key][2]).ljust(4) + "|".ljust(4) + str(self.data[key][3]).ljust(4) + "|".ljust(4)
+			print str(key).rjust(4) + "|".ljust(4) + str(self.data[key][0]).ljust(4) + "|".ljust(4) + str(self.data[key][1]).ljust(4) + "|".ljust(4) + str(self.data[key][2]).ljust(4) + "|".ljust(4) + str(self.data[key][3]).ljust(4) + "|".ljust(4) + str(self.data[key][4]).ljust(4) + "|".ljust(4)
 
 	def write(self):
 		f = open('out-quads', 'w')

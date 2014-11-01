@@ -2,10 +2,11 @@ init
 
 i = 10;
 
-replay 9 [
+replay 8 [
 	sample off right 10;
 	sample on left 8 5 blue;
-	quad 5 5 yellow;
+	//quad 5 5 yellow;
+	quad i-3 i yellow;
 	arc 3 2 cyan;
 ];
 

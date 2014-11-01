@@ -82,11 +82,14 @@ t_ignore = " \t"
 #def t_newline(t):
 #    r'\r\n+'
 
+def t_COMMENT(t):
+    r'\/\/.*'
+    pass
+
 def t_newline(t):
     r'\n+'
 
 def t_error(t):
-    
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
     
@@ -146,7 +149,7 @@ def p_statute(p):
     assign_vars=[]
 
 def p_module(p):
-    '''module : MOD '#' ID insertQuadMod moduleA endMod'''
+    '''module : MOD '#' moduleID insertQuadMod moduleA endMod'''
     global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
     print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
@@ -154,7 +157,7 @@ def p_module(p):
     suma = sum(work_vars)
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
-    	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
+    	print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
     	suma = suma - 1
 
@@ -165,11 +168,17 @@ def p_module(p):
     work_vars[1] = work_vars[1] - cont_vars[1]
     work_vars[2] = work_vars[2] - cont_vars[2]
     cont_vars = [0,0,0] #Reinicia contador
+    quads_gen.setScope("*work*")
     tab_lvalores = TabVars(1200, 1400, 1600)
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
             | block'''
+
+def p_moduleID(p):
+    '''moduleID : ID'''
+    quads_gen.setScope(p[1])
+    p[0] = p[1]
 
 def p_vars(p):
     '''vars : type ID varsA'''
@@ -279,8 +288,10 @@ def p_assign(p):
     #print pilaOpera, pilaTipos, assign_vars
     valor1 = pilaOpera.pop()
     tipo1 = pilaTipos.pop()
+    print "ASSIGN--", assign_vars
     index = vartipo_assign(assign_vars)
-    #print "ASSIGN--", valor1, tipo1, index
+    print "ASSIGN--", assign_vars, index
+    print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
     	senderror(3, p[1])
     if tipo1 == 0:
@@ -523,6 +534,8 @@ def p_var_cte(p):
     else:
         findtipo = buscaID(pairs_idtype, p[1])
         print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
+        if findtipo == -1:
+        	senderror(4, p[1])
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
         p[0] = p[1]
@@ -530,9 +543,12 @@ def p_var_cte(p):
 
 def p_gotoFalse(p):
 	'''gotoFalse : '''
-	global pilaOpera, pilaTipos
+	global pilaOpera, pilaTipos, assign_vars
+	print "GOTOFALSE--", pilaOpera
+	print "GOTOFALSE--", pilaTipos
 	if pilaTipos.pop() != 2:
 		senderror(5)
+	assign_vars = []
 	quads_gen.addGoTo('goToF', pilaOpera.pop(), -1, -1)
 
 def p_gotoE(p):
