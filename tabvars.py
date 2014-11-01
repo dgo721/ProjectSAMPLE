@@ -124,7 +124,7 @@ def invartipo_mod(tipo):
 	elif (tipo==1):
 		return "FLOAT"
 	elif (tipo==2):
-		return "BOOLEAN"
+		return "BOOL"
 
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente

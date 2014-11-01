@@ -19,7 +19,8 @@ mod # second (int d) {
 mod # third (int e, float f) {
 	var6 = e*f;
 }
-
+e=09;
+f=0.01;
 # third (e,f);
 
 replay 9 [

@@ -1,7 +1,7 @@
 init
 
 i = 7 + 9;
-j = i - 10;
+j = 23.2;
 
 trio i 6 green;
 quad 5 j yellow;

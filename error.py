@@ -1,6 +1,6 @@
 import sys
 
-def senderror(x, *resto):
+def senderror(x, linenumber, *resto):
 	if x == 1:
 		print("ERROR // Syntax at '%s'" % resto[0])
 	elif x == 2:
@@ -18,5 +18,11 @@ def senderror(x, *resto):
 	elif x == 8:
 		print("ERROR // Parameter type %s is expected" % resto[0])
 	elif x == 9:
-		print("ERROR // Module %s expects %d parameters" % (resto[0], resto[1]))
+		if resto[1] == 1:
+			print("ERROR // Module %s expects %d parameter" % (resto[0], resto[1]))
+		else:
+			print("ERROR // Module %s expects %d parameters" % (resto[0], resto[1]))
+	elif x == 10:
+		print("ERROR // Type INT/FLOAT is expected")
+	print "-LINE //", linenumber
 	sys.exit()

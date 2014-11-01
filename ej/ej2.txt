@@ -2,7 +2,6 @@ init
 
 h = 34;
 
-h = 3.45;
 n = h + h + h;
 a = 3 + h * (n - 2);
 
@@ -28,6 +27,8 @@ mod # third (int e, float f) {
 }
 
 d = true;
+var1 = 23;
+var3 = 3.4;
 
 # third (var1, var3);
 

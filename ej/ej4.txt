@@ -23,8 +23,11 @@ mod # fifth (bool h, int i) {
 mod # seis (int j, float k, bool l) {
 	
 }
+e=2;
+f=1.2;
+g=false;
 
-# third (e,f);
+# seis (e,f,g);
 
 var1 = 3;
 var2 = 0;

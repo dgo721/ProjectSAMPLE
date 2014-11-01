@@ -55,6 +55,8 @@ tokens = ['CTE_INTEGER','CTE_FLOAT', 'CTE_STRING','ID'] + list(reserva.values())
 
 literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#']
 
+linenumber = 0;
+
 #TOKENS
 
 def t_ID(t):
@@ -88,6 +90,9 @@ def t_COMMENT(t):
 
 def t_newline(t):
     r'\n+'
+    global linenumber
+    t.lexer.lineno += len(t.value)
+    linenumber = t.lexer.lineno
 
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
@@ -157,7 +162,7 @@ def p_module(p):
     suma = sum(work_vars)
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
-    	print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
+    	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
     	suma = suma - 1
 
@@ -168,8 +173,9 @@ def p_module(p):
     work_vars[1] = work_vars[1] - cont_vars[1]
     work_vars[2] = work_vars[2] - cont_vars[2]
     cont_vars = [0,0,0] #Reinicia contador
+    quads_gen.addcontinueG()
     quads_gen.setScope("*work*")
-    tab_lvalores = TabVars(1200, 1400, 1600)
+    tab_lvalores = TabVars(12000, 14000, 16000)
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -177,6 +183,7 @@ def p_moduleA(p):
 
 def p_moduleID(p):
     '''moduleID : ID'''
+    quads_gen.addGoTo('goTo', -1, -1, -1)
     quads_gen.setScope(p[1])
     p[0] = p[1]
 
@@ -199,7 +206,7 @@ def p_vars(p):
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
     pairs_idtype.append([p[2], tipo1])
-    print "MODULEA--",pairs_idtype
+    #print "MODULEA--",pairs_idtype
     #tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
 def p_varsA(p):
@@ -225,7 +232,7 @@ def p_callID(p):
     '''callID : ID'''
     global id_mod
     if dir_modulos.lookup(p[1]) == False:
-    	senderror(7, p[1])
+    	senderror(7, linenumber, p[1])
     id_mod = p[1]
 
 def p_insertEra(p):
@@ -243,7 +250,7 @@ def p_callingA(p):
     '''callingA : callingB ')' ';'
                 | ')' ';' '''
     if (p[1] == ')' or p[2] == ')') and (xparam + 1) != len(list_params):
-    	senderror(9, id_mod, len(list_params))
+    	senderror(9, linenumber, id_mod, len(list_params))
 
 def p_callingB(p):
     '''callingB : expression checkParam callingC'''
@@ -252,12 +259,14 @@ def p_checkParam(p):
     '''checkParam : '''
     argum = pilaOpera.pop()
     tipo = pilaTipos.pop()
-    print "CHECK PARAM--1-", xparam, list_params, argum, tipo
+    #print "CHECK PARAM--1-", xparam, list_params, argum, tipo
+    if xparam >= len(dir_modulos.getParamsNum(id_mod)):
+    	senderror(9, linenumber, id_mod, len(dir_modulos.getParamsNum(id_mod)))
     if list_params[xparam] == tipo:
     	prm = "param" + str(xparam + 1)
     	quads_gen.addQ('param',argum,-1,prm)
     else:
-    	senderror(8, invartipo_mod(list_params[xparam]))
+    	senderror(8, linenumber, invartipo_mod(list_params[xparam]))
 
 def p_callingC(p):
     '''callingC : ',' sumXparam callingB
@@ -288,12 +297,12 @@ def p_assign(p):
     #print pilaOpera, pilaTipos, assign_vars
     valor1 = pilaOpera.pop()
     tipo1 = pilaTipos.pop()
-    print "ASSIGN--", assign_vars
+    #print "ASSIGN--", assign_vars
     index = vartipo_assign(assign_vars)
-    print "ASSIGN--", assign_vars, index
-    print "ASSIGN--", valor1, tipo1, index
+    #print "ASSIGN--", assign_vars, index
+    #print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
-    	senderror(3, p[1])
+    	senderror(3, linenumber, p[1])
     if tipo1 == 0:
         cont_vars[0] = cont_vars[0] + 1
         work_vars[0] = work_vars[0] + 1
@@ -310,6 +319,7 @@ def p_assign(p):
     #tab_valores = tabvar(tab_valores, p[1], tipo1)
     #print "TABVAL en assign", tab_valores
     quads_gen.add('=', valor1, -1, p[1])
+
 
 def p_condition(p):
     '''condition : IF '(' expression ')' gotoFalse block conditionA continueGo'''
@@ -363,7 +373,7 @@ def p_command(p):
     	tipo2 = pilaTipos.pop()
     	tipo1 = pilaTipos.pop()
     	if tipo1 == 2 or tipo2 == 2:
-    		print "ERROR TIPO OPERACION"
+    		senderror(10, linenumber-1)
     	valor2 = pilaOpera.pop()
     	valor1 = pilaOpera.pop()
     	quads_gen.addQ(p[1], valor1, valor2, p[4])
@@ -372,7 +382,7 @@ def p_commandA(p):
     '''commandA : ON move exp CTE_INTEGER color ';'
             | OFF move exp ';' '''
     if pilaTipos.pop() == 2:
-    	print "ERROR TIPO OPERACION"
+    	senderror(10, linenumber-1)
     if p[1] == 'on':
     	p[0] = [p[1], p[2], pilaOpera.pop(), p[4], p[5]]
     else:
@@ -432,7 +442,7 @@ def p_expression(p):
             pilaTipos.append(tipoNuevo)
             #print pilaOpera, pilaTipos
         else:
-            senderror(2)
+            senderror(2, linenumber)
 
 def p_exp(p):
     '''exp : exp '+' exp
@@ -461,7 +471,7 @@ def p_exp(p):
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
         else:
-            senderror(2)
+            senderror(2, linenumber)
 
 def p_factor(p):
     '''factor : '(' expression ')'
@@ -535,7 +545,7 @@ def p_var_cte(p):
         findtipo = buscaID(pairs_idtype, p[1])
         print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         if findtipo == -1:
-        	senderror(4, p[1])
+        	senderror(4, linenumber, p[1])
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
         p[0] = p[1]
@@ -547,7 +557,7 @@ def p_gotoFalse(p):
 	print "GOTOFALSE--", pilaOpera
 	print "GOTOFALSE--", pilaTipos
 	if pilaTipos.pop() != 2:
-		senderror(5)
+		senderror(5, linenumber)
 	assign_vars = []
 	quads_gen.addGoTo('goToF', pilaOpera.pop(), -1, -1)
 
@@ -586,9 +596,9 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        senderror(1, p.value)
+        senderror(1, linenumber, p.value)
     else:
-        senderror(1, "EOF")
+        senderror(1, linenumber, "EOF")
 
 
 from ply import yacc
@@ -607,7 +617,7 @@ assign_vars = list() #Para ASSIGN, almacena los tipos de variables encontrados e
 pairs_idtype = list() #Almacena las variables en par id-tipo, utlizados para distincion entre variables locales/globales
 tab_constant = TabConst() #Instancia clase TabConst, tabla de constantes del codigo seleccionado
 tab_valores = TabVars(2000, 4000, 6000) #Instancia clase TabVars, tabla de variables del codigo seleccionado
-tab_lvalores = TabVars(1200, 1400, 1600) #Instancia clase TabVars, tabla de variables locales, distinta por cada modulo
+tab_lvalores = TabVars(12000, 14000, 16000) #Instancia clase TabVars, tabla de variables locales, distinta por cada modulo
 dir_modulos = DirMods() #Instancia clase DirMods, directorio de modulos del programa
 quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para codigo intermedio
 cont_vars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
