@@ -116,9 +116,9 @@ def p_program(p):
     while (pairs_idtype):
     	par = pairs_idtype.pop(0)
     	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
-    	tab_valores=tabvar(tab_valores, par[0], par[1])
+    	tab_valores=tabvar(tab_valores, par[0], par[1], linenumber)
     
-    dir_modulos = dirmod(dir_modulos, "workspace", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None)
+    dir_modulos = dirmod(dir_modulos, "*workspace*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], tab_temporal, None)
 
 def p_programA(p):
     '''programA : programB END
@@ -137,8 +137,9 @@ def p_programC(p):
 def p_workspace(p):
     '''workspace : statute
             | module'''
-    global cont_vars, pairs_idtype
+    global cont_vars, cont_tvars
     cont_vars = [0,0,0]
+    cont_tvars = [0,0,0]
 
 def p_statute(p):
     '''statute : assign
@@ -155,7 +156,7 @@ def p_statute(p):
 
 def p_module(p):
     '''module : MOD '#' moduleID insertQuadMod moduleA endMod'''
-    global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_valores, tab_lvalores, pairs_idtype
+    global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_lvalores, tab_ltemporal, pairs_idtype, flagTabTemp
     print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     x = sum(work_vars) - sum(cont_vars)
@@ -163,19 +164,24 @@ def p_module(p):
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
     	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
-    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1])
+    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], linenumber)
     	suma = suma - 1
 
-    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod)
+    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], copy.deepcopy(tab_ltemporal), line_mod)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
     work_vars[0] = work_vars[0] - cont_vars[0]
     work_vars[1] = work_vars[1] - cont_vars[1]
     work_vars[2] = work_vars[2] - cont_vars[2]
+    work_tvars[0] = work_tvars[0] - cont_tvars[0]
+    work_tvars[1] = work_tvars[1] - cont_tvars[1]
+    work_tvars[2] = work_tvars[2] - cont_tvars[2]
     cont_vars = [0,0,0] #Reinicia contador
     quads_gen.addcontinueG()
     quads_gen.setScope("*work*")
+    flagTabTemp = False
     tab_lvalores = TabVars(12000, 14000, 16000)
+    tab_ltemporal = TabVars(32000, 34000, 36000)
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -183,6 +189,9 @@ def p_moduleA(p):
 
 def p_moduleID(p):
     '''moduleID : ID'''
+    global flagTabTemp, line_mod
+    flagTabTemp = True
+    line_mod = linenumber
     quads_gen.addGoTo('goTo', -1, -1, -1)
     quads_gen.setScope(p[1])
     p[0] = p[1]
@@ -412,7 +421,7 @@ def p_expression(p):
                 | exp AND exp
                 | exp OR exp
                 | exp empty'''
-    global pilaOpera, pilaTipos, quads_gen
+    global pilaOpera, pilaTipos, quads_gen, tab_ltemporal, tab_temporal
     if p[2] == '=' or p[2] == '<' or p[2] == '>' or p[2] == 'and' or p[2] == 'or':
         valor2=pilaOpera.pop()
         valor1=pilaOpera.pop()
@@ -437,6 +446,13 @@ def p_expression(p):
         	tipoNuevo = semant_oper(tipo1, tipo2, 5)
         #print tipoNuevo
         if tipoNuevo != -1:
+            if tipoNuevo == 2:
+            	cont_tvars[2] = cont_tvars[2] + 1
+            	work_tvars[2] = work_tvars[2] + 1
+            if flagTabTemp == True:
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
+            else:
+            	tab_temporal=tabvar(tab_temporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
@@ -450,7 +466,7 @@ def p_exp(p):
             | exp '*' exp
             | exp '/' exp
             | factor empty'''
-    global pilaOpera, pilaTipos, quads_gen
+    global pilaOpera, pilaTipos, quads_gen, tab_ltemporal, tab_temporal
     if p[2] == '+' or p[2] == '-' or p[2] == '*' or p[2] == '/':
         valor2=pilaOpera.pop()
         valor1=pilaOpera.pop()
@@ -467,6 +483,16 @@ def p_exp(p):
             tipoNuevo = semant_oper(tipo1, tipo2, 3)
         #print tipoNuevo
         if tipoNuevo != -1:
+            if tipoNuevo == 0:
+            	cont_tvars[0] = cont_tvars[0] + 1
+            	work_tvars[0] = work_tvars[0] + 1
+            elif tipoNuevo == 1:
+            	cont_tvars[1] = cont_tvars[1] + 1
+            	work_tvars[1] = work_tvars[1] + 1
+            if flagTabTemp == True:
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
+            else:
+            	tab_temporal=tabvar(tab_temporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
@@ -618,14 +644,20 @@ pairs_idtype = list() #Almacena las variables en par id-tipo, utlizados para dis
 tab_constant = TabConst() #Instancia clase TabConst, tabla de constantes del codigo seleccionado
 tab_valores = TabVars(2000, 4000, 6000) #Instancia clase TabVars, tabla de variables del codigo seleccionado
 tab_lvalores = TabVars(12000, 14000, 16000) #Instancia clase TabVars, tabla de variables locales, distinta por cada modulo
+tab_temporal = TabVars(22000, 24000, 26000)
+tab_ltemporal = TabVars(32000, 34000, 36000)
 dir_modulos = DirMods() #Instancia clase DirMods, directorio de modulos del programa
 quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para codigo intermedio
 cont_vars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
 work_vars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
+cont_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
+work_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
 quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
+line_mod = 0
 id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
 xparam = 0 #Variable entera en funcion de apuntador de parametros
+flagTabTemp = False
 
 #'''
 
@@ -650,17 +682,20 @@ f.close()
 
 print("\n")
 dir_modulos.echotables()
+#dir_modulos.echotablestemp()
 #tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
-dir_modulos.echo() #Despliega directorio de modulos
+#dir_modulos.echo() #Despliega directorio de modulos
+#dir_modulos.echoV()
+#dir_modulos.echoT()
 #dir_modulos.write()
 #print tab_valores.getDir("b")
 print("\n")
 #tab_constant.echo()
 #tab_constant.write()
 print("\n")
-quads_gen.echo()
+#quads_gen.echo()
 #quads_gen.write()
 print("\n")
 #quads_gen.echoQ(tab_valores, tab_constant)

@@ -128,14 +128,14 @@ def invartipo_mod(tipo):
 
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente
-def tabvar(tab_valores, nombre, tipo):
+def tabvar(tab_valores, nombre, tipo, linea):
 	print nombre, tipo
 	if tab_valores.lookup(nombre)!=True:
 		tab_valores.add(nombre, tipo)
 	else:
 		if tab_valores.getType(nombre) != tipo:
 			print tab_valores.getType(nombre), tipo
-			senderror(6, nombre, invartipo_mod(tab_valores.getType(nombre)))
+			senderror(6, linea, nombre, invartipo_mod(tab_valores.getType(nombre)))
 	return tab_valores
 
 def buscaID(lista, idv):
