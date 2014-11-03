@@ -197,21 +197,70 @@ class CodeGen:
 					i = i + 1
 			print str(a).rjust(4) + "|".ljust(4) + str(q[0]).ljust(4) + "|".ljust(4) + str(q[1]).ljust(4) + "|".ljust(4) + str(q[2]).ljust(4) + "|".ljust(4) + str(q[3]).ljust(4) + "|".ljust(4)
 
-	def writeQ(self, tabvar, tabconst):
-		f = open('quads.smo', 'w')
+	def writeQ(self, dirmod, tabconst):
+		f = open('sample.smo', 'a')
+		tablaP = dirmod.getTable("*work*")
+		tablatempP = dirmod.getTableTemp("*work*")
 		for a in self.data:
 			quad = self.getQuad(a)
 			scope = quad[4]
+			tabla = dirmod.getTable(scope)
+			tablatemp = dirmod.getTableTemp(scope)
 			q = list()
 			i = 0
-			for x in quad:
-				if (tabvar.lookup(x)==True):
-					q.append(tabvar.getDir(x))
-				elif (tabconst.lookup(x)==True):
-					q.append(tabconst.getDir(x))
+			if quad[0] == "goTo" or quad[0] == "ret" or quad[0] == "era" or quad[0] == "gosub":
+				q.append(quad[0])
+				q.append(quad[1])
+				q.append(quad[2])
+				q.append(quad[3])
+			elif quad[0] == "goToF" or quad[0] == "param" or quad[0] == "sample1":
+				q.append(quad[0])
+				if (tabla.lookup(quad[1])==True):
+					q.append(tabla.getDir(quad[1]))
+				elif (tablatemp.lookup(quad[1])==True):
+					q.append(tablatemp.getDir(quad[1]))
+				elif (tablaP.lookup(quad[1])==True):
+					q.append(tablaP.getDir(quad[1]))
+				elif (tablatempP.lookup(quad[1])==True):
+					q.append(tablatempP.getDir(quad[1]))
+				elif (tabconst.lookup(quad[1])==True):
+					q.append(tabconst.getDir(quad[1]))
 				else:
-					q.append(quad[i])
-				i = i + 1
+					q.append(quad[1])
+				q.append(quad[2])
+				q.append(quad[3])
+			elif quad[0] == "sample2":
+				q.append(quad[0])
+				q.append(quad[1])
+				q.append(quad[2])
+				if (tabla.lookup(quad[3])==True):
+					q.append(tabla.getDir(quad[3]))
+				elif (tablatemp.lookup(quad[3])==True):
+					q.append(tablatemp.getDir(quad[3]))
+				elif (tablaP.lookup(quad[3])==True):
+					q.append(tablaP.getDir(quad[3]))
+				elif (tablatempP.lookup(quad[3])==True):
+					q.append(tablatempP.getDir(quad[3]))
+				elif (tabconst.lookup(quad[3])==True):
+					q.append(tabconst.getDir(quad[3]))
+				else:
+					q.append(quad[3])
+			else:
+				for x in quad:
+					#print x, a
+					if (tabla.lookup(x)==True):
+						q.append(tabla.getDir(x))
+					elif (tablatemp.lookup(x)==True):
+						q.append(tablatemp.getDir(x))
+					elif (tablaP.lookup(x)==True):
+						q.append(tablaP.getDir(x))
+					elif (tablatempP.lookup(x)==True):
+						q.append(tablatempP.getDir(x))
+					elif (tabconst.lookup(x)==True):
+						q.append(tabconst.getDir(x))
+					else:
+						q.append(quad[i])
+					i = i + 1
 			print >> f, str(a) + "|" + str(q[0]) + "|" + str(q[1]) + "|" + str(q[2]) + "|" + str(q[3])
 		f.close()
 

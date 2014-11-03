@@ -37,6 +37,13 @@ class TabConst:
 		for key in self.data:
 			print >> f, str(key).ljust(10) + "|".ljust(5) + str(self.data[key][0]).ljust(10) + "|".ljust(5)
 		f.close()
+
+	def writeQ(self):
+		f = open('sample.smo', 'a')
+		for key in self.data:
+			print >> f, str(key) + "|" + str(self.data[key][0])
+		print >> f, "%%%%"
+		f.close()
 	
 	def __str__(self):
 		return repr(self.data)

@@ -157,7 +157,7 @@ def p_statute(p):
 def p_module(p):
     '''module : MOD '#' moduleID insertQuadMod moduleA endMod'''
     global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_lvalores, tab_ltemporal, pairs_idtype, flagTabTemp
-    print "modulo #", p[3]
+    #print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
@@ -249,7 +249,7 @@ def p_insertEra(p):
     global list_params
     quads_gen.addQ('era',id_mod,-1,-1)
     list_params = dir_modulos.getParamsNum(id_mod)
-    print "INSERERA--",  list_params, len(list_params)
+    #print "INSERERA--",  list_params, len(list_params)
     if len(list_params) != 0:
     	xparam = 0
     else:
@@ -569,7 +569,7 @@ def p_var_cte(p):
         #print "--FALSE", p[1], pilaOpera
     else:
         findtipo = buscaID(pairs_idtype, p[1])
-        print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
+        #print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         if findtipo == -1:
         	senderror(4, linenumber, p[1])
         assign_vars.append(findtipo)
@@ -580,8 +580,8 @@ def p_var_cte(p):
 def p_gotoFalse(p):
 	'''gotoFalse : '''
 	global pilaOpera, pilaTipos, assign_vars
-	print "GOTOFALSE--", pilaOpera
-	print "GOTOFALSE--", pilaTipos
+	#print "GOTOFALSE--", pilaOpera
+	#print "GOTOFALSE--", pilaTipos
 	if pilaTipos.pop() != 2:
 		senderror(5, linenumber)
 	assign_vars = []
@@ -690,13 +690,15 @@ dir_modulos.echo() #Despliega directorio de modulos
 dir_modulos.echoV()
 dir_modulos.echoT()
 #dir_modulos.write()
+dir_modulos.writeQ()
 #print tab_valores.getDir("b")
 print("\n")
-#tab_constant.echo()
+tab_constant.echo()
 #tab_constant.write()
+tab_constant.writeQ()
 print("\n")
 quads_gen.echo()
-#quads_gen.write()
+quads_gen.write()
 print("\n")
 quads_gen.echoQ(dir_modulos, tab_constant)
-#quads_gen.writeQ(tab_valores, dir_modulos)
+quads_gen.writeQ(dir_modulos, tab_constant)

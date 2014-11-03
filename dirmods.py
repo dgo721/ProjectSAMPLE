@@ -61,6 +61,13 @@ class DirMods:
 			print >> f, key.ljust(15) + "|".ljust(5) + str(self.data[key][0]).ljust(25) + "|".ljust(5) + str(self.data[key][1]).ljust(15) + "|".ljust(5) + str(self.data[key][2]).ljust(15) + "|".ljust(5) + str(self.data[key][3]).ljust(15) + "|".ljust(5)
 		f.close()
 
+	def writeQ(self):
+		f = open('sample.smo', 'w')
+		for key in self.data:
+			print >> f, key + "|" + str(self.data[key][0]) + "|" + str(self.data[key][1]) + "|" + str(self.data[key][2]) + "|" + str(self.data[key][3]) + "|" + str(self.data[key][5]) + "|" + str(self.data[key][6]) + "|" + str(self.data[key][7]) + "|" + str(self.data[key][8])
+		print >> f, "%%%%"
+		f.close()
+
 	def echotables(self):
 		for key in self.data:
 			print "VARIABLES", key.ljust(15)

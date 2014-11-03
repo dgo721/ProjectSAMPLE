@@ -3,10 +3,10 @@ init
 i = 7 + 9;
 j = i - 10;
 
-trio 4 6 green;
-sample on up i 4 red;
+//trio 4 6 green;
+//sample on up i 4 red;
 sample off down j;
-quad 5 5 yellow;
+//quad 5 5 yellow;
 arc 3 2 cyan;
 
 a = i + j * 3.3;
