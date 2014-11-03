@@ -29,6 +29,12 @@ class DirMods:
 				return True
 		return False
 
+	def getTable(self, key):
+		return self.data[key][4]
+
+	def getTableTemp(self, key):
+		return self.data[key][9]
+
 	def echo(self):
 		print "Modulos".ljust(15) + "|".ljust(5) + "Parametros".ljust(30) + "|".ljust(5) + "No. QUAD".ljust(15) + "|".ljust(5)
 		print "---------------".ljust(15) + "|".ljust(5) + "------------------------------".ljust(30) + "|".ljust(5) + "---------------".ljust(15) + "|".ljust(5)

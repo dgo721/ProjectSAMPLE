@@ -68,7 +68,7 @@ def t_ID(t):
 t_CTE_STRING = r'\".*?\"'
 
 def t_CTE_FLOAT(t):
-    r'-?\d+\.\d*'
+    r'\d+\.\d*'
     global pilaOpera
     t.value = float(t.value)
     return t
@@ -118,7 +118,7 @@ def p_program(p):
     	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
     	tab_valores=tabvar(tab_valores, par[0], par[1], linenumber)
     
-    dir_modulos = dirmod(dir_modulos, "*workspace*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], tab_temporal, None)
+    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], tab_temporal, None)
 
 def p_programA(p):
     '''programA : programB END
@@ -450,9 +450,9 @@ def p_expression(p):
             	cont_tvars[2] = cont_tvars[2] + 1
             	work_tvars[2] = work_tvars[2] + 1
             if flagTabTemp == True:
-            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, linenumber)
             else:
-            	tab_temporal=tabvar(tab_temporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
+            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, linenumber)
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
@@ -490,9 +490,9 @@ def p_exp(p):
             	cont_tvars[1] = cont_tvars[1] + 1
             	work_tvars[1] = work_tvars[1] + 1
             if flagTabTemp == True:
-            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, linenumber)
             else:
-            	tab_temporal=tabvar(tab_temporal, quads_gen.lasttemp(), tipoNuevo, linenumber)
+            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, linenumber)
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
@@ -682,21 +682,21 @@ f.close()
 
 print("\n")
 dir_modulos.echotables()
-#dir_modulos.echotablestemp()
+dir_modulos.echotablestemp()
 #tab_valores.echo() #Despliega tabla de valores
 #tab_valores.write() #Guarda en archivo la tabla de valores
 print("\n")
-#dir_modulos.echo() #Despliega directorio de modulos
-#dir_modulos.echoV()
-#dir_modulos.echoT()
+dir_modulos.echo() #Despliega directorio de modulos
+dir_modulos.echoV()
+dir_modulos.echoT()
 #dir_modulos.write()
 #print tab_valores.getDir("b")
 print("\n")
 #tab_constant.echo()
 #tab_constant.write()
 print("\n")
-#quads_gen.echo()
+quads_gen.echo()
 #quads_gen.write()
 print("\n")
-#quads_gen.echoQ(tab_valores, tab_constant)
-#quads_gen.writeQ(tab_valores, tab_constant)
+quads_gen.echoQ(dir_modulos, tab_constant)
+#quads_gen.writeQ(tab_valores, dir_modulos)

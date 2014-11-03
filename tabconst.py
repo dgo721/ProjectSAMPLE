@@ -1,7 +1,7 @@
 class TabConst:
 
 	def __init__(self):
-		self.offset = 1000
+		self.offset = 100
 		self.data = {}
 
 	def add(self, key):

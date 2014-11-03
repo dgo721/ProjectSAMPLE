@@ -1,3 +1,6 @@
+from dirmods import DirMods
+from tabvars import TabVars
+
 class CodeGen:
 
 	def __init__(self):
@@ -10,7 +13,7 @@ class CodeGen:
 	def add(self, op, oper1, oper2, asigna):
 		if oper2 != -1:
 			stmp=str(self.t)
-			tmp='t' + stmp
+			tmp='_t' + stmp
 			self.data[self.x]=[op, oper1, oper2, tmp, self.scope]
 			self.x=self.x+1
 			self.t=self.t+1
@@ -49,14 +52,14 @@ class CodeGen:
 		temporal = self.pilaSaltos.pop()
 		regreso = self.pilaSaltos.pop()
 		stmp=str(self.t)
-		tmp='t' + stmp
+		tmp='_t' + stmp
 		self.data[self.x]=['+', temporal, 1, tmp, self.scope]
 		self.x=self.x+1
 		self.t=self.t+1
 		self.data[self.x]=['=', tmp, -1, temporal, self.scope]
 		self.x=self.x+1
 		stmp=str(self.t)
-		tmp='t' + stmp
+		tmp='_t' + stmp
 		self.data[self.x]=['==', temporal, cte, tmp, self.scope]
 		self.x=self.x+1
 		self.t=self.t+1
@@ -68,7 +71,7 @@ class CodeGen:
 
 	def addGoToR(self):
 		stmp=str(self.t)
-		tmp='t' + stmp
+		tmp='_t' + stmp
 		self.data[self.x]=['=', 0, -1, tmp, self.scope]
 		self.x=self.x+1
 		self.t=self.t+1
@@ -90,10 +93,16 @@ class CodeGen:
 	def getnextX(self):
 		return self.x
 
+	def gettemp(self):
+		ltemp=self.t
+		stmp=str(ltemp)
+		tmp='_t' + stmp
+		return tmp
+
 	def lasttemp(self):
 		ltemp=self.t-1
 		stmp=str(ltemp)
-		tmp='t' + stmp
+		tmp='_t' + stmp
 		return tmp
 
 	def getScope(self):
@@ -121,27 +130,78 @@ class CodeGen:
 			print >> f, str(key).rjust(4) + "|".ljust(4) + str(self.data[key][0]).ljust(4) + "|".ljust(4) + str(self.data[key][1]).ljust(4) + "|".ljust(4) + str(self.data[key][2]).ljust(4) + "|".ljust(4) + str(self.data[key][3]).ljust(4) + "|".ljust(4)
 		f.close()
 
-	def echoQ(self, tabvar, tabconst):
+	def echoQ(self, dirmod, tabconst):
 		print "QUAD".ljust(4) + "|".ljust(4) + "OP".ljust(4) + "|".ljust(4) + "OPR1".ljust(4) + "|".ljust(4) + "OPR2".ljust(4) + "|".ljust(4) + "TEMP".ljust(4) + "|".ljust(4)
 		print "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4) + "----".ljust(4) + "|".ljust(4)
+		tablaP = dirmod.getTable("*work*")
+		tablatempP = dirmod.getTableTemp("*work*")
 		for a in self.data:
 			quad = self.getQuad(a)
+			scope = quad[4]
+			tabla = dirmod.getTable(scope)
+			tablatemp = dirmod.getTableTemp(scope)
 			q = list()
 			i = 0
-			for x in quad:
-				if (tabvar.lookup(x)==True):
-					q.append(tabvar.getDir(x))
-				elif (tabconst.lookup(x)==True):
-					q.append(tabconst.getDir(x))
+			if quad[0] == "goTo" or quad[0] == "ret" or quad[0] == "era" or quad[0] == "gosub":
+				q.append(quad[0])
+				q.append(quad[1])
+				q.append(quad[2])
+				q.append(quad[3])
+			elif quad[0] == "goToF" or quad[0] == "param" or quad[0] == "sample1":
+				q.append(quad[0])
+				if (tabla.lookup(quad[1])==True):
+					q.append(tabla.getDir(quad[1]))
+				elif (tablatemp.lookup(quad[1])==True):
+					q.append(tablatemp.getDir(quad[1]))
+				elif (tablaP.lookup(quad[1])==True):
+					q.append(tablaP.getDir(quad[1]))
+				elif (tablatempP.lookup(quad[1])==True):
+					q.append(tablatempP.getDir(quad[1]))
+				elif (tabconst.lookup(quad[1])==True):
+					q.append(tabconst.getDir(quad[1]))
 				else:
-					q.append(quad[i])
-				i = i + 1
+					q.append(quad[1])
+				q.append(quad[2])
+				q.append(quad[3])
+			elif quad[0] == "sample2":
+				q.append(quad[0])
+				q.append(quad[1])
+				q.append(quad[2])
+				if (tabla.lookup(quad[3])==True):
+					q.append(tabla.getDir(quad[3]))
+				elif (tablatemp.lookup(quad[3])==True):
+					q.append(tablatemp.getDir(quad[3]))
+				elif (tablaP.lookup(quad[3])==True):
+					q.append(tablaP.getDir(quad[3]))
+				elif (tablatempP.lookup(quad[3])==True):
+					q.append(tablatempP.getDir(quad[3]))
+				elif (tabconst.lookup(quad[3])==True):
+					q.append(tabconst.getDir(quad[3]))
+				else:
+					q.append(quad[3])
+			else:
+				for x in quad:
+					#print x, a
+					if (tabla.lookup(x)==True):
+						q.append(tabla.getDir(x))
+					elif (tablatemp.lookup(x)==True):
+						q.append(tablatemp.getDir(x))
+					elif (tablaP.lookup(x)==True):
+						q.append(tablaP.getDir(x))
+					elif (tablatempP.lookup(x)==True):
+						q.append(tablatempP.getDir(x))
+					elif (tabconst.lookup(x)==True):
+						q.append(tabconst.getDir(x))
+					else:
+						q.append(quad[i])
+					i = i + 1
 			print str(a).rjust(4) + "|".ljust(4) + str(q[0]).ljust(4) + "|".ljust(4) + str(q[1]).ljust(4) + "|".ljust(4) + str(q[2]).ljust(4) + "|".ljust(4) + str(q[3]).ljust(4) + "|".ljust(4)
 
 	def writeQ(self, tabvar, tabconst):
 		f = open('quads.smo', 'w')
 		for a in self.data:
 			quad = self.getQuad(a)
+			scope = quad[4]
 			q = list()
 			i = 0
 			for x in quad:
