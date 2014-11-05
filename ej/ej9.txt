@@ -26,6 +26,6 @@ mod # third (int e, float f) {
 e=23;
 r=34.3;
 
-# second (e);
+//# second (e);
 
 end

@@ -23,31 +23,58 @@ def listParams(lista):
 		i = i + 1
 	return temp
 
-def getDirValue(num):
+def addDirData(num, data):
+	#print "addDirData--", num, data
 	if num >= 36000:
-		pass
+		memoria.addLocalBoolTemp(data)
 	elif num >= 34000:
-		pass
+		memoria.addLocalFloatTemp(data)
 	elif num >= 32000:
-		pass
+		memoria.addLocalIntTemp(data)
 	elif num >= 26000:
-		pass
+		memoria.addGlobalBoolTemp(data)
 	elif num >= 24000:
-		pass
+		memoria.addGlobalFloatTemp(data)
 	elif num >= 22000:
-		pass
+		memoria.addGlobalIntTemp(data)
 	elif num >= 16000:
-		pass
+		memoria.addLocalBool(data)
 	elif num >= 14000:
-		pass
+		memoria.addLocalFloat(data)
 	elif num >= 12000:
-		pass
+		memoria.addLocalInt(data)
 	elif num >= 6000:
-		pass
+		memoria.addGlobalBool(data)
 	elif num >= 4000:
-		pass
+		memoria.addGlobalFloat(data)
 	elif num >= 2000:
-		pass
+		memoria.addGlobalInt(data)
+
+def getDirData(num):
+	if num >= 36000:
+		return memoria.getLocalBoolTemp(num)
+	elif num >= 34000:
+		return memoria.getLocalFloatTemp(num)
+	elif num >= 32000:
+		return memoria.getLocalIntTemp(num)
+	elif num >= 26000:
+		return memoria.getGlobalBoolTemp(num)
+	elif num >= 24000:
+		return memoria.getGlobalFloatTemp(num)
+	elif num >= 22000:
+		return memoria.getGlobalIntTemp(num)
+	elif num >= 16000:
+		return memoria.getLocalBool(num)
+	elif num >= 14000:
+		return memoria.getLocalFloat(num)
+	elif num >= 12000:
+		return memoria.getLocalInt(num)
+	elif num >= 6000:
+		return memoria.getGlobalBool(num)
+	elif num >= 4000:
+		return memoria.getGlobalFloat(num)
+	elif num >= 2000:
+		return memoria.getGlobalInt(num)
 	elif num >= 100:
 		return constants[num]
 
@@ -99,8 +126,36 @@ f.close()
 
 while quad[ip][1][0] != 'end':
 	qactual = quad[ip][1]
+	#print qactual
 
 	if qactual[0] == '+':
-		pass
+		tmp = getDirData(int(qactual[1])) + getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '-':
+		tmp = getDirData(int(qactual[1])) - getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '*':
+		tmp = getDirData(int(qactual[1])) * getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '/':
+		tmp = getDirData(int(qactual[1])) / getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '=':
+		tmp = getDirData(int(qactual[1]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == 'echo':
+		tmp = getDirData(int(qactual[1]))
+		esstring = re.compile(pattn_string)
+		tmp1 = str(tmp)
+		if re.match(esstring, tmp1):
+			tmp1 = tmp.split("\"")
+			print tmp1[1]
+		else:
+			print tmp
 
 	ip = ip + 1
