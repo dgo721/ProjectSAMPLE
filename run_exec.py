@@ -1,4 +1,4 @@
-import re, turtle
+import re, turtle, math
 from memory import Memory
 
 read = 1
@@ -212,11 +212,20 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'trio':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
-		base = getDirData(int(qactual[1]))*5
-		height = getDirData(int(qactual[2]))*5
+		b = getDirData(int(qactual[1]))*5
+		h = getDirData(int(qactual[2]))*5
+		ang = math.degrees(math.atan(h/(b/2)))
+		l = math.sqrt(h**2 + (b/2)**2)
 		turtle.pencolor(qactual[3])
 		turtle.fillcolor(qactual[3])
 		turtle.fill(True)
+		turtle.seth(90)
+		turtle.left(90-ang)
+		turtle.forward(l)
+		turtle.left(ang*2)
+		turtle.forward(l)
+		turtle.left(180-ang)
+		turtle.forward(b)
 		turtle.fill(False)
 
 	elif qactual[0] == 'quad':

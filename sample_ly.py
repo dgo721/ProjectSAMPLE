@@ -668,7 +668,7 @@ try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
-    Name = "ej/ej8.txt"
+    Name = "ej/ej10.txt"
 
 s = Name
 

@@ -5,16 +5,16 @@ j = i - 10;
 echo i;
 echo j;
 
-//trio 4 6 green;
-//sample on up i 4 blue;
-//sample off down j;
-//sample on right 5 5 blue;
-//sample on left 9 2 red;
-//sample on down 8 1 yellow;
-//sample on left 13 5 green;
-//sample on up 23 6 black;
+trio 40 60 green;
+sample on up i 4 blue;
+sample off down j;
+sample on right 5 5 blue;
+sample on left 9 2 red;
+sample on down 8 1 yellow;
+sample on left 13 5 green;
+sample on up 23 6 black;
 quad 5 15 yellow;
-//arc 22.3 90 cyan;
+arc 22.3 90 cyan;
 sample on left 13 5 blue;
 //oval 15 15 green;
 

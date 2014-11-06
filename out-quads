@@ -6,14 +6,29 @@ QUAD|   OP  |   OPR1|   OPR2|   TEMP|
    4|   =   |   _t2 |   -1  |   j   |   
    5|   echo|   i   |   -1  |   -1  |   
    6|   echo|   j   |   -1  |   -1  |   
-   7|   quad|   5   |   15  |   yellow|   
-   8|   sample1|   5   |   blue|   -1  |   
-   9|   sample2|   on  |   left|   13  |   
-  10|   *   |   j   |   3.3 |   _t3 |   
-  11|   +   |   i   |   _t3 |   _t4 |   
-  12|   =   |   _t4 |   -1  |   a   |   
-  13|   *   |   j   |   3.3 |   _t5 |   
-  14|   echo|   _t5 |   -1  |   -1  |   
-  15|   echo|   a   |   -1  |   -1  |   
-  16|   echo|   "Prueba"|   -1  |   -1  |   
-  17|   end |   -1  |   -1  |   -1  |   
+   7|   trio|   40  |   60  |   green|   
+   8|   sample1|   4   |   blue|   -1  |   
+   9|   sample2|   on  |   up  |   i   |   
+  10|   sample|   off |   down|   j   |   
+  11|   sample1|   5   |   blue|   -1  |   
+  12|   sample2|   on  |   right|   5   |   
+  13|   sample1|   2   |   red |   -1  |   
+  14|   sample2|   on  |   left|   9   |   
+  15|   sample1|   1   |   yellow|   -1  |   
+  16|   sample2|   on  |   down|   8   |   
+  17|   sample1|   5   |   green|   -1  |   
+  18|   sample2|   on  |   left|   13  |   
+  19|   sample1|   6   |   black|   -1  |   
+  20|   sample2|   on  |   up  |   23  |   
+  21|   quad|   5   |   15  |   yellow|   
+  22|   arc |   22.3|   90  |   cyan|   
+  23|   sample1|   5   |   blue|   -1  |   
+  24|   sample2|   on  |   left|   13  |   
+  25|   *   |   j   |   3.3 |   _t3 |   
+  26|   +   |   i   |   _t3 |   _t4 |   
+  27|   =   |   _t4 |   -1  |   a   |   
+  28|   *   |   j   |   3.3 |   _t5 |   
+  29|   echo|   _t5 |   -1  |   -1  |   
+  30|   echo|   a   |   -1  |   -1  |   
+  31|   echo|   "Prueba"|   -1  |   -1  |   
+  32|   end |   -1  |   -1  |   -1  |   
