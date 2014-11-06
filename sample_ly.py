@@ -390,10 +390,12 @@ def p_command(p):
 def p_commandA(p):
     '''commandA : ON move exp CTE_INTEGER color ';'
             | OFF move exp ';' '''
+    global tab_constant
     if pilaTipos.pop() == 2:
     	senderror(10, linenumber-1)
     if p[1] == 'on':
-    	p[0] = [p[1], p[2], pilaOpera.pop(), p[4], p[5]]
+    	tab_constant = tabconstante(tab_constant, p[4])
+        p[0] = [p[1], p[2], pilaOpera.pop(), p[4], p[5]]
     else:
 		p[0] = [p[1], p[2], pilaOpera.pop()]
 
@@ -544,6 +546,7 @@ def p_var_cte(p):
                 | FALSE'''
     global assign_vars, pilaTipos, tab_constant
     if (type(p[1]) is int):
+        print "VAR_CTE--",p[1]
         tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(0) #Encuentra un entero para asignar
         pilaTipos.append(0)

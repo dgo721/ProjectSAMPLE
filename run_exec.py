@@ -1,4 +1,4 @@
-import re
+import re, turtle
 from memory import Memory
 
 read = 1
@@ -123,9 +123,12 @@ for line in f:
 
 f.close()
 #print quad[0][0]
+#print constants
 
 while quad[ip][1][0] != 'end':
 	qactual = quad[ip][1]
+	turtle.seth(90)
+	turtle.color("black", "black")
 	#print qactual
 
 	if qactual[0] == '+':
@@ -148,10 +151,92 @@ while quad[ip][1][0] != 'end':
 		tmp = getDirData(int(qactual[1]))
 		addDirData(int(qactual[3]), tmp)
 
+	elif qactual[0] == 'sample1':
+		linew = getDirData(int(qactual[1]))
+		color = qactual[2]
+		ip = ip + 1; qactual = quad[ip][1]
+		tmp = getDirData(int(qactual[3]))*5
+		print qactual[0], qactual[1], qactual[2], getDirData(int(qactual[3])), linew, color
+		turtle.pendown()
+		turtle.pensize(linew); turtle.pencolor(color)
+		if qactual[2] == 'up':
+			turtle.seth(90)
+			turtle.forward(tmp)
+		elif qactual[2] == 'down':
+			turtle.seth(270)
+			turtle.forward(tmp)
+		elif qactual[2] == 'left':
+			turtle.seth(180)
+			turtle.forward(tmp)
+		elif qactual[2] == 'right':
+			turtle.seth(0)
+			turtle.forward(tmp)
+
+	elif qactual[0] == 'sample':
+		print qactual[0], qactual[1], qactual[2], getDirData(int(qactual[3]))
+		tmp = getDirData(int(qactual[3]))*5
+		turtle.penup()
+		if qactual[2] == 'up':
+			turtle.seth(90)
+			turtle.forward(tmp)
+		elif qactual[2] == 'down':
+			turtle.seth(270)
+			turtle.forward(tmp)
+		elif qactual[2] == 'left':
+			turtle.seth(180)
+			turtle.forward(tmp)
+		elif qactual[2] == 'right':
+			turtle.seth(0)
+			turtle.forward(tmp)
+
+	elif qactual[0] == 'arc':
+		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
+		size=getDirData(int(qactual[1]))*5
+		angle=getDirData(int(qactual[2]))
+		turtle.pencolor(qactual[3]);
+		turtle.pensize(2)
+		turtle.circle(size,angle)
+
+	elif qactual[0] == 'oval':
+		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
+		turtle.pencolor(qactual[3])
+		turtle.fillcolor(qactual[3])
+		turtle.begin_fill()
+		turtle.circle(35)
+		turtle.end_fill()
+		turtle.fill(True)
+		for _ in range(4):
+			turtle.forward(100)
+			turtle.left(90)
+		turtle.fill(False)
+
+	elif qactual[0] == 'trio':
+		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
+		base = getDirData(int(qactual[1]))*5
+		height = getDirData(int(qactual[2]))*5
+		turtle.pencolor(qactual[3])
+		turtle.fillcolor(qactual[3])
+		turtle.fill(True)
+		turtle.fill(False)
+
+	elif qactual[0] == 'quad':
+		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
+		base = getDirData(int(qactual[1]))*5
+		height = getDirData(int(qactual[2]))*5
+		turtle.pencolor(qactual[3])
+		turtle.fillcolor(qactual[3])
+		turtle.fill(True)
+		for _ in range(2):
+			turtle.forward(base)
+			turtle.left(90)
+			turtle.forward(height)
+			turtle.left(90)
+		turtle.fill(False)
+
 	elif qactual[0] == 'echo':
 		tmp = getDirData(int(qactual[1]))
-		esstring = re.compile(pattn_string)
 		tmp1 = str(tmp)
+		esstring = re.compile(pattn_string)
 		if re.match(esstring, tmp1):
 			tmp1 = tmp.split("\"")
 			print tmp1[1]
@@ -159,3 +244,5 @@ while quad[ip][1][0] != 'end':
 			print tmp
 
 	ip = ip + 1
+
+turtle.done()
