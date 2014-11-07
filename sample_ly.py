@@ -47,6 +47,7 @@ reserva = {
     'blue' : 'BLUE',
     'orange' : 'ORANGE',
     'black' : 'BLACK',
+    'white' : 'WHITE',
     'purple' : 'PURPLE',
     'cyan' : 'CYAN',
 }
@@ -529,6 +530,7 @@ def p_color(p):
             | BLUE
             | GREEN
             | BLACK
+            | WHITE
             | ORANGE
             | PURPLE
             | CYAN'''

@@ -78,6 +78,46 @@ def getDirData(num):
 	elif num >= 100:
 		return constants[num]
 
+def getColor(color):
+	if color == "red":
+		return "#d03832"
+	elif color == "yellow":
+		return "#e1c81d"
+	elif color == "green":
+		return "#31ad29"
+	elif color == "blue":
+		return "#2734a4"
+	elif color == "black":
+		return "#000000";
+	elif color == "white":
+		return "#ffffff"
+	elif color == "orange":
+		return "#ee7c15"
+	elif color == "purple":
+		return "#740fd5"
+	elif color == "cyan":
+		return "#23c5ef"
+
+def getDarkColor(color):
+	if color == "red":
+		return "#7c1d1c"
+	elif color == "yellow":
+		return "#b2a713"
+	elif color == "green":
+		return "#147517"
+	elif color == "blue":
+		return "#2e2c57"
+	elif color == "black":
+		return "#ffffff";
+	elif color == "white":
+		return "#000000"
+	elif color == "orange":
+		return "#a06911"
+	elif color == "purple":
+		return "#4a0b69"
+	elif color == "cyan":
+		return "#0f698e"
+
 f = open('sample.smo', 'r')
 
 for line in f:
@@ -127,8 +167,10 @@ f.close()
 
 while quad[ip][1][0] != 'end':
 	qactual = quad[ip][1]
+	turtle.bgcolor("#727678")
 	turtle.seth(90)
-	turtle.color("black", "black")
+	turtle.color("darkgreen", "black")
+	turtle.pendown()
 	#print qactual
 
 	if qactual[0] == '+':
@@ -153,7 +195,7 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'sample1':
 		linew = getDirData(int(qactual[1]))
-		color = qactual[2]
+		color = getColor(qactual[2])
 		ip = ip + 1; qactual = quad[ip][1]
 		tmp = getDirData(int(qactual[3]))*5
 		print qactual[0], qactual[1], qactual[2], getDirData(int(qactual[3])), linew, color
@@ -193,22 +235,29 @@ while quad[ip][1][0] != 'end':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
 		size=getDirData(int(qactual[1]))*5
 		angle=getDirData(int(qactual[2]))
-		turtle.pencolor(qactual[3]);
+		turtle.pencolor(getColor(qactual[3]));
 		turtle.pensize(2)
 		turtle.circle(size,angle)
 
 	elif qactual[0] == 'oval':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
-		turtle.pencolor(qactual[3])
-		turtle.fillcolor(qactual[3])
-		turtle.begin_fill()
-		turtle.circle(35)
-		turtle.end_fill()
-		turtle.fill(True)
-		for _ in range(4):
-			turtle.forward(100)
-			turtle.left(90)
-		turtle.fill(False)
+		dmayor = getDirData(int(qactual[2]))/5
+		dmenor = getDirData(int(qactual[1]))/5
+		turtle.shape("circle")
+		turtle.shapesize(dmenor+0.5,dmayor+0.5,1)
+		turtle.fillcolor(getDarkColor(qactual[3]))
+		turtle.stamp()
+		turtle.shapesize(dmenor,dmayor,1)
+		turtle.fillcolor(getColor(qactual[3]))
+		turtle.stamp()
+		turtle.shapesize(1,1,1)
+		turtle.fillcolor("black")
+		turtle.shape('classic')
+		turtle.penup()
+		turtle.seth(0)
+		turtle.forward((dmayor+0.5)*10)
+		turtle.seth(90)
+		turtle.backward((dmenor+0.5)*10)
 
 	elif qactual[0] == 'trio':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
@@ -216,8 +265,9 @@ while quad[ip][1][0] != 'end':
 		h = getDirData(int(qactual[2]))*5
 		ang = math.degrees(math.atan(h/(b/2)))
 		l = math.sqrt(h**2 + (b/2)**2)
-		turtle.pencolor(qactual[3])
-		turtle.fillcolor(qactual[3])
+		turtle.pensize(5);
+		turtle.pencolor(getDarkColor(qactual[3]))
+		turtle.fillcolor(getColor(qactual[3]))
 		turtle.fill(True)
 		turtle.seth(90)
 		turtle.left(90-ang)
@@ -232,13 +282,14 @@ while quad[ip][1][0] != 'end':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
 		base = getDirData(int(qactual[1]))*5
 		height = getDirData(int(qactual[2]))*5
-		turtle.pencolor(qactual[3])
-		turtle.fillcolor(qactual[3])
+		turtle.pensize(5);
+		turtle.pencolor(getDarkColor(qactual[3]))
+		turtle.fillcolor(getColor(qactual[3]))
 		turtle.fill(True)
 		for _ in range(2):
-			turtle.forward(base)
-			turtle.left(90)
 			turtle.forward(height)
+			turtle.left(90)
+			turtle.forward(base)
 			turtle.left(90)
 		turtle.fill(False)
 
