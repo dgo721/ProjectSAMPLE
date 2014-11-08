@@ -4,40 +4,40 @@ class Memory:
 	def __init__(self):
 		self.gintdir = 2000
 		self.gintend = 2000
-		self.gint = list()
+		self.gint = dict()
 		self.gfloatdir = 4000
 		self.gfloatend = 4000
-		self.gfloat = list()
+		self.gfloat = dict()
 		self.gbooldir = 6000
 		self.gboolend = 6000
-		self.gbool = list()
+		self.gbool = dict()
 		self.gtintdir = 22000
 		self.gtintend = 22000
-		self.gtint = list()
+		self.gtint = dict()
 		self.gtfloatdir = 24000
 		self.gtfloatend = 24000
-		self.gtfloat = list()
+		self.gtfloat = dict()
 		self.gtbooldir = 26000
 		self.gtboolend = 26000
-		self.gtbool = list()
+		self.gtbool = dict()
 		self.lintdir = 12000
 		self.lintend = 12000
-		self.lint = list()
+		self.lint = dict()
 		self.lfloatdir = 14000
 		self.lfloatend = 14000
-		self.lfloat = list()
+		self.lfloat = dict()
 		self.lbooldir = 16000
 		self.lboolend = 16000
-		self.lbool = list()
+		self.lbool = dict()
 		self.ltintdir = 32000
 		self.ltintend = 32000
-		self.ltint = list()
+		self.ltint = dict()
 		self.ltfloatdir = 34000
 		self.ltfloatend = 34000
-		self.ltfloat = list()
+		self.ltfloat = dict()
 		self.ltbooldir = 36000
 		self.ltboolend = 36000
-		self.ltbool = list()
+		self.ltbool = dict()
 
 	#Inicializa mapa de memoria global (workspace)
 	def setGlobalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool):
@@ -50,93 +50,81 @@ class Memory:
 		#print self.gintend, self.gfloatend, self.gboolend, self.gtintend, self.gtfloatend, self.gtboolend
 
 	#Aniade elemento a memoria global
-	def addGlobalInt(self, data):
-		self.gint.append(data)
+	def addGlobalInt(self, num, data):
+		self.gint[num]=data
 
-	def addGlobalFloat(self, data):
-		self.gfloat.append(data)
+	def addGlobalFloat(self, num, data):
+		self.gfloat[num]=data
 
-	def addGlobalBool(self, data):
-		self.gbool.append(data)
+	def addGlobalBool(self, num, data):
+		self.gbool[num]=data
 
 	#Aniade elemento temporal a memoria global
-	def addGlobalIntTemp(self, data):
-		self.gtint.append(data)
+	def addGlobalIntTemp(self, num, data):
+		self.gtint[num]=data
 
-	def addGlobalFloatTemp(self, data):
-		self.gtfloat.append(data)
+	def addGlobalFloatTemp(self, num, data):
+		self.gtfloat[num]=data
 
-	def addGlobalBoolTemp(self, data):
-		self.gtbool.append(data)
+	def addGlobalBoolTemp(self, num, data):
+		self.gtbool[num]=data
 
 	#Aniade elemento a memoria local
-	def addLocalInt(self, data):
-		self.lint.append(data)
+	def addLocalInt(self, num, data):
+		self.lint[num]=data
 
-	def addLocalFloat(self, data):
-		self.lfloat.append(data)
+	def addLocalFloat(self, num, data):
+		self.lfloat[num]=data
 
-	def addLocalBool(self, data):
-		self.lbool.append(data)
+	def addLocalBool(self, num, data):
+		self.lbool[num]=data
 
 	#Aniade elemento temporal a memoria local
-	def addLocalIntTemp(self, data):
-		self.ltint.append(data)
+	def addLocalIntTemp(self, num, data):
+		self.ltint[num]=data
 
-	def addLocalFloatTemp(self, data):
-		self.ltfloat.append(data)
+	def addLocalFloatTemp(self, num, data):
+		self.ltfloat[num]=data
 
-	def addLocalBoolTemp(self, data):
-		self.ltbool.append(data)
+	def addLocalBoolTemp(self, num, data):
+		self.ltbool[num]=data
 	
 	#Busca elemento en memoria
 	def getGlobalInt(self, num):
-		pos = num - self.gintdir
-		return self.gint[pos]
+		return self.gint[num]
 
 	def getGlobalFloat(self, num):
-		pos = num - self.gfloatdir
-		return self.gfloat[pos]
+		return self.gfloat[num]
 
 	def getGlobalBool(self, num):
-		pos = num - self.gbooldir
-		return self.gbool[pos]
+		return self.gbool[num]
 
 	def getGlobalIntTemp(self, num):
-		pos = num - self.gtintdir
-		return self.gtint[pos]
+		return self.gtint[num]
 
 	def getGlobalFloatTemp(self, num):
-		pos = num - self.gtfloatdir
-		return self.gtfloat[pos]
+		return self.gtfloat[num]
 
 	def getGlobalBoolTemp(self, num):
-		pos = num - self.gtbooldir
-		return self.gtbool[pos]
+		return self.gtbool[num]
 
 	def getLocalInt(self, num):
-		pos = num - self.lintdir
-		return self.lint[pos]
+		return self.lint[num]
 
 	def getLocalFloat(self, num):
-		pos = num - self.lfloatdir
-		return self.lfloat[pos]
+		return self.lfloat[num]
 
 	def getLocalBool(self, num):
-		pos = num - self.lbooldir
-		return self.lbool[pos]
+		return self.lbool[num]
 
 	def getLocalIntTemp(self, num):
-		pos = num - self.ltintdir
-		return self.ltint[pos]
+		return self.ltint[num]
 
 	def getLocalFloatTemp(self, num):
-		pos = num - self.ltfloatdir
-		return self.ltfloat[pos]
+		return self.ltfloat[num]
 
 	def getLocalBoolTemp(self, num):
-		pos = num - self.ltbooldir
-		return self.ltbool[pos]
+		return self.ltbool[num]
 
 	def echoGlobal(self):
 		print "GLOBAL INT--", self.gint
@@ -145,3 +133,11 @@ class Memory:
 		print "GLOBAL INT TEMP--", self.gtint
 		print "GLOBAL FLOAT TEMP--", self.gtfloat
 		print "GLOBAL BOOL TEMP--", self.gtbool
+
+	def echoEndMemory(self):
+		print self.gintend
+		print self.gfloatend
+		print self.gboolend
+		print self.gtintend
+		print self.gtfloatend
+		print self.gtboolend

@@ -2,14 +2,19 @@ init
 
 if (1 > 2) {
 	var3 = 3;
+	echo var3;
 } else { 
 	if (4 < 100) {
 		var4 = 3.41;
+		echo var4;
 	} else {
 		var4 = 123.34;
+		echo var4;
 	}
 }
 
 a=2;
+
+echo a;
 
 end

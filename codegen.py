@@ -1,5 +1,5 @@
 from dirmods import DirMods
-from tabvars import TabVars
+from tabvars import TabVars, tabvar
 
 class CodeGen:
 
@@ -48,12 +48,13 @@ class CodeGen:
 		self.x=self.x+1
 		self.data[salida][3] = self.x
 
-	def addcontinueR(self, cte):
+	def addcontinueR(self, cte, tabtemp, linenumber):
 		temporal = self.pilaSaltos.pop()
 		regreso = self.pilaSaltos.pop()
 		stmp=str(self.t)
 		tmp='_t' + stmp
 		self.data[self.x]=['+', temporal, 1, tmp, self.scope]
+		tabtemp=tabvar(tabtemp, tmp, 0, linenumber)
 		self.x=self.x+1
 		self.t=self.t+1
 		self.data[self.x]=['=', tmp, -1, temporal, self.scope]
@@ -61,22 +62,26 @@ class CodeGen:
 		stmp=str(self.t)
 		tmp='_t' + stmp
 		self.data[self.x]=['==', temporal, cte, tmp, self.scope]
+		tabtemp=tabvar(tabtemp, tmp, 2, linenumber)
 		self.x=self.x+1
 		self.t=self.t+1
 		self.data[self.x]=['goToF', tmp, -1, regreso, self.scope]
 		self.x=self.x+1
+		return tabtemp
 
 	def addGoToW(self):
 		self.pilaSaltos.append(self.x)
 
-	def addGoToR(self):
+	def addGoToR(self, tabtemp, linenumber):
 		stmp=str(self.t)
 		tmp='_t' + stmp
 		self.data[self.x]=['=', 0, -1, tmp, self.scope]
+		tabtemp=tabvar(tabtemp, tmp, 0, linenumber)
 		self.x=self.x+1
 		self.t=self.t+1
 		self.pilaSaltos.append(self.x)
 		self.pilaSaltos.append(tmp)
+		return tabtemp
 
 	def getKey(self, key):
 		for llave in self.data:

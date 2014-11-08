@@ -1,0 +1,25 @@
+init
+
+quad 30 30 white;
+oval 30 30 purple;
+trio 30 30 blue;
+sample off down 10;
+sample off right 10;
+quad 30 30 cyan;
+oval 30 30 red;
+trio 30 30 orange;
+sample off down 10;
+sample off right 10;
+quad 30 30 green;
+oval 30 30 yellow;
+trio 30 30 black;
+
+//sample off up 15;
+//sample off left 30;
+//arc 25 180 red;
+//sample off right 44.5;
+//sample off down 10;
+//arc 20 180 red;
+//sample off down 15;
+
+end

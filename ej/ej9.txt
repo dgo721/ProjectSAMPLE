@@ -2,6 +2,7 @@ init
 
 //Esto es un comentario de linea
 i = 1.3;
+echo i;
 
 mod # first {
 	j = 3;
@@ -11,6 +12,8 @@ mod # first {
 j=23.2;
 a=45 + 3 + j;
 
+echo a; echo j;
+
 mod # second (int d) {
 	var4 = 1.23;
 	var3 = d;
@@ -18,13 +21,19 @@ mod # second (int d) {
 
 b= 45 * 334 / 23 - 34;
 
+echo b;
+
 mod # third (int e, float f) {
 	var13 = 12+b-i*89.2;
 	var14 = 23;
 }
 
+echo b+a;
+
 e=23;
 r=34.3;
+
+echo e*j; echo "ULTIMA";
 
 //# second (e);
 

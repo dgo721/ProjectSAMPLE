@@ -26,29 +26,29 @@ def listParams(lista):
 def addDirData(num, data):
 	#print "addDirData--", num, data
 	if num >= 36000:
-		memoria.addLocalBoolTemp(data)
+		memoria.addLocalBoolTemp(num, data)
 	elif num >= 34000:
-		memoria.addLocalFloatTemp(data)
+		memoria.addLocalFloatTemp(num, data)
 	elif num >= 32000:
-		memoria.addLocalIntTemp(data)
+		memoria.addLocalIntTemp(num, data)
 	elif num >= 26000:
-		memoria.addGlobalBoolTemp(data)
+		memoria.addGlobalBoolTemp(num, data)
 	elif num >= 24000:
-		memoria.addGlobalFloatTemp(data)
+		memoria.addGlobalFloatTemp(num, data)
 	elif num >= 22000:
-		memoria.addGlobalIntTemp(data)
+		memoria.addGlobalIntTemp(num, data)
 	elif num >= 16000:
-		memoria.addLocalBool(data)
+		memoria.addLocalBool(num, data)
 	elif num >= 14000:
-		memoria.addLocalFloat(data)
+		memoria.addLocalFloat(num, data)
 	elif num >= 12000:
-		memoria.addLocalInt(data)
+		memoria.addLocalInt(num, data)
 	elif num >= 6000:
-		memoria.addGlobalBool(data)
+		memoria.addGlobalBool(num, data)
 	elif num >= 4000:
-		memoria.addGlobalFloat(data)
+		memoria.addGlobalFloat(num, data)
 	elif num >= 2000:
-		memoria.addGlobalInt(data)
+		memoria.addGlobalInt(num, data)
 
 def getDirData(num):
 	if num >= 36000:
@@ -74,6 +74,7 @@ def getDirData(num):
 	elif num >= 4000:
 		return memoria.getGlobalFloat(num)
 	elif num >= 2000:
+		print num
 		return memoria.getGlobalInt(num)
 	elif num >= 100:
 		return constants[num]
@@ -165,13 +166,24 @@ f.close()
 #print quad[0][0]
 #print constants
 
+turtle.bgcolor("#727678")
+turtle.seth(90)
+turtle.color("darkgreen", "black")
+turtle.pendown()
+
 while quad[ip][1][0] != 'end':
 	qactual = quad[ip][1]
-	turtle.bgcolor("#727678")
 	turtle.seth(90)
 	turtle.color("darkgreen", "black")
 	turtle.pendown()
 	#print qactual
+
+	if ip == 10:
+		#print getDirData(int(qactual[1])), getDirData(int(qactual[2]))
+		#memoria.echoGlobal()
+		#memoria.echoEndMemory()
+		#print constants
+		pass
 
 	if qactual[0] == '+':
 		tmp = getDirData(int(qactual[1])) + getDirData(int(qactual[2]))
@@ -190,10 +202,36 @@ while quad[ip][1][0] != 'end':
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '=':
+		print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
 		tmp = getDirData(int(qactual[1]))
 		addDirData(int(qactual[3]), tmp)
 
+	elif qactual[0] == '==':
+		tmp = getDirData(int(qactual[1])) == getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '<>':
+		tmp = getDirData(int(qactual[1])) <> getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '>=':
+		tmp = getDirData(int(qactual[1])) >= getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '<=':
+		tmp = getDirData(int(qactual[1])) <= getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '>':
+		tmp = getDirData(int(qactual[1])) > getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == '<':
+		tmp = getDirData(int(qactual[1])) < getDirData(int(qactual[2]))
+		addDirData(int(qactual[3]), tmp)
+
 	elif qactual[0] == 'sample1':
+		prevSample = True
 		linew = getDirData(int(qactual[1]))
 		color = getColor(qactual[2])
 		ip = ip + 1; qactual = quad[ip][1]
@@ -216,6 +254,7 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'sample':
 		print qactual[0], qactual[1], qactual[2], getDirData(int(qactual[3]))
+		prevSample = True
 		tmp = getDirData(int(qactual[3]))*5
 		turtle.penup()
 		if qactual[2] == 'up':
@@ -238,11 +277,19 @@ while quad[ip][1][0] != 'end':
 		turtle.pencolor(getColor(qactual[3]));
 		turtle.pensize(2)
 		turtle.circle(size,angle)
+		prevSample = False
 
 	elif qactual[0] == 'oval':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
 		dmayor = getDirData(int(qactual[2]))/5
 		dmenor = getDirData(int(qactual[1]))/5
+		turtle.pencolor(getDarkColor(qactual[3]))
+
+		turtle.penup()
+		turtle.forward((dmenor+0.5)*10)
+		turtle.seth(180)
+		turtle.forward((dmayor+0.5)*10)
+		turtle.seth(90)
 		turtle.shape("circle")
 		turtle.shapesize(dmenor+0.5,dmayor+0.5,1)
 		turtle.fillcolor(getDarkColor(qactual[3]))
@@ -258,6 +305,7 @@ while quad[ip][1][0] != 'end':
 		turtle.forward((dmayor+0.5)*10)
 		turtle.seth(90)
 		turtle.backward((dmenor+0.5)*10)
+		prevSample = False
 
 	elif qactual[0] == 'trio':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
@@ -277,6 +325,7 @@ while quad[ip][1][0] != 'end':
 		turtle.left(180-ang)
 		turtle.forward(b)
 		turtle.fill(False)
+		prevSample = False
 
 	elif qactual[0] == 'quad':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
@@ -292,6 +341,7 @@ while quad[ip][1][0] != 'end':
 			turtle.forward(base)
 			turtle.left(90)
 		turtle.fill(False)
+		prevSample = False
 
 	elif qactual[0] == 'echo':
 		tmp = getDirData(int(qactual[1]))
@@ -303,6 +353,19 @@ while quad[ip][1][0] != 'end':
 		else:
 			print tmp
 
-	ip = ip + 1
+	elif qactual[0] == 'goTo':
+		print qactual[0], qactual[3]
+		ip = int(qactual[3]) - 2
 
+	elif qactual[0] == 'goToF':
+		print qactual[0], getDirData(int(qactual[1])), qactual[3]
+		if getDirData(int(qactual[1])) == False:
+			ip = int(qactual[3]) - 2
+
+	elif qactual[0] == 'ret':
+		pass
+
+	#print "IP-", ip+1
+	ip = ip + 1
+turtle.hideturtle()
 turtle.done()

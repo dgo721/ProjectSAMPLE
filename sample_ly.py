@@ -405,7 +405,15 @@ def p_cycle(p):
 
 def p_repeat(p):
     '''repeat : REPLAY CTE_INTEGER gotoR '[' repeatA ']' ';' '''
-    quads_gen.addcontinueR(p[2])
+    global tab_temporal, tab_ltemporal
+    if flagTabTemp == True:
+    	tab_ltemporal=quads_gen.addcontinueR(p[2], tab_ltemporal, linenumber)
+    else:
+    	tab_temporal=quads_gen.addcontinueR(p[2], tab_temporal, linenumber)
+    cont_tvars[0] = cont_tvars[0] + 1
+    work_tvars[0] = work_tvars[0] + 1
+    cont_tvars[2] = cont_tvars[2] + 1
+    work_tvars[2] = work_tvars[2] + 1
 
 def p_repeatA(p):
     '''repeatA : command repeatB'''
@@ -602,7 +610,14 @@ def p_gotoW(p):
 
 def p_gotoR(p):
 	'''gotoR : '''
-	quads_gen.addGoToR()
+	global tab_temporal, tab_ltemporal, tab_constant
+	if flagTabTemp == True:
+		tab_ltemporal=quads_gen.addGoToR(tab_ltemporal, linenumber)
+	else:
+		tab_temporal=quads_gen.addGoToR(tab_temporal, linenumber)
+	tab_constant = tabconstante(tab_constant, 0)
+	cont_tvars[0] = cont_tvars[0] + 1
+	work_tvars[0] = work_tvars[0] + 1
 
 def p_continueGo(p):
 	'''continueGo : '''
