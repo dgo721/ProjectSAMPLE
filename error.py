@@ -1,6 +1,9 @@
 import sys
 
 def senderror(x, linenumber, *resto):
+	if linenumber == 0:
+		linenumber = 1
+
 	if x == 1:
 		print("ERROR // Syntax at '%s'" % resto[0])
 		print "-LINE //", linenumber
@@ -35,5 +38,8 @@ def senderror(x, linenumber, *resto):
 		print "-LINE //", linenumber
 	elif x == 11:
 		print("ERROR // Module <%s> already exists") % resto[0]
+		print "-LINE //", linenumber
+	elif x == 12:
+		print("ERROR // Dimension value must be greater than 0")
 		print "-LINE //", linenumber
 	sys.exit()

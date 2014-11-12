@@ -1,5 +1,6 @@
 import re, turtle, math
 from memory import Memory
+from error_exec import senderror
 
 read = 1
 ip = 0
@@ -74,7 +75,6 @@ def getDirData(num):
 	elif num >= 4000:
 		return memoria.getGlobalFloat(num)
 	elif num >= 2000:
-		print num
 		return memoria.getGlobalInt(num)
 	elif num >= 100:
 		return constants[num]
@@ -198,11 +198,15 @@ while quad[ip][1][0] != 'end':
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '/':
-		tmp = getDirData(int(qactual[1])) / getDirData(int(qactual[2]))
-		addDirData(int(qactual[3]), tmp)
+		try:
+			tmp = getDirData(int(qactual[1])) / getDirData(int(qactual[2]))
+		except ZeroDivisionError:
+			senderror(1)
+		else:
+			addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '=':
-		print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
+		#print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
 		tmp = getDirData(int(qactual[1]))
 		addDirData(int(qactual[3]), tmp)
 

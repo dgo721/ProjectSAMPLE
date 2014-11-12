@@ -1,0 +1,10 @@
+init
+
+a=0;
+
+while (a < 31){
+	a = a + 3;
+	echo a;
+}
+
+end

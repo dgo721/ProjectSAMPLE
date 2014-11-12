@@ -8,16 +8,25 @@ class TabVars:
 		self.offsbol = dirbool
 		self.data = {}
 
-	def add(self, key, value):
+	def add(self, key, value, numdim):
 		if value == 0:
 			self.data.update({key:[value, self.offsint]})
-			self.offsint = self.offsint + 1
+			if numdim == 0:
+				self.offsint = self.offsint + 1
+			else:
+				self.offsint = self.offsint + numdim
 		elif value == 1:
 			self.data.update({key:[value, self.offsflo]})
-			self.offsflo = self.offsflo + 1
+			if numdim == 0:
+				self.offsflo = self.offsflo + 1
+			else:
+				self.offsflo = self.offsflo + numdim
 		elif value == 2:
 			self.data.update({key:[value, self.offsbol]})
-			self.offsbol = self.offsbol + 1
+			if numdim == 0:
+				self.offsbol = self.offsbol + 1
+			else:
+				self.offsbol = self.offsbol + numdim
 
 	def getKey(self, key):
 		for llave in self.data:
@@ -127,10 +136,10 @@ def invartipo_mod(tipo):
 
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente
-def tabvar(tab_valores, nombre, tipo, linea):
+def tabvar(tab_valores, nombre, tipo, numdim, linea):
 	#print "TABVAR--", nombre, tipo
 	if tab_valores.lookup(nombre)!=True:
-		tab_valores.add(nombre, tipo)
+		tab_valores.add(nombre, tipo, numdim)
 	else:
 		if tab_valores.getType(nombre) != tipo:
 			#print "TABVAR--", tab_valores.getType(nombre), tipo

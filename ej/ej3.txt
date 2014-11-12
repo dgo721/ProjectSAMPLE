@@ -1,7 +1,7 @@
 init
 
 var1 = 3;
-var2 = 0;
+var2 = 2;
 var3 = false;
 var4 = 1.23+var1;
 var5 = var2 + var4;

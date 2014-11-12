@@ -37,6 +37,8 @@ reserva = {
     'else' : 'ELSE',
     'while' : 'WHILE',
     'replay' : 'REPLAY',
+    'arr' : 'ARR',
+    'mat' : 'MAT',
     'pipe' : 'PIPE',
     'in' : 'IN',
     'out' : 'OUT',
@@ -62,7 +64,6 @@ linenumber = 0;
 
 def t_ID(t):
     r'[a-z][a-zA-Z0-9_]*'
-    global pilaOpera
     t.type = reserva.get(t.value,'ID') # Checa palabras reservadas
     return t
 
@@ -70,13 +71,11 @@ t_CTE_STRING = r'\".*?\"'
 
 def t_CTE_FLOAT(t):
     r'\d+\.\d*'
-    global pilaOpera
     t.value = float(t.value)
     return t
 
 def t_CTE_INTEGER(t):
     r'\d+'
-    global pilaOpera
     t.value = int(t.value)
     return t
 
@@ -117,7 +116,7 @@ def p_program(p):
     while (pairs_idtype):
     	par = pairs_idtype.pop(0)
     	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
-    	tab_valores=tabvar(tab_valores, par[0], par[1], linenumber)
+    	tab_valores=tabvar(tab_valores, par[0], par[1], par[2], linenumber)
     
     dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], tab_temporal, None)
 
@@ -150,6 +149,8 @@ def p_statute(p):
                 | repeat
                 | command
                 | calling
+                | array
+                | matrix
                 | pipeline
                 | screen'''
     global assign_vars
@@ -165,7 +166,7 @@ def p_module(p):
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
     	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
-    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], linenumber)
+    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber)
     	suma = suma - 1
 
     dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], copy.deepcopy(tab_ltemporal), line_mod)
@@ -215,7 +216,7 @@ def p_vars(p):
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
-    pairs_idtype.append([p[2], tipo1])
+    pairs_idtype.append([p[2], tipo1, 0])
     #print "MODULEA--",pairs_idtype
     #tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
@@ -323,8 +324,8 @@ def p_assign(p):
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
-    pairs_idtype.append([p[1], tipo1])
-    #print "ASSIGN--1 PAIRS", pairs_idtype, pairs_idtype[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
+    pairs_idtype.append([p[1], tipo1, 0])
+    #print "ASSIGN--1 PAIRS", pairs_idtype, vartipo_mod[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
     #print "ASSIGN--2 PAIRS", cont_vars, work_vars
     #tab_valores = tabvar(tab_valores, p[1], tipo1)
     #print "TABVAL en assign", tab_valores
@@ -353,6 +354,52 @@ def p_writeA(p):
             | CTE_STRING '''
     p[0] = p[1]
 
+def p_array(p):
+	'''array : ARR typeDim ID '[' CTE_INTEGER ']' ';' '''
+	global pairs_idtype, tab_constant
+	if p[5] == 0:
+		senderror(12, linenumber-1)
+	r = p[5] #Equivalente a R = (Ls - Li) * R, R = 1
+	print r
+	tipo1 = vartipo_mod(p[2])
+	if tipo1 == 0:
+		cont_vars[0] = cont_vars[0] + r
+		work_vars[0] = work_vars[0] + r
+	elif tipo1 == 1:
+		cont_vars[1] = cont_vars[1] + r
+		work_vars[1] = work_vars[1] + r
+	elif tipo1 == 2:
+		cont_vars[2] = cont_vars[2] + r
+		work_vars[2] = work_vars[2] + r
+	print "NUEVO ARR", p[1], p[5]
+	tab_constant = tabconstante(tab_constant, p[5])
+	pairs_idtype.append([p[3], tipo1, r])
+	quads_gen.addQ('arr', p[3], -1, r)
+
+
+def p_matrix(p):
+	'''matrix : MAT typeDim ID '[' CTE_INTEGER ']' '[' CTE_INTEGER ']' ';' '''
+	global pairs_idtype, tab_constant
+	if p[5] == 0 or p[8] == 0:
+		senderror(12, linenumber-1)
+	r = p[5] * p[8] #Equivalente a 2 veces R = (Ls - Li) * R, R = 1
+	print r
+	tipo1 = vartipo_mod(p[2])
+	if tipo1 == 0:
+		cont_vars[0] = cont_vars[0] + r
+		work_vars[0] = work_vars[0] + r
+	elif tipo1 == 1:
+		cont_vars[1] = cont_vars[1] + r
+		work_vars[1] = work_vars[1] + r
+	elif tipo1 == 2:
+		cont_vars[2] = cont_vars[2] + r
+		work_vars[2] = work_vars[2] + r
+	print "NUEVO MAT", p[1], p[5], p[8]
+	tab_constant = tabconstante(tab_constant, p[5])
+	tab_constant = tabconstante(tab_constant, p[8])
+	pairs_idtype.append([p[3], tipo1, r])
+	quads_gen.addQ('mat', p[3], -1, r)
+
 def p_pipeline(p):
     '''pipeline : PIPE ID pipelineA'''
 
@@ -368,6 +415,12 @@ def p_pipelineB(p):
 def p_pipelineC(p):
     '''pipelineC : ',' pipelineB
             | empty'''
+
+def p_typeDim(p):
+    '''typeDim : INT
+                | FLOAT
+                | BOOL'''
+    p[0] = p[1]
 
 def p_command(p):
     '''command : figure exp exp color ';'
@@ -461,9 +514,9 @@ def p_expression(p):
             	cont_tvars[2] = cont_tvars[2] + 1
             	work_tvars[2] = work_tvars[2] + 1
             if flagTabTemp == True:
-            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, linenumber)
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
             else:
-            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, linenumber)
+            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
@@ -501,9 +554,9 @@ def p_exp(p):
             	cont_tvars[1] = cont_tvars[1] + 1
             	work_tvars[1] = work_tvars[1] + 1
             if flagTabTemp == True:
-            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, linenumber)
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
             else:
-            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, linenumber)
+            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
             quads_gen.add(p[2], valor1, valor2, -1)
             pilaOpera.append(quads_gen.lasttemp())
             pilaTipos.append(tipoNuevo)
@@ -556,7 +609,7 @@ def p_var_cte(p):
                 | FALSE'''
     global assign_vars, pilaTipos, tab_constant
     if (type(p[1]) is int):
-        print "VAR_CTE--",p[1]
+        #print "VAR_CTE--",p[1]
         tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(0) #Encuentra un entero para asignar
         pilaTipos.append(0)
@@ -649,6 +702,7 @@ def p_error(p):
 
 from ply import yacc
 yacc.yacc()
+
 from tabvars import *
 from tabconst import *
 from dirmods import *
@@ -674,18 +728,26 @@ cont_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/
 work_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
 quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
-line_mod = 0
+line_mod = 0 #Almacena el numero de linea donde comienza un modulo
 id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
 xparam = 0 #Variable entera en funcion de apuntador de parametros
 flagTabTemp = False
 
 #'''
 
+nodisplay = 0
+
 try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
     Name = "ej/ej10.txt"
+
+try:
+    if int(sys.argv[2])==1:
+        nodisplay = 1
+except:
+    nodisplay = 0
 
 s = Name
 
@@ -700,25 +762,26 @@ yacc.parse(st)
 #print st
 f.close()
 
-print("\n")
-dir_modulos.echotables()
-dir_modulos.echotablestemp()
-#tab_valores.echo() #Despliega tabla de valores
-#tab_valores.write() #Guarda en archivo la tabla de valores
-print("\n")
-dir_modulos.echo() #Despliega directorio de modulos
-dir_modulos.echoV()
-dir_modulos.echoT()
-#dir_modulos.write()
-dir_modulos.writeQ()
-#print tab_valores.getDir("b")
-print("\n")
-tab_constant.echo()
-#tab_constant.write()
-tab_constant.writeQ()
-print("\n")
-quads_gen.echo()
-quads_gen.write()
-print("\n")
-quads_gen.echoQ(dir_modulos, tab_constant)
-quads_gen.writeQ(dir_modulos, tab_constant)
+if nodisplay != 1:
+	print("\n")
+	dir_modulos.echotables()
+	dir_modulos.echotablestemp()
+	#tab_valores.echo() #Despliega tabla de valores
+	#tab_valores.write() #Guarda en archivo la tabla de valores
+	print("\n")
+	dir_modulos.echo() #Despliega directorio de modulos
+	dir_modulos.echoV()
+	dir_modulos.echoT()
+	#dir_modulos.write()
+	#dir_modulos.writeQ()
+	#print tab_valores.getDir("b")
+	print("\n")
+	tab_constant.echo()
+	#tab_constant.write()
+	#tab_constant.writeQ()
+	print("\n")
+	#quads_gen.echo()
+	#quads_gen.write()
+	print("\n")
+	#quads_gen.echoQ(dir_modulos, tab_constant)
+	#quads_gen.writeQ(dir_modulos, tab_constant)
