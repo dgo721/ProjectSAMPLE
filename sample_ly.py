@@ -241,6 +241,9 @@ def p_id(p):
 		| ID '''
 	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer
 	p[0] = p[1]
+	print "ID--", es_dim, tab_dims.getDim(p[1])
+	if es_dim > 0 and tab_dims.getDim(p[1]) == -1:
+		senderror(16, linenumber, p[1])
 	if es_dim != tab_dims.getDim(p[1]) and tab_dims.getDim(p[1]) != -1:
 		if tab_dims.getDim(p[1]) == 2:
 			senderror(13, linenumber, p[1])
@@ -250,15 +253,15 @@ def p_id(p):
 		oper = pilaOpera.pop()
 		tipo = pilaTipos.pop()
 		if flagTabTemp == True:
-			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_lpointer, linenumber)
+			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_lpointer)
 			tab_lpointer = templist[0]
-			cont_tvars[0] = cont_tvars[0] + 1
-			work_tvars[0] = work_tvars[0] + 1
+			cont_point = cont_point + 1
+			work_point = work_point + 1
 		else:
-			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_pointer, linenumber)
+			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_pointer)
 			tab_pointer = templist[0]
-			cont_tvars[0] = cont_tvars[0] + 1
-			work_tvars[0] = work_tvars[0] + 1
+			cont_point = cont_point + 1
+			work_point = work_point + 1
 		p[0] = templist[1]
 	elif tab_dims.getDim(p[1]) == 2:
 		oper2 = pilaOpera.pop()
@@ -266,9 +269,18 @@ def p_id(p):
 		tipo2 = pilaTipos.pop()
 		tipo1 = pilaTipos.pop()
 		if flagTabTemp == True:
-			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_lpointer, linenumber)
+			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_lpointer, tab_ltemporal, linenumber)
+			tab_lpointer = templist[0]
+			tab_ltemporal = templist[1]
+			cont_tvars[0] = cont_tvars[0] + 2
+			work_tvars[0] = work_tvars[0] + 2
 		else:
-			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_pointer, linenumber)
+			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_pointer, tab_temporal, linenumber)
+			tab_pointer = templist[0]
+			tab_temporal = templist[1]
+			cont_tvars[0] = cont_tvars[0] + 2
+			work_tvars[0] = work_tvars[0] + 2
+		p[0] = templist[2]
 	es_dim = 0
 
 def p_sumdim(p):

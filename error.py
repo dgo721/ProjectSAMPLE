@@ -54,4 +54,7 @@ def senderror(x, linenumber, *resto):
 		elif resto[2] == 2:
 			print("ERROR // Variable <%s> already assign as a matrix.") % resto[0]
 		print "-LINE //", linenumber
+	elif x == 16:
+		print("ERROR // Variable <%s> not declared as array/matrix") % resto[0]
+		print "-LINE //", linenumber
 	sys.exit()

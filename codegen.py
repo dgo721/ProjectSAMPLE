@@ -86,7 +86,7 @@ class CodeGen:
 		self.pilaSaltos.append(tmp)
 		return tabtemp
 
-	def addVer1(self, oper, iden, limite1, tabpointer, linenumber):
+	def addVer1(self, oper, iden, limite1, tabpointer):
 		self.data[self.x]=['ver1', oper, -1, limite1, self.scope]
 		self.x=self.x+1
 		stmp=str(self.a)
@@ -97,11 +97,28 @@ class CodeGen:
 		self.a=self.a+1
 		return [tabpointer, tmp]
 
-	def addVer2(self, oper1, oper2, iden, limite1, limite2, tabpointer, linenumber):
-		self.data[self.x]=['ver1', oper1, -1, limite1, self.scope]
+	def addVer2(self, oper1, oper2, iden, limite1, limite2, tabpointer, tabtemp, linenumber):
+		self.data[self.x]=['ver2', oper1, -1, limite1, self.scope]
 		self.x=self.x+1
-		
-		return [tabpointer, tmp]
+		stmp=str(self.t)
+		tmp1='_t' + stmp
+		self.data[self.x]=['*dir', oper1, limite1, tmp1, self.scope]
+		self.x=self.x+1
+		self.t=self.t+1
+		self.data[self.x]=['ver', oper2, -1, limite2, self.scope]
+		self.x=self.x+1
+		stmp=str(self.t)
+		tmp2='_t' + stmp
+		self.data[self.x]=['+tmp', tmp1, oper2, tmp2, self.scope]
+		self.x=self.x+1
+		self.t=self.t+1
+		stmp=str(self.a)
+		tmp3='_a' + stmp
+		self.data[self.x]=['+dir', tmp2, iden, tmp3, self.scope]
+		tabpointer.add(tmp3)
+		self.x=self.x+1
+		self.a=self.a+1
+		return [tabpointer, tabtemp, tmp3]
 
 	def getKey(self, key):
 		for llave in self.data:
