@@ -239,8 +239,8 @@ def p_id(p):
 	'''id : ID '[' sumdim exp ']' '[' sumdim exp ']'
 		| ID '[' sumdim exp ']' 
 		| ID '''
-	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer
-	p[0] = p[1]
+	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer, cont_point, work_point
+	p[0] = [p[1], None]
 	print "ID--", es_dim, tab_dims.getDim(p[1])
 	if es_dim > 0 and tab_dims.getDim(p[1]) == -1:
 		senderror(16, linenumber, p[1])
@@ -262,7 +262,7 @@ def p_id(p):
 			tab_pointer = templist[0]
 			cont_point = cont_point + 1
 			work_point = work_point + 1
-		p[0] = templist[1]
+		p[0] = [p[1], templist[1]]
 	elif tab_dims.getDim(p[1]) == 2:
 		oper2 = pilaOpera.pop()
 		oper1 = pilaOpera.pop()
@@ -274,13 +274,17 @@ def p_id(p):
 			tab_ltemporal = templist[1]
 			cont_tvars[0] = cont_tvars[0] + 2
 			work_tvars[0] = work_tvars[0] + 2
+			cont_point = cont_point + 1
+			work_point = work_point + 1
 		else:
 			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_pointer, tab_temporal, linenumber)
 			tab_pointer = templist[0]
 			tab_temporal = templist[1]
 			cont_tvars[0] = cont_tvars[0] + 2
 			work_tvars[0] = work_tvars[0] + 2
-		p[0] = templist[2]
+			cont_point = cont_point + 1
+			work_point = work_point + 1
+		p[0] = [p[1], templist[2]]
 	es_dim = 0
 
 def p_sumdim(p):
@@ -369,7 +373,7 @@ def p_assign(p):
     #print "ASSIGN--", assign_vars, index
     #print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
-    	senderror(3, linenumber, p[1])
+    	senderror(3, linenumber, p[1][0])
     if tipo1 == 0:
         cont_vars[0] = cont_vars[0] + 1
         work_vars[0] = work_vars[0] + 1
@@ -380,12 +384,15 @@ def p_assign(p):
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
-    pairs_idtype.append([p[1], tipo1, 0])
+    pairs_idtype.append([p[1][0], tipo1, 0])
     #print "ASSIGN--1 PAIRS", pairs_idtype, vartipo_mod[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
     #print "ASSIGN--2 PAIRS", cont_vars, work_vars
     #tab_valores = tabvar(tab_valores, p[1], tipo1)
     #print "TABVAL en assign", tab_valores
-    quads_gen.add('=', valor1, -1, p[1])
+    if p[1][1] == None:
+    	quads_gen.add('=', valor1, -1, p[1][0])
+    else:
+    	quads_gen.add('=', valor1, -1, p[1][1])
 
 
 def p_condition(p):
@@ -430,6 +437,7 @@ def p_array(p):
 		work_vars[2] = work_vars[2] + r
 	print "NUEVO ARR", p[1], p[5]
 	tab_constant = tabconstante(tab_constant, p[5])
+	tab_constant = tabconstante(tab_constant, p[5]-1)
 	pairs_idtype.append([p[3], tipo1, r])
 	tab_dims.add(p[3], 1, p[5]-1, -1)
 	quads_gen.addQ('arr', p[3], -1, r)
@@ -455,7 +463,9 @@ def p_matrix(p):
 		work_vars[2] = work_vars[2] + r
 	print "NUEVO MAT", p[1], p[5], p[8]
 	tab_constant = tabconstante(tab_constant, p[5])
+	tab_constant = tabconstante(tab_constant, p[5]-1)
 	tab_constant = tabconstante(tab_constant, p[8])
+	tab_constant = tabconstante(tab_constant, p[8]-1)
 	pairs_idtype.append([p[3], tipo1, r])
 	tab_dims.add(p[3], 2, p[5]-1, p[8]-1)
 	quads_gen.addQ('mat', p[3], -1, r)
@@ -663,7 +673,7 @@ def p_screen(p):
             | CLEAR'''
 
 def p_var_cte(p):
-    '''var_cte : ID
+    '''var_cte : id
                 | CTE_INTEGER
                 | CTE_FLOAT
                 | TRUE
@@ -695,13 +705,18 @@ def p_var_cte(p):
         p[0] = p[1]
         #print "--FALSE", p[1], pilaOpera
     else:
-        findtipo = buscaID(pairs_idtype, p[1])
+        print "VAR_CTE--", p[1][0], p[1][1]
+        findtipo = buscaID(pairs_idtype, p[1][0])
+        esdimensionada = tab_dims.isDuplicate(p[1][0])
         #print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         if findtipo == -1:
-        	senderror(4, linenumber, p[1])
+        	senderror(4, linenumber, p[1][0])
         assign_vars.append(findtipo)
         pilaTipos.append(findtipo)
-        p[0] = p[1]
+        if esdimensionada == -1:
+        	p[0] = p[1][0]
+        else:
+        	p[0] = p[1][1]
         #print "--ID", p[1], pilaOpera
 
 def p_gotoFalse(p):
@@ -832,6 +847,8 @@ yacc.parse(st)
 f.close()
 
 if nodisplay != 1:
+	print("\n")
+	print tab_dims
 	print("\n")
 	dir_modulos.echotables()
 	dir_modulos.echotablestemp()
