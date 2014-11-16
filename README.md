@@ -27,8 +27,18 @@ A graphical-output compiler that receives input commands, displaying drawing and
 
 **codegen.py** - Python class CodeGen, retains all generated quadruples.
 
+**error.py** - Python file, includes error statements while compiling a Sample input.
+
 **out-quads** - CodeGen output
 
-**quads.smo** - Sample object file .smo
+**quads.smo** - Sample quads file .smo
+
+**sample.smo** - Sample object file .smo, includes module directory, constants and quads.
+
+**run_exec.py** - Sample runtime file, read and executes .smo file.
+
+**memory.py** - Python class Memory, serves as virtual memory for runtime procedures.
+
+**error_exec.py** - Python file, includes error statements while running a Sample input.
 
 Input examples: */ej*
