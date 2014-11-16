@@ -42,4 +42,16 @@ def senderror(x, linenumber, *resto):
 	elif x == 12:
 		print("ERROR // Dimension value must be greater than 0")
 		print "-LINE //", linenumber
+	elif x == 13:
+		print("ERROR // Variable <%s> must be a matrix") % resto[0]
+		print "-LINE //", linenumber
+	elif x == 14:
+		print("ERROR // Variable <%s> must be an array") % resto[0]
+		print "-LINE //", linenumber
+	elif x == 15:
+		if resto[1] == 1:
+			print("ERROR // Variable <%s> already assign as an array.") % resto[0]
+		elif resto[2] == 2:
+			print("ERROR // Variable <%s> already assign as a matrix.") % resto[0]
+		print "-LINE //", linenumber
 	sys.exit()

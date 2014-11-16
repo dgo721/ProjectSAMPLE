@@ -38,15 +38,22 @@ class Memory:
 		self.ltbooldir = 36000
 		self.ltboolend = 36000
 		self.ltbool = dict()
+		self.gpdir = 40000
+		self.gpend = 40000
+		self.gp = dict()
+		self.lpdir = 42000
+		self.lpend = 42000
+		self.lp = dict()
 
 	#Inicializa mapa de memoria global (workspace)
-	def setGlobalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool):
+	def setGlobalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p):
 		self.gintend = self.gintend + cont_int
 		self.gfloatend = self.gfloatend + cont_float
 		self.gboolend = self.gboolend + cont_bool
 		self.gtintend = self.gtintend + cont_tint
 		self.gtfloatend = self.gtfloatend + cont_tfloat
 		self.gtboolend = self.gtboolend + cont_tbool
+		self.gpend = self.gpend + cont_p
 		#print self.gintend, self.gfloatend, self.gboolend, self.gtintend, self.gtfloatend, self.gtboolend
 
 	#Aniade elemento a memoria global

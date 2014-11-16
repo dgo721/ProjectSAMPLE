@@ -118,7 +118,7 @@ def p_program(p):
     	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
     	tab_valores=tabvar(tab_valores, par[0], par[1], par[2], linenumber)
     
-    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], tab_temporal, None)
+    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], work_point, tab_temporal, tab_pointer, None)
 
 def p_programA(p):
     '''programA : programB END
@@ -169,7 +169,7 @@ def p_module(p):
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber)
     	suma = suma - 1
 
-    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], copy.deepcopy(tab_ltemporal), line_mod)
+    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], cont_point, copy.deepcopy(tab_ltemporal), copy.deepcopy(tab_lpointer), line_mod)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
     work_vars[0] = work_vars[0] - cont_vars[0]
@@ -178,12 +178,15 @@ def p_module(p):
     work_tvars[0] = work_tvars[0] - cont_tvars[0]
     work_tvars[1] = work_tvars[1] - cont_tvars[1]
     work_tvars[2] = work_tvars[2] - cont_tvars[2]
+    work_point = work_point - cont_point
     cont_vars = [0,0,0] #Reinicia contador
+    cont_point = 0
     quads_gen.addcontinueG()
     quads_gen.setScope("*work*")
     flagTabTemp = False
     tab_lvalores = TabVars(12000, 14000, 16000)
     tab_ltemporal = TabVars(32000, 34000, 36000)
+    tab_lpointer = TabPointer(42000)
 
 def p_moduleA(p):
     '''moduleA : '(' vars ')' block
@@ -231,6 +234,47 @@ def p_type(p):
     global id_type, list_params
     list_params.append(p[1]) #Aniade el tipo a la secuencia
     id_type.append(p[1]) #Aniade a la lista de tipos de parametros, sea INT, FLOAT, BOOL
+
+def p_id(p):
+	'''id : ID '[' sumdim exp ']' '[' sumdim exp ']'
+		| ID '[' sumdim exp ']' 
+		| ID '''
+	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer
+	p[0] = p[1]
+	if es_dim != tab_dims.getDim(p[1]) and tab_dims.getDim(p[1]) != -1:
+		if tab_dims.getDim(p[1]) == 2:
+			senderror(13, linenumber, p[1])
+		elif tab_dims.getDim(p[1]) == 1:
+			senderror(14, linenumber, p[1])
+	if tab_dims.getDim(p[1]) == 1:
+		oper = pilaOpera.pop()
+		tipo = pilaTipos.pop()
+		if flagTabTemp == True:
+			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_lpointer, linenumber)
+			tab_lpointer = templist[0]
+			cont_tvars[0] = cont_tvars[0] + 1
+			work_tvars[0] = work_tvars[0] + 1
+		else:
+			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_pointer, linenumber)
+			tab_pointer = templist[0]
+			cont_tvars[0] = cont_tvars[0] + 1
+			work_tvars[0] = work_tvars[0] + 1
+		p[0] = templist[1]
+	elif tab_dims.getDim(p[1]) == 2:
+		oper2 = pilaOpera.pop()
+		oper1 = pilaOpera.pop()
+		tipo2 = pilaTipos.pop()
+		tipo1 = pilaTipos.pop()
+		if flagTabTemp == True:
+			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_lpointer, linenumber)
+		else:
+			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_pointer, linenumber)
+	es_dim = 0
+
+def p_sumdim(p):
+	'''sumdim : '''
+	global es_dim
+	es_dim += 1
 
 def p_calling(p):
     '''calling : '#' callID '(' insertEra callingA'''
@@ -303,7 +347,7 @@ def p_blockC(p):
                 | empty'''
 
 def p_assign(p):
-    '''assign : ID '=' expression ';' '''
+    '''assign : id '=' expression ';' '''
     global tab_valores, pilaOpera, pilaTipos, quads_gen, cont_vars, work_vars, pairs_idtype
     #print pilaOpera, pilaTipos, assign_vars
     valor1 = pilaOpera.pop()
@@ -356,11 +400,12 @@ def p_writeA(p):
 
 def p_array(p):
 	'''array : ARR typeDim ID '[' CTE_INTEGER ']' ';' '''
-	global pairs_idtype, tab_constant
-	if p[5] == 0:
+	global pairs_idtype, tab_constant, tab_dims
+	if tab_dims.isDuplicate(p[3]) != -1:
+		senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
+	if p[5] < 1:
 		senderror(12, linenumber-1)
 	r = p[5] #Equivalente a R = (Ls - Li) * R, R = 1
-	print r
 	tipo1 = vartipo_mod(p[2])
 	if tipo1 == 0:
 		cont_vars[0] = cont_vars[0] + r
@@ -374,16 +419,18 @@ def p_array(p):
 	print "NUEVO ARR", p[1], p[5]
 	tab_constant = tabconstante(tab_constant, p[5])
 	pairs_idtype.append([p[3], tipo1, r])
+	tab_dims.add(p[3], 1, p[5]-1, -1)
 	quads_gen.addQ('arr', p[3], -1, r)
 
 
 def p_matrix(p):
 	'''matrix : MAT typeDim ID '[' CTE_INTEGER ']' '[' CTE_INTEGER ']' ';' '''
-	global pairs_idtype, tab_constant
-	if p[5] == 0 or p[8] == 0:
+	global pairs_idtype, tab_constant, tab_dims
+	if tab_dims.isDuplicate(p[3]) != -1:
+		senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
+	if p[5] < 1 or p[8] < 1:
 		senderror(12, linenumber-1)
 	r = p[5] * p[8] #Equivalente a 2 veces R = (Ls - Li) * R, R = 1
-	print r
 	tipo1 = vartipo_mod(p[2])
 	if tipo1 == 0:
 		cont_vars[0] = cont_vars[0] + r
@@ -398,6 +445,7 @@ def p_matrix(p):
 	tab_constant = tabconstante(tab_constant, p[5])
 	tab_constant = tabconstante(tab_constant, p[8])
 	pairs_idtype.append([p[3], tipo1, r])
+	tab_dims.add(p[3], 2, p[5]-1, p[8]-1)
 	quads_gen.addQ('mat', p[3], -1, r)
 
 def p_pipeline(p):
@@ -569,6 +617,7 @@ def p_factor(p):
     global listoper, pilaOpera
     if p[1] != '(':
         pilaOpera.append(p[1])
+        print "FACTOR--", pilaOpera
     p[0] = p[1]
 
 def p_figure(p):
@@ -708,6 +757,8 @@ from tabconst import *
 from dirmods import *
 from cube_sem import semant_oper
 from codegen import CodeGen
+from tabdims import TabDims
+from tabpointers import TabPointer
 
 pilaTipos = list() #Almacena los tipos encontrados.
 pilaOpera = list() #Guarda las variables y contanstes utilizadas para una asignacion
@@ -718,20 +769,26 @@ pairs_idtype = list() #Almacena las variables en par id-tipo, utlizados para dis
 tab_constant = TabConst() #Instancia clase TabConst, tabla de constantes del codigo seleccionado
 tab_valores = TabVars(2000, 4000, 6000) #Instancia clase TabVars, tabla de variables del codigo seleccionado
 tab_lvalores = TabVars(12000, 14000, 16000) #Instancia clase TabVars, tabla de variables locales, distinta por cada modulo
-tab_temporal = TabVars(22000, 24000, 26000)
-tab_ltemporal = TabVars(32000, 34000, 36000)
+tab_temporal = TabVars(22000, 24000, 26000) #Instancia clase TabVars, tabla de variables temporales del codigo seleccionado
+tab_ltemporal = TabVars(32000, 34000, 36000) #Instancia clase TabVars, tabla de variables temporales locales del codigo seleccionado
+tab_pointer = TabPointer(40000) #Instancia clase TabPointer, guarda los apuntadores a direccion dentro de variables dimensionadas
+tab_lpointer = TabPointer(42000) #Instancia clase TabPointer, guarda los apuntadores locales a direccion dentro de variables dimensionadas
 dir_modulos = DirMods() #Instancia clase DirMods, directorio de modulos del programa
+tab_dims = TabDims() #Instancia clase TabDims, almaneca limites de variables dimensionadas
 quads_gen = CodeGen() #Instancia clase CodeGen, generador de cuadruplos para codigo intermedio
 cont_vars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
 work_vars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
-cont_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
+cont_tvars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
 work_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
+cont_point = 0 #Contador de apuntadores en modulos
+work_point = 0 #Contador de apuntadores en el workspace
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
 quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
 line_mod = 0 #Almacena el numero de linea donde comienza un modulo
 id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
 xparam = 0 #Variable entera en funcion de apuntador de parametros
-flagTabTemp = False
+flagTabTemp = False #Indica si almacena valores temporales globales o locales
+es_dim = 0 #Variable indica si la variable es atomica, de dimension 1 o dimension 2
 
 #'''
 
@@ -780,7 +837,7 @@ if nodisplay != 1:
 	#tab_constant.write()
 	#tab_constant.writeQ()
 	print("\n")
-	#quads_gen.echo()
+	quads_gen.echo()
 	#quads_gen.write()
 	print("\n")
 	#quads_gen.echoQ(dir_modulos, tab_constant)

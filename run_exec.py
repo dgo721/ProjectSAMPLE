@@ -26,7 +26,11 @@ def listParams(lista):
 
 def addDirData(num, data):
 	#print "addDirData--", num, data
-	if num >= 36000:
+	if num >= 42000:
+		pass
+	elif num >= 40000:
+		pass
+	elif num >= 36000:
 		memoria.addLocalBoolTemp(num, data)
 	elif num >= 34000:
 		memoria.addLocalFloatTemp(num, data)
@@ -52,7 +56,11 @@ def addDirData(num, data):
 		memoria.addGlobalInt(num, data)
 
 def getDirData(num):
-	if num >= 36000:
+	if num >= 42000:
+		pass
+	elif num >= 40000:
+		pass
+	elif num >= 36000:
 		return memoria.getLocalBoolTemp(num)
 	elif num >= 34000:
 		return memoria.getLocalFloatTemp(num)
@@ -143,9 +151,10 @@ for line in f:
 			cont_tint = int(string[6])
 			cont_tfloat = int(string[7])
 			cont_tbool = int(string[8])
-			directory[string[0]] = [list_param, quad_init, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool]
+			cont_p = int(string[9])
+			directory[string[0]] = [list_param, quad_init, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p]
 			if string[0] == "*work*":
-				memoria.setGlobalMemory(cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool)
+				memoria.setGlobalMemory(cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p)
 		if read == 2:
 			esint = re.compile(pattn_int)
 			esfloat = re.compile(pattn_float)

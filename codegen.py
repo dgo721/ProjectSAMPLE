@@ -1,11 +1,14 @@
 from dirmods import DirMods
 from tabvars import TabVars, tabvar
+from tabdims import TabDims
+from tabpointers import TabPointer
 
 class CodeGen:
 
 	def __init__(self):
 		self.x = 1
 		self.t = 1
+		self.a = 1
 		self.data = {}
 		self.pilaSaltos = []
 		self.scope = "*work*"
@@ -76,12 +79,29 @@ class CodeGen:
 		stmp=str(self.t)
 		tmp='_t' + stmp
 		self.data[self.x]=['=', 0, -1, tmp, self.scope]
-		tabtemp=tabvar(tabtemp, tmp, 0, linenumber)
+		tabtemp=tabvar(tabtemp, tmp, 0, 0, linenumber)
 		self.x=self.x+1
 		self.t=self.t+1
 		self.pilaSaltos.append(self.x)
 		self.pilaSaltos.append(tmp)
 		return tabtemp
+
+	def addVer1(self, oper, iden, limite1, tabpointer, linenumber):
+		self.data[self.x]=['ver1', oper, -1, limite1, self.scope]
+		self.x=self.x+1
+		stmp=str(self.a)
+		tmp='_a' + stmp
+		self.data[self.x]=['+dir', oper, iden, tmp, self.scope]
+		tabpointer.add(tmp)
+		self.x=self.x+1
+		self.a=self.a+1
+		return [tabpointer, tmp]
+
+	def addVer2(self, oper1, oper2, iden, limite1, limite2, tabpointer, linenumber):
+		self.data[self.x]=['ver1', oper1, -1, limite1, self.scope]
+		self.x=self.x+1
+		
+		return [tabpointer, tmp]
 
 	def getKey(self, key):
 		for llave in self.data:

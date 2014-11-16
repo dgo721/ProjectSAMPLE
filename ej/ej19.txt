@@ -1,13 +1,16 @@
 init
 
-arr int a[3];
-arr bool e[10];
+mat int a [3][2];
+b = 1;
+a[0+2*1][1*b+2] = 1;
+
+//arr bool e[10];
 //c = 5 + (4*3+2*2);
-mat int b[2][4];
-arr float q[5];
-mat float w[2][3];
+//mat int b[2][4];
+//arr float q[5];
+//mat float w[2][3];
 //d = (5+3) / 46-3;
-f = 34.3 + 23;
-g = 0.002;
+//f = 34.3 + 23;
+//g = 0.002;
 
 end

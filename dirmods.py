@@ -1,13 +1,14 @@
-from tabvars import TabVars
 from error import senderror
+from tabvars import TabVars
+from tabpointers import TabPointer
 
 class DirMods:
 
 	def __init__(self):
 		self.data = {}
 
-	def add(self, key, params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tabtemporales):
-		self.data[key]=[params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tabtemporales]
+	def add(self, key, params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tpoints, tabtemporales, tabpointers):
+		self.data[key]=[params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tpoints, tabtemporales, tabpointers]
 
 	def getParams(self, key):
 		return self.data[key][0]
@@ -53,6 +54,12 @@ class DirMods:
 		for key in sorted(self.data):
 			print key.ljust(15) + "|".ljust(5) + str(self.data[key][6]).ljust(10) + "|".ljust(5) + str(self.data[key][7]).ljust(10) + "|".ljust(5) + str(self.data[key][8]).ljust(10) + "|".ljust(5)
 
+	def echoP(self):
+		print "Modulos".ljust(15) + "|".ljust(5) + "# TPOINTERS".ljust(10) + "|".ljust(5)
+		print "---------------".ljust(15) + "|".ljust(5)
+		for key in sorted(self.data):
+			print key.ljust(15) + "|".ljust(5) + str(self.data[key][9]).ljust(10) + "|".ljust(5)
+
 	def write(self):
 		f = open('out-dir_mods', 'w')
 		print >> f, "Modulos".ljust(15) + "|".ljust(5) + "Parametros".ljust(25) + "|".ljust(5) + "# Var INTS".ljust(15) + "|".ljust(5) + "# Var FLOATS".ljust(15) + "|".ljust(5) + "# Var BOOLS".ljust(15) + "|".ljust(5)
@@ -64,7 +71,7 @@ class DirMods:
 	def writeQ(self):
 		f = open('sample.smo', 'w')
 		for key in self.data:
-			print >> f, key + "|" + str(self.data[key][0]) + "|" + str(self.data[key][1]) + "|" + str(self.data[key][2]) + "|" + str(self.data[key][3]) + "|" + str(self.data[key][5]) + "|" + str(self.data[key][6]) + "|" + str(self.data[key][7]) + "|" + str(self.data[key][8])
+			print >> f, key + "|" + str(self.data[key][0]) + "|" + str(self.data[key][1]) + "|" + str(self.data[key][2]) + "|" + str(self.data[key][3]) + "|" + str(self.data[key][5]) + "|" + str(self.data[key][6]) + "|" + str(self.data[key][7]) + "|" + str(self.data[key][8]) + "|" + str(self.data[key][9])
 		print >> f, "%%%%"
 		f.close()
 
@@ -77,15 +84,21 @@ class DirMods:
 	def echotablestemp(self):
 		for key in self.data:
 			print "TEMPORALES", key.ljust(15)
-			self.data[key][9].echo()
+			self.data[key][10].echo()
+			print "\n"
+
+	def echotablespoint(self):
+		for key in self.data:
+			print "APUNTADORES", key.ljust(15)
+			self.data[key][11].echo()
 			print "\n"
 
 	def __str__(self):
 		return repr(self.data)
 
-def dirmod(dir_modulos, nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tab_temporales, linea):
+def dirmod(dir_modulos, nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer, linea):
 	if dir_modulos.lookup(nombre)!=True and tab_valores.lookup(nombre)!=True:
-		dir_modulos.add(nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tab_temporales)
+		dir_modulos.add(nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer)
 	else:
 		senderror(11, linea, nombre)
 	return dir_modulos
