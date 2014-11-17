@@ -256,7 +256,6 @@ while quad[ip][1][0] != 'end':
 			data = getDirData(int(qactual[3]))
 		else:
 			data = int(qactual[3])
-		print "=--", data, "=", tmp
 		addDirData(data, tmp)
 
 	elif qactual[0] == '==':
@@ -333,10 +332,16 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'sample1':
 		prevSample = True
-		linew = getDirData(int(qactual[1]))
+		if int(qactual[1]) >= 40000:
+			linew = getDirData(getDirData(int(qactual[1])))
+		else:
+			linew = getDirData(int(qactual[1]))
 		color = getColor(qactual[2])
 		ip = ip + 1; qactual = quad[ip][1]
-		tmp = getDirData(int(qactual[3]))*5
+		if int(qactual[3]) >= 40000:
+			tmp = getDirData(getDirData(int(qactual[3])))*5
+		else:
+			tmp = getDirData(int(qactual[3]))*5
 		print qactual[0], qactual[1], qactual[2], getDirData(int(qactual[3])), linew, color
 		turtle.pendown()
 		turtle.pensize(linew); turtle.pencolor(color)
@@ -356,7 +361,10 @@ while quad[ip][1][0] != 'end':
 	elif qactual[0] == 'sample':
 		print qactual[0], qactual[1], qactual[2], getDirData(int(qactual[3]))
 		prevSample = True
-		tmp = getDirData(int(qactual[3]))*5
+		if int(qactual[3]) >= 40000:
+			tmp = getDirData(getDirData(int(qactual[3])))*5
+		else:
+			tmp = getDirData(int(qactual[3]))*5
 		turtle.penup()
 		if qactual[2] == 'up':
 			turtle.seth(90)
@@ -373,8 +381,14 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'arc':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
-		size=getDirData(int(qactual[1]))*5
-		angle=getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			size = getDirData(getDirData(int(qactual[1])))*5
+		else:
+			size = getDirData(int(qactual[1]))*5
+		if int(qactual[2]) >= 40000:
+			angle = getDirData(getDirData(int(qactual[2])))
+		else:
+			angle = getDirData(int(qactual[2]))
 		turtle.pencolor(getColor(qactual[3]));
 		turtle.pensize(2)
 		turtle.circle(size,angle)
@@ -382,8 +396,14 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'oval':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
-		dmayor = getDirData(int(qactual[2]))/5
-		dmenor = getDirData(int(qactual[1]))/5
+		if int(qactual[1]) >= 40000:
+			dmenor = getDirData(getDirData(int(qactual[1])))/5
+		else:
+			dmenor = getDirData(int(qactual[1]))/5
+		if int(qactual[2]) >= 40000:
+			dmayor = getDirData(getDirData(int(qactual[2])))/5
+		else:
+			dmayor = getDirData(int(qactual[2]))/5
 		turtle.pencolor(getDarkColor(qactual[3]))
 
 		turtle.penup()
@@ -410,8 +430,14 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'trio':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
-		b = getDirData(int(qactual[1]))*5
-		h = getDirData(int(qactual[2]))*5
+		if int(qactual[1]) >= 40000:
+			b = getDirData(getDirData(int(qactual[1])))*5
+		else:
+			b = getDirData(int(qactual[1]))*5
+		if int(qactual[2]) >= 40000:
+			h = getDirData(getDirData(int(qactual[2])))*5
+		else:
+			h = getDirData(int(qactual[2]))*5
 		ang = math.degrees(math.atan(h/(b/2)))
 		l = math.sqrt(h**2 + (b/2)**2)
 		turtle.pensize(5);
@@ -430,8 +456,14 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'quad':
 		print qactual[0], getDirData(int(qactual[1])), getDirData(int(qactual[2])), qactual[3]
-		base = getDirData(int(qactual[1]))*5
-		height = getDirData(int(qactual[2]))*5
+		if int(qactual[1]) >= 40000:
+			base = getDirData(getDirData(int(qactual[1])))*5
+		else:
+			base = getDirData(int(qactual[1]))*5
+		if int(qactual[2]) >= 40000:
+			height = getDirData(getDirData(int(qactual[2])))*5
+		else:
+			height = getDirData(int(qactual[2]))*5
 		turtle.pensize(5);
 		turtle.pencolor(getDarkColor(qactual[3]))
 		turtle.fillcolor(getColor(qactual[3]))
