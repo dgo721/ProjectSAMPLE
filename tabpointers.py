@@ -14,6 +14,12 @@ class TabPointer:
 				return self.data[key][0]
 		return -1
 
+	def lookup(self, key):
+		for llave in self.data:
+			if (llave==key):
+				return True
+		return False
+
 	def echo(self):
 		print "Apuntador".ljust(10) + "|".ljust(5) + "Direccion".ljust(10) + "|".ljust(5)
 		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)

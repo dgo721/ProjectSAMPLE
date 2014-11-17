@@ -18,6 +18,12 @@ class TabDims:
 				return self.data[key][0]
 		return -1
 
+	def lookup(self, key):
+		for llave in self.data:
+			if (llave==key):
+				return True
+		return False
+
 	def getLimit1(self, key):
 		return self.data[key][1]
 

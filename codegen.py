@@ -103,6 +103,7 @@ class CodeGen:
 		stmp=str(self.t)
 		tmp1='_t' + stmp
 		self.data[self.x]=['*', oper1, limite1, tmp1, self.scope]
+		tabtemp=tabvar(tabtemp, tmp1, 0, 0, linenumber)
 		self.x=self.x+1
 		self.t=self.t+1
 		self.data[self.x]=['ver', oper2, -1, limite2, self.scope]
@@ -110,6 +111,7 @@ class CodeGen:
 		stmp=str(self.t)
 		tmp2='_t' + stmp
 		self.data[self.x]=['+', tmp1, oper2, tmp2, self.scope]
+		tabtemp=tabvar(tabtemp, tmp2, 0, 0, linenumber)
 		self.x=self.x+1
 		self.t=self.t+1
 		stmp=str(self.a)
@@ -243,11 +245,13 @@ class CodeGen:
 		f = open('sample.smo', 'a')
 		tablaP = dirmod.getTable("*work*")
 		tablatempP = dirmod.getTableTemp("*work*")
+		tablapointP = dirmod.getTablePoint("*work*")
 		for a in self.data:
 			quad = self.getQuad(a)
 			scope = quad[4]
 			tabla = dirmod.getTable(scope)
 			tablatemp = dirmod.getTableTemp(scope)
+			tablapoint = dirmod.getTablePoint(scope)
 			q = list()
 			i = 0
 			if quad[0] == "goTo" or quad[0] == "ret" or quad[0] == "era" or quad[0] == "gosub":
@@ -255,22 +259,52 @@ class CodeGen:
 				q.append(quad[1])
 				q.append(quad[2])
 				q.append(quad[3])
-			elif quad[0] == "goToF" or quad[0] == "param" or quad[0] == "sample1":
+			elif quad[0] == "goToF" or quad[0] == "param" or quad[0] == "sample1" or quad[0] == "ver":
 				q.append(quad[0])
 				if (tabla.lookup(quad[1])==True):
 					q.append(tabla.getDir(quad[1]))
 				elif (tablatemp.lookup(quad[1])==True):
 					q.append(tablatemp.getDir(quad[1]))
+				elif (tablapoint.lookup(quad[1])==True):
+					q.append(tablapoint.getDir(quad[1]))
 				elif (tablaP.lookup(quad[1])==True):
 					q.append(tablaP.getDir(quad[1]))
 				elif (tablatempP.lookup(quad[1])==True):
 					q.append(tablatempP.getDir(quad[1]))
+				elif (tablapointP.lookup(quad[1])==True):
+					q.append(tablapointP.getDir(quad[1]))
 				elif (tabconst.lookup(quad[1])==True):
 					q.append(tabconst.getDir(quad[1]))
 				else:
 					q.append(quad[1])
 				q.append(quad[2])
 				q.append(quad[3])
+			elif quad[0] == "+dir":
+				q.append(quad[0])
+				if (tabla.lookup(quad[1])==True):
+					q.append(tabla.getDir(quad[1]))
+				elif (tablatemp.lookup(quad[1])==True):
+					q.append(tablatemp.getDir(quad[1]))
+				elif (tablapoint.lookup(quad[1])==True):
+					q.append(tablapoint.getDir(quad[1]))
+				elif (tablaP.lookup(quad[1])==True):
+					q.append(tablaP.getDir(quad[1]))
+				elif (tablatempP.lookup(quad[1])==True):
+					q.append(tablatempP.getDir(quad[1]))
+				elif (tablapointP.lookup(quad[1])==True):
+					q.append(tablapointP.getDir(quad[1]))
+				elif (tabconst.lookup(quad[1])==True):
+					q.append(tabconst.getDir(quad[1]))
+				else:
+					q.append(quad[1])
+				if (tabla.lookup(quad[2])==True):
+					q.append(tabla.getDir(quad[2]))
+				elif (tablaP.lookup(quad[2])==True):
+					q.append(tablaP.getDir(quad[2]))
+				if (tablapoint.lookup(quad[3])==True):
+					q.append(tablapoint.getDir(quad[3]))
+				elif (tablapointP.lookup(quad[3])==True):
+					q.append(tablapointP.getDir(quad[3]))
 			elif quad[0] == "sample2":
 				q.append(quad[0])
 				q.append(quad[1])
@@ -279,10 +313,14 @@ class CodeGen:
 					q.append(tabla.getDir(quad[3]))
 				elif (tablatemp.lookup(quad[3])==True):
 					q.append(tablatemp.getDir(quad[3]))
+				elif (tablapoint.lookup(quad[3])==True):
+					q.append(tablapoint.getDir(quad[3]))
 				elif (tablaP.lookup(quad[3])==True):
 					q.append(tablaP.getDir(quad[3]))
 				elif (tablatempP.lookup(quad[3])==True):
 					q.append(tablatempP.getDir(quad[3]))
+				elif (tablapointP.lookup(quad[3])==True):
+					q.append(tablapointP.getDir(quad[3]))
 				elif (tabconst.lookup(quad[3])==True):
 					q.append(tabconst.getDir(quad[3]))
 				else:
@@ -294,10 +332,14 @@ class CodeGen:
 						q.append(tabla.getDir(x))
 					elif (tablatemp.lookup(x)==True):
 						q.append(tablatemp.getDir(x))
+					elif (tablapoint.lookup(x)==True):
+						q.append(tablapoint.getDir(x))
 					elif (tablaP.lookup(x)==True):
 						q.append(tablaP.getDir(x))
 					elif (tablatempP.lookup(x)==True):
 						q.append(tablatempP.getDir(x))
+					elif (tablapointP.lookup(x)==True):
+						q.append(tablapointP.getDir(x))
 					elif (tabconst.lookup(x)==True):
 						q.append(tabconst.getDir(x))
 					else:
