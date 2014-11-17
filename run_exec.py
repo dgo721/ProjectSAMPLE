@@ -27,9 +27,9 @@ def listParams(lista):
 def addDirData(num, data):
 	#print "addDirData--", num, data
 	if num >= 42000:
-		pass
+		memoria.addLocalPointer(num, data)
 	elif num >= 40000:
-		pass
+		memoria.addGlobalPointer(num, data)
 	elif num >= 36000:
 		memoria.addLocalBoolTemp(num, data)
 	elif num >= 34000:
@@ -57,9 +57,9 @@ def addDirData(num, data):
 
 def getDirData(num):
 	if num >= 42000:
-		pass
+		return memoria.getLocalPointer(num)
 	elif num >= 40000:
-		pass
+		return memoria.getGlobalPointer(num)
 	elif num >= 36000:
 		return memoria.getLocalBoolTemp(num)
 	elif num >= 34000:
@@ -195,20 +195,52 @@ while quad[ip][1][0] != 'end':
 		pass
 
 	if qactual[0] == '+':
-		tmp = getDirData(int(qactual[1])) + getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 + operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '-':
-		tmp = getDirData(int(qactual[1])) - getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 - operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '*':
-		tmp = getDirData(int(qactual[1])) * getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 * operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '/':
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
 		try:
-			tmp = getDirData(int(qactual[1])) / getDirData(int(qactual[2]))
+			tmp = operador1 / operador2
 		except ZeroDivisionError:
 			senderror(1)
 		else:
@@ -216,31 +248,87 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == '=':
 		#print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
-		tmp = getDirData(int(qactual[1]))
-		addDirData(int(qactual[3]), tmp)
+		if int(qactual[1]) >= 40000:
+			tmp = getDirData(getDirData(int(qactual[1])))
+		else:
+			tmp = getDirData(int(qactual[1]))
+		if int(qactual[3]) >= 40000:
+			data = getDirData(int(qactual[3]))
+		else:
+			data = int(qactual[3])
+		print "=--", data, "=", tmp
+		addDirData(data, tmp)
 
 	elif qactual[0] == '==':
-		tmp = getDirData(int(qactual[1])) == getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 == operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '<>':
-		tmp = getDirData(int(qactual[1])) <> getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 <> operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '>=':
-		tmp = getDirData(int(qactual[1])) >= getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 >= operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '<=':
-		tmp = getDirData(int(qactual[1])) <= getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 <= operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '>':
-		tmp = getDirData(int(qactual[1])) > getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 > operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == '<':
-		tmp = getDirData(int(qactual[1])) < getDirData(int(qactual[2]))
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 < operador2
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == 'sample1':
@@ -356,8 +444,31 @@ while quad[ip][1][0] != 'end':
 		turtle.fill(False)
 		prevSample = False
 
-	elif qactual[0] == 'echo':
+	elif qactual[0] == 'arr' or qactual[0] == 'mat':
+		print qactual[0], int(qactual[1]), 0, qactual[3]
+		ini = int(qactual[1])
+		if ini >= 6000:
+			data = False
+		elif ini >= 4000:
+			data = 0.0
+		elif ini >= 2000:
+			data = 0
+		i = 0
+		while i < int(qactual[3]):
+			addDirData(int(qactual[1])+i, data)
+			i = i + 1
+
+	elif qactual[0] == 'ver':
+		print qactual[0], getDirData(int(qactual[1])), qactual[2], qactual[3]
 		tmp = getDirData(int(qactual[1]))
+		if tmp < 0 or tmp > int(qactual[3]):
+			senderror(2)
+
+	elif qactual[0] == 'echo':
+		if int(qactual[1]) >= 40000:
+			tmp = getDirData(getDirData(int(qactual[1])))
+		else:
+			tmp = getDirData(int(qactual[1]))
 		tmp1 = str(tmp)
 		esstring = re.compile(pattn_string)
 		if re.match(esstring, tmp1):
@@ -365,6 +476,10 @@ while quad[ip][1][0] != 'end':
 			print tmp1[1]
 		else:
 			print tmp
+
+	elif qactual[0] == '+dir':
+		tmp = getDirData(int(qactual[1])) + int(qactual[2])
+		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == 'goTo':
 		print qactual[0], qactual[3]
@@ -382,3 +497,4 @@ while quad[ip][1][0] != 'end':
 	ip = ip + 1
 turtle.hideturtle()
 turtle.done()
+memoria.echoGlobal()

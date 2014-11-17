@@ -325,6 +325,26 @@ class CodeGen:
 					q.append(tabconst.getDir(quad[3]))
 				else:
 					q.append(quad[3])
+			elif quad[0] == "arr" or quad[0] == "mat":
+				q.append(quad[0])
+				if (tabla.lookup(quad[1])==True):
+					q.append(tabla.getDir(quad[1]))
+				elif (tablatemp.lookup(quad[1])==True):
+					q.append(tablatemp.getDir(quad[1]))
+				elif (tablapoint.lookup(quad[1])==True):
+					q.append(tablapoint.getDir(quad[1]))
+				elif (tablaP.lookup(quad[1])==True):
+					q.append(tablaP.getDir(quad[1]))
+				elif (tablatempP.lookup(quad[1])==True):
+					q.append(tablatempP.getDir(quad[1]))
+				elif (tablapointP.lookup(quad[1])==True):
+					q.append(tablapointP.getDir(quad[1]))
+				elif (tabconst.lookup(quad[1])==True):
+					q.append(tabconst.getDir(quad[1]))
+				else:
+					q.append(quad[1])
+				q.append(quad[2])
+				q.append(quad[3])
 			else:
 				for x in quad:
 					#print x, a

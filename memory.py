@@ -95,6 +95,12 @@ class Memory:
 
 	def addLocalBoolTemp(self, num, data):
 		self.ltbool[num]=data
+
+	def addGlobalPointer(self, num, data):
+		self.gp[num]=data
+
+	def addLocalPointer(self, num, data):
+		self.lp[num]=data
 	
 	#Busca elemento en memoria
 	def getGlobalInt(self, num):
@@ -133,6 +139,12 @@ class Memory:
 	def getLocalBoolTemp(self, num):
 		return self.ltbool[num]
 
+	def getGlobalPointer(self, num):
+		return self.gp[num]
+
+	def getLocalPointer(self, num):
+		return self.lp[num]
+
 	def echoGlobal(self):
 		print "GLOBAL INT--", self.gint
 		print "GLOBAL FLOAT--", self.gfloat
@@ -140,6 +152,7 @@ class Memory:
 		print "GLOBAL INT TEMP--", self.gtint
 		print "GLOBAL FLOAT TEMP--", self.gtfloat
 		print "GLOBAL BOOL TEMP--", self.gtbool
+		print "GLOBAL POINT--", self.gp
 
 	def echoEndMemory(self):
 		print self.gintend
@@ -148,3 +161,4 @@ class Memory:
 		print self.gtintend
 		print self.gtfloatend
 		print self.gtboolend
+		print self.gpend

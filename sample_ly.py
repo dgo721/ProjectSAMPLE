@@ -374,13 +374,13 @@ def p_assign(p):
     #print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
     	senderror(3, linenumber, p[1][0])
-    if tipo1 == 0:
+    if tipo1 == 0 and p[1][1] == None:
         cont_vars[0] = cont_vars[0] + 1
         work_vars[0] = work_vars[0] + 1
-    elif tipo1 == 1:
+    elif tipo1 == 1 and p[1][1] == None:
         cont_vars[1] = cont_vars[1] + 1
         work_vars[1] = work_vars[1] + 1
-    elif tipo1 == 2:
+    elif tipo1 == 2 and p[1][1] == None:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
     #print "NUEVO ID", p[1]
@@ -410,6 +410,7 @@ def p_write(p):
 		tab_constant = tabconstante(tab_constant, p[2])
 		quads_gen.addQ(p[1], p[2], -1, -1)
 	else:
+		pilaTipos.pop()
 		quads_gen.addQ(p[1], pilaOpera.pop(), -1, -1)
 
 def p_writeA(p):
@@ -441,7 +442,6 @@ def p_array(p):
 	pairs_idtype.append([p[3], tipo1, r])
 	tab_dims.add(p[3], 1, p[5]-1, -1)
 	quads_gen.addQ('arr', p[3], -1, r)
-
 
 def p_matrix(p):
 	'''matrix : MAT typeDim ID '[' CTE_INTEGER ']' '[' CTE_INTEGER ']' ';' '''
