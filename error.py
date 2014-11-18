@@ -57,4 +57,10 @@ def senderror(x, linenumber, *resto):
 	elif x == 16:
 		print("ERROR // Variable <%s> not declared as array/matrix") % resto[0]
 		print "-LINE //", linenumber
+	elif x == 17:
+		print("ERROR // Module <%s> returns <%s>") % (resto[0], resto[1])
+		print "-LINE //", linenumber
+	elif x == 18:
+		print("ERROR // No RETURN should be at WORKSPACE")
+		print "-LINE //", linenumber
 	sys.exit()

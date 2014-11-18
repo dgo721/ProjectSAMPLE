@@ -19,11 +19,11 @@ reserva = {
     'and' : 'AND',
     'or' : 'OR',
     'echo' : 'ECHO',
-    'clear' : 'CLEAR',
     'sample' : 'SAMPLE',
     'on' : 'ON',
     'off' : 'OFF',
     'mod' : 'MOD',
+    'return' : 'RETURN',
     'oval' : 'OVAL',
     'trio' : 'TRIO',
     'quad' : 'QUAD',
@@ -32,7 +32,6 @@ reserva = {
     'down' : 'DOWN',
     'left' : 'LEFT',
     'right' : 'RIGHT',
-    'where' : 'WHERE',
     'if' : 'IF',
     'else' : 'ELSE',
     'while' : 'WHILE',
@@ -114,7 +113,7 @@ def p_program(p):
     	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
     	tab_valores=tabvar(tab_valores, par[0], par[1], par[2], linenumber)
     
-    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], work_point, tab_temporal, tab_pointer, None)
+    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], work_point, tab_temporal, tab_pointer, None, None)
 
 def p_programA(p):
     '''programA : programB END
@@ -147,16 +146,39 @@ def p_statute(p):
                 | calling
                 | array
                 | matrix
-                | screen'''
+                | return'''
     global assign_vars
     assign_vars=[]
 
+def p_typeMod(p):
+	'''typeMod : INT
+			| FLOAT
+			| BOOL
+			| empty'''
+	global tipomod
+	p[0] = p[1]
+	tipomod = p[1]
+
+
+def p_addMod(p):
+	'''addMod : '''
+	global tipomod, nombremod, tab_valores, work_vars
+	if tipomod == 'int':
+		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
+		work_vars[0] = work_vars[0] + 1
+	elif tipomod == 'float':
+		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
+		work_vars[1] = work_vars[1] + 1
+	elif tipomod == 'bool':
+		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
+		work_vars[2] = work_vars[2] + 1
+
 def p_module(p):
-    '''module : MOD '#' moduleID insertQuadMod moduleA endMod'''
-    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp
+    '''module : MOD typeMod '#' moduleID addMod insertQuadMod moduleA endMod'''
+    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_valores, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp
     #print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
-    dir_modulos = removedirmod(dir_modulos, p[3])
+    dir_modulos = removedirmod(dir_modulos, p[4])
     x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
     while (x < suma and pairs_idtype):
@@ -164,8 +186,7 @@ def p_module(p):
     	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber)
     	suma = suma - 1
-
-    dir_modulos = dirmod(dir_modulos, p[3], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], cont_point, copy.deepcopy(tab_ltemporal), copy.deepcopy(tab_lpointer), line_mod)
+    dir_modulos = dirmod(dir_modulos, p[4], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], cont_point, copy.deepcopy(tab_ltemporal), copy.deepcopy(tab_lpointer), p[2], line_mod)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
     work_vars[0] = work_vars[0] - cont_vars[0]
@@ -190,12 +211,13 @@ def p_moduleA(p):
 
 def p_moduleID(p):
     '''moduleID : ID'''
-    global flagTabTemp, line_mod, dir_modulos
+    global flagTabTemp, line_mod, dir_modulos, nombremod
     flagTabTemp = True
     line_mod = linenumber
     dir_modulos = tempdirmod(dir_modulos, p[1], list_params)
     quads_gen.addGoTo('goTo', -1, -1, -1)
     quads_gen.setScope(p[1])
+    nombremod = p[1]
     p[0] = p[1]
 
 def p_vars(p):
@@ -235,10 +257,12 @@ def p_type(p):
 def p_id(p):
 	'''id : ID '[' sumdim exp ']' '[' sumdim exp ']'
 		| ID '[' sumdim exp ']' 
-		| ID '''
+		| callID '#' calling2
+		| ID empty'''
 	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer, cont_point, work_point
 	p[0] = [p[1], None]
 	print "ID--", es_dim, tab_dims.getDim(p[1])
+	#senderror(17, linenumber, p[1])
 	if es_dim > 0 and tab_dims.getDim(p[1]) == -1:
 		senderror(16, linenumber, p[1])
 	if es_dim != tab_dims.getDim(p[1]) and tab_dims.getDim(p[1]) != -1:
@@ -290,7 +314,15 @@ def p_sumdim(p):
 	es_dim += 1
 
 def p_calling(p):
-    '''calling : '#' callID '(' insertEra callingA'''
+	'''calling : '#' callID calling2 ';' '''
+
+def p_calling2(p):
+	'''calling2 : '(' maincalling ')' '''
+	if (xparam + 1) != len(lista_params):
+		senderror(9, linenumber, id_mod, len(lista_params))
+
+def p_maincalling(p):
+    '''maincalling : insertEra callingA'''
     global lista_params
     quads_gen.addQ('gosub',id_mod,-1,-1)
     lista_params = []
@@ -303,11 +335,13 @@ def p_callID(p):
     if dir_modulos.lookup(p[1]) == False:
     	senderror(7, linenumber, p[1])
     id_mod = p[1]
+    p[0] = p[1]
 
 def p_insertEra(p):
     '''insertEra : '''
     global lista_params
     quads_gen.addQ('era',id_mod,-1,-1)
+    print id_mod, dir_modulos.getParams(id_mod)
     lista_params = dir_modulos.getParamsNum(id_mod)
     print "INSERERA--",  list_params, len(list_params)
     if len(lista_params) != 0:
@@ -316,13 +350,11 @@ def p_insertEra(p):
     	xparam = -1
 
 def p_callingA(p):
-    '''callingA : callingB ')' ';'
-                | ')' ';' '''
-    if (p[1] == ')' or p[2] == ')') and (xparam + 1) != len(lista_params):
-    	senderror(9, linenumber, id_mod, len(lista_params))
+    '''callingA : callingB
+                | empty '''
 
 def p_callingB(p):
-    '''callingB : expression checkParam callingC'''
+    '''callingB : exp checkParam callingC'''
 
 def p_checkParam(p):
     '''checkParam : '''
@@ -621,6 +653,18 @@ def p_exp(p):
         else:
             senderror(2, linenumber)
 
+def p_return(p):
+	'''return : RETURN exp ';' '''
+	global pilaOpera, pilaTipos, quads_gen
+	valor=pilaOpera.pop()
+	tipo=pilaTipos.pop()
+	print 'return', valor, tipo, nombremod, tipomod
+	if quads_gen.getScope() == "*work*":
+		senderror(18, linenumber)
+	if tipo != vartipo_mod(tipomod):
+		senderror(17, linenumber, nombremod, tipomod)
+	quads_gen.add('return', valor, -1, nombremod)
+
 def p_factor(p):
     '''factor : '(' expression ')'
             | var_cte '''
@@ -655,10 +699,6 @@ def p_color(p):
             | PURPLE
             | CYAN'''
     p[0] = p[1]
-
-def p_screen(p):
-    '''screen : WHERE
-            | CLEAR'''
 
 def p_var_cte(p):
     '''var_cte : id
@@ -805,6 +845,8 @@ id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
 xparam = 0 #Variable entera en funcion de apuntador de parametros
 flagTabTemp = False #Indica si almacena valores temporales globales o locales
 es_dim = 0 #Variable indica si la variable es atomica, de dimension 1 o dimension 2
+nombremod = str()
+tipomod = str()
 
 #'''
 

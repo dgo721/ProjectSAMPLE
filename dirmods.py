@@ -7,8 +7,8 @@ class DirMods:
 	def __init__(self):
 		self.data = {}
 
-	def add(self, key, params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tpoints, tabtemporales, tabpointers):
-		self.data[key]=[params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tpoints, tabtemporales, tabpointers]
+	def add(self, key, params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tpoints, tabtemporales, tabpointers, tipo):
+		self.data[key]=[params, xints, yfloats, zbools, tabvalores, quad, tints, tfloats, tbools, tpoints, tabtemporales, tabpointers, tipo]
 
 	def getParams(self, key):
 		return self.data[key][0]
@@ -41,6 +41,9 @@ class DirMods:
 
 	def getTablePoint(self, key):
 		return self.data[key][11]
+
+	def getType(self, key):
+		return self.data[key][12]
 
 	def echo(self):
 		print "Modulos".ljust(15) + "|".ljust(5) + "Parametros".ljust(30) + "|".ljust(5) + "No. QUAD".ljust(15) + "|".ljust(5)
@@ -77,7 +80,7 @@ class DirMods:
 	def writeQ(self):
 		f = open('sample.smo', 'w')
 		for key in self.data:
-			print >> f, key + "|" + str(self.data[key][0]) + "|" + str(self.data[key][1]) + "|" + str(self.data[key][2]) + "|" + str(self.data[key][3]) + "|" + str(self.data[key][5]) + "|" + str(self.data[key][6]) + "|" + str(self.data[key][7]) + "|" + str(self.data[key][8]) + "|" + str(self.data[key][9])
+			print >> f, key + "|" + str(self.data[key][0]) + "|" + str(self.data[key][1]) + "|" + str(self.data[key][2]) + "|" + str(self.data[key][3]) + "|" + str(self.data[key][5]) + "|" + str(self.data[key][6]) + "|" + str(self.data[key][7]) + "|" + str(self.data[key][8]) + "|" + str(self.data[key][9]) + "|" + str(self.data[key][12])
 		print >> f, "%%%%"
 		f.close()
 
@@ -102,16 +105,16 @@ class DirMods:
 	def __str__(self):
 		return repr(self.data)
 
-def dirmod(dir_modulos, nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer, linea):
+def dirmod(dir_modulos, nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer, tipo, linea):
 	if dir_modulos.lookup(nombre)!=True and tab_valores.lookup(nombre)!=True:
-		dir_modulos.add(nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer)
+		dir_modulos.add(nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer, tipo)
 	else:
 		senderror(11, linea, nombre)
 	return dir_modulos
 
 def tempdirmod(dir_modulos, nombre, params):
 	if dir_modulos.lookup(nombre)!=True:
-		dir_modulos.add(nombre, params, None, None, None, None, None, None, None, None, None, None, None)
+		dir_modulos.add(nombre, params, None, None, None, None, None, None, None, None, None, None, None, None)
 	else:
 		senderror(11, linea, nombre)
 	return dir_modulos
