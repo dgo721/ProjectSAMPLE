@@ -566,20 +566,24 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'gosub':
 		print qactual[0], qactual[1]
-		memoria.echoNew()
+		memoria.sleepLocalMemory()
 		memoria.setLocalMemory()
-		memoria.addIP([ip, current_scope])
+		if current_scope == "*work*":
+			memoria.addIP([ip, current_scope])
 		current_scope = qactual[1]
 		direcmod = directory[qactual[1]][1]
 		ip = direcmod - 2
 
 	elif qactual[0] == 'ret':
-		memoria.echoLocal()
 		memoria.freeLocalMemory()
-		ip = memoria.getIP()[0]
+		ipscope = memoria.getIP()
+		if ipscope[1] != "*work*":
+			memoria.awakeLocalMemory()
+		ip = ipscope[0]
+		current_scope = ipscope[1]
 
 	#print "IP-", ip+1
 	ip = ip + 1
 turtle.hideturtle()
 turtle.done()
-memoria.echoGlobal()
+#memoria.echoGlobal()

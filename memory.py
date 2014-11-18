@@ -1,4 +1,5 @@
 import copy
+from error_exec import senderror
 
 class Memory:
 
@@ -46,8 +47,6 @@ class Memory:
 		self.lpdir = 42000
 		self.lpend = 42000
 		self.lp = dict()
-		self.localspace = 14000
-		self.pilaLocal = list()
 		#Valores de creacion para nueva memoria
 		self.nwintdir = 12000
 		self.nwintend = 12000
@@ -70,8 +69,9 @@ class Memory:
 		self.nwpdir = 42000
 		self.nwpend = 42000
 		self.nwp = dict()
-		#Pila IPs de llamada
-		self.callip = list()
+		self.callip = list() #Pila IPs de llamada
+		self.pilaLocal = list() #Pila Memoria en Sleep
+		self.localspace = 14000 #Espacio disponible en memoria local
 
 	#Crea mapa de memoria local nueva / Cuadruplo ERA
 	def newLocalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p):
@@ -110,6 +110,9 @@ class Memory:
 
 	#Inicializa mapa de memoria local (modulo)
 	def setLocalMemory(self):
+		self.localspace = self.localspace - (self.nwintend - self.nwintdir) - (self.nwfloatend - self.nwfloatdir) - (self.nwboolend - self.nwbooldir) - (self.nwtintend - self.nwtintdir) - (self.nwtfloatend - self.nwtfloatdir) - (self.nwtboolend - self.nwtbooldir) - (self.nwpend - self.nwpdir)
+		if self.localspace <= 0:
+			senderror(3)
 		self.lintdir = self.nwintdir
 		self.lintend = self.nwintend
 		self.lint = self.nwint
@@ -141,6 +144,7 @@ class Memory:
 		#print self.lintend, self.lfloatend, self.lboolend, self.ltintend, self.ltfloatend, self.ltboolend
 
 	def freeLocalMemory(self):
+		self.localspace = self.localspace + (self.lintend - self.lintdir) + (self.lfloatend - self.lfloatdir) + (self.lboolend - self.lbooldir) + (self.ltintend - self.ltintdir) + (self.ltfloatend - self.ltfloatdir) + (self.ltboolend - self.ltbooldir) + (self.lpend - self.lpdir)
 		self.lintdir = 12000
 		self.lintend = 12000
 		self.lint = dict()
@@ -162,6 +166,41 @@ class Memory:
 		self.lpdir = 42000
 		self.lpend = 42000
 		self.lp = dict()
+
+	#Guarda segmento de memoria local ante una nueva llamada recursiva
+	def sleepLocalMemory(self):
+		self.pilaLocal.append([self.lintend, self.lint, self.lfloatend, self.lfloat, self.lboolend, self.lbool, self.ltintend, self.ltint, self.ltfloatend, self.ltfloat, self.ltboolend, self.ltbool, self.lpend, self.lp])
+
+	def awakeLocalMemory(self):
+		mem_awake = self.pilaLocal.pop()
+		self.lintdir = 12000
+		self.lintend = mem_awake[0]
+		self.lint = mem_awake[1]
+		self.lint = copy.deepcopy(mem_awake[1])
+		self.lfloatdir = 14000
+		self.lfloatend = mem_awake[2]
+		self.lfloat = mem_awake[3]
+		self.lfloat = copy.deepcopy(mem_awake[3])
+		self.lbooldir = 16000
+		self.lboolend = mem_awake[4]
+		self.lbool = mem_awake[5]
+		self.lbool = copy.deepcopy(mem_awake[5])
+		self.ltintdir = 32000
+		self.ltintend = mem_awake[6]
+		self.ltint = mem_awake[7]
+		self.ltint = copy.deepcopy(mem_awake[7])
+		self.ltfloatdir = 34000
+		self.ltfloatend = mem_awake[8]
+		self.ltfloat = mem_awake[9]
+		self.ltfloat = copy.deepcopy(mem_awake[9])
+		self.ltbooldir = 36000
+		self.ltboolend = mem_awake[10]
+		self.ltbool = mem_awake[11]
+		self.ltbool = copy.deepcopy(mem_awake[11])
+		self.lpdir = 42000
+		self.lpend = mem_awake[12]
+		self.lp = mem_awake[13]
+		self.lp = copy.deepcopy(mem_awake[13])
 
 	#Aniade elemento a memoria global
 	def addGlobalInt(self, num, data):
