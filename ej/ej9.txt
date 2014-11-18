@@ -17,6 +17,8 @@ echo a; echo j;
 mod # second (int d) {
 	var4 = 1.23;
 	var3 = d;
+  echo var4;
+  echo var3;
 }
 
 b= 45 * 334 / 23 - 34;
@@ -26,15 +28,19 @@ echo b;
 mod # third (int e, float f) {
 	var13 = 12+b-i*89.2;
 	var14 = 23;
+  echo var13;
+  echo var14;
 }
 
+echo "Suma b+a";
 echo b+a;
 
 e=23;
 r=34.3;
 
-echo e*j; echo "ULTIMA";
+# second (e);
+# third (e,r);
 
-//# second (e);
+echo e*j; echo "ULTIMA";
 
 end

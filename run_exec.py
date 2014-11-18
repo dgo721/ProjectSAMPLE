@@ -1,4 +1,4 @@
-import re, turtle, math
+import re, turtle, math, sys
 from memory import Memory
 from error_exec import senderror
 
@@ -87,6 +87,15 @@ def getDirData(num):
 	elif num >= 100:
 		return constants[num]
 
+def addParamData(num, data):
+	#print "addDirData--", num, data
+	if num >= 16000:
+		memoria.addParamBool(num, data)
+	elif num >= 14000:
+		memoria.addParamFloat(num, data)
+	elif num >= 12000:
+		memoria.addParamInt(num, data)
+
 def getColor(color):
 	if color == "red":
 		return "#d03832"
@@ -174,6 +183,13 @@ for line in f:
 f.close()
 #print quad[0][0]
 #print constants
+
+current_scope = "*work*"
+parametros = list()
+num_parametros = 0
+paramint = 12000
+paramfloat = 14000
+parambool = 16000
 
 turtle.bgcolor("#727678")
 turtle.seth(90)
@@ -522,8 +538,45 @@ while quad[ip][1][0] != 'end':
 		if getDirData(int(qactual[1])) == False:
 			ip = int(qactual[3]) - 2
 
+	elif qactual[0] == 'era':
+		print qactual[0], qactual[1]
+		memoria.newLocalMemory(cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p)
+		if directory[qactual[1]][0] != None:
+			parametros = directory[qactual[1]][0]
+		else:
+			parametros = []
+		num_parametros = 0
+
+	elif qactual[0] == 'param':
+		print qactual[0], qactual[1]
+		if int(qactual[1]) >= 40000:
+			tmp = getDirData(getDirData(int(qactual[1])))
+		else:
+			tmp = getDirData(int(qactual[1]))
+		if parametros[num_parametros] == 'int':
+			addParamData(paramint, tmp)
+			paramint = paramint + 1
+		elif parametros[num_parametros] == 'float':
+			addParamData(paramfloat, tmp)
+			paramfloat = paramfloat + 1
+		elif parametros[num_parametros] == 'bool':
+			addParamData(parambool, tmp)
+			parambool = parambool + 1
+		num_parametros += 1
+
+	elif qactual[0] == 'gosub':
+		print qactual[0], qactual[1]
+		memoria.echoNew()
+		memoria.setLocalMemory()
+		memoria.addIP([ip, current_scope])
+		current_scope = qactual[1]
+		direcmod = directory[qactual[1]][1]
+		ip = direcmod - 2
+
 	elif qactual[0] == 'ret':
-		pass
+		memoria.echoLocal()
+		memoria.freeLocalMemory()
+		ip = memoria.getIP()[0]
 
 	#print "IP-", ip+1
 	ip = ip + 1

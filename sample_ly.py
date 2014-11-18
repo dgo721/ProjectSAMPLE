@@ -158,7 +158,7 @@ def p_statute(p):
 
 def p_module(p):
     '''module : MOD '#' moduleID insertQuadMod moduleA endMod'''
-    global id_params, cont_vars, dir_modulos, list_params, work_vars, tab_lvalores, tab_ltemporal, pairs_idtype, flagTabTemp
+    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp
     #print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     x = sum(work_vars) - sum(cont_vars)

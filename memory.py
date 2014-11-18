@@ -1,6 +1,8 @@
+import copy
+
 class Memory:
 
-	#Inicializa clase Memory
+	#Inicializa clase Memory / Crea mapa de memoria
 	def __init__(self):
 		self.gintdir = 2000
 		self.gintend = 2000
@@ -44,6 +46,56 @@ class Memory:
 		self.lpdir = 42000
 		self.lpend = 42000
 		self.lp = dict()
+		self.localspace = 14000
+		self.pilaLocal = list()
+		#Valores de creacion para nueva memoria
+		self.nwintdir = 12000
+		self.nwintend = 12000
+		self.nwint = dict()
+		self.nwfloatdir = 14000
+		self.nwfloatend = 14000
+		self.nwfloat = dict()
+		self.nwbooldir = 16000
+		self.nwboolend = 16000
+		self.nwbool = dict()
+		self.nwtintdir = 32000
+		self.nwtintend = 32000
+		self.nwtint = dict()
+		self.nwtfloatdir = 34000
+		self.nwtfloatend = 34000
+		self.nwtfloat = dict()
+		self.nwtbooldir = 36000
+		self.nwtboolend = 36000
+		self.nwtbool = dict()
+		self.nwpdir = 42000
+		self.nwpend = 42000
+		self.nwp = dict()
+		#Pila IPs de llamada
+		self.callip = list()
+
+	#Crea mapa de memoria local nueva / Cuadruplo ERA
+	def newLocalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p):
+		self.nwintdir = 12000
+		self.nwintend = self.nwintdir + cont_int
+		self.nwint = dict()
+		self.nwfloatdir = 14000
+		self.nwfloatend = self.nwfloatdir + cont_float
+		self.nwfloat = dict()
+		self.nwbooldir = 16000
+		self.nwboolend = self.nwbooldir + cont_bool
+		self.nwbool = dict()
+		self.nwtintdir = 32000
+		self.nwtintend = self.nwintdir + cont_tint
+		self.nwtint = dict()
+		self.nwtfloatdir = 34000
+		self.nwtfloatend = self.nwfloatdir + cont_tfloat
+		self.nwtfloat = dict()
+		self.nwtbooldir = 36000
+		self.nwtboolend = self.nwtbooldir + cont_tbool
+		self.nwtbool = dict()
+		self.nwpdir = 42000
+		self.nwpend = self.nwpdir + cont_p
+		self.nwp = dict()
 
 	#Inicializa mapa de memoria global (workspace)
 	def setGlobalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p):
@@ -55,6 +107,61 @@ class Memory:
 		self.gtboolend = self.gtboolend + cont_tbool
 		self.gpend = self.gpend + cont_p
 		#print self.gintend, self.gfloatend, self.gboolend, self.gtintend, self.gtfloatend, self.gtboolend
+
+	#Inicializa mapa de memoria local (modulo)
+	def setLocalMemory(self):
+		self.lintdir = self.nwintdir
+		self.lintend = self.nwintend
+		self.lint = self.nwint
+		self.lint = copy.deepcopy(self.nwint)
+		self.lfloatdir = self.nwfloatdir 
+		self.lfloatend = self.nwfloatend
+		self.lfloat = self.nwfloat
+		self.lfloat = copy.deepcopy(self.nwfloat)
+		self.lbooldir = self.nwbooldir
+		self.lboolend = self.nwboolend
+		self.lbool = self.nwbool
+		self.lbool = copy.deepcopy(self.nwbool)
+		self.ltintdir = self.nwtintdir
+		self.ltintend = self.nwtintend
+		self.ltint = self.nwtint
+		self.ltint = copy.deepcopy(self.nwtint)
+		self.ltfloatdir = self.nwtfloatdir
+		self.ltfloatend = self.nwtfloatend
+		self.ltfloat = self.nwtfloat
+		self.ltfloat = copy.deepcopy(self.nwtfloat)
+		self.ltbooldir = self.nwtbooldir
+		self.ltboolend = self.nwtboolend
+		self.ltbool = self.nwtbool
+		self.ltbool = copy.deepcopy(self.nwtbool)
+		self.lpdir = self.nwpdir
+		self.lpend = self.nwpend
+		self.lp = self.nwp
+		self.lp = copy.deepcopy(self.nwp)
+		#print self.lintend, self.lfloatend, self.lboolend, self.ltintend, self.ltfloatend, self.ltboolend
+
+	def freeLocalMemory(self):
+		self.lintdir = 12000
+		self.lintend = 12000
+		self.lint = dict()
+		self.lfloatdir = 14000
+		self.lfloatend = 14000
+		self.lfloat = dict()
+		self.lbooldir = 16000
+		self.lboolend = 16000
+		self.lbool = dict()
+		self.ltintdir = 32000
+		self.ltintend = 32000
+		self.ltint = dict()
+		self.ltfloatdir = 34000
+		self.ltfloatend = 34000
+		self.ltfloat = dict()
+		self.ltbooldir = 36000
+		self.ltboolend = 36000
+		self.ltbool = dict()
+		self.lpdir = 42000
+		self.lpend = 42000
+		self.lp = dict()
 
 	#Aniade elemento a memoria global
 	def addGlobalInt(self, num, data):
@@ -101,6 +208,16 @@ class Memory:
 
 	def addLocalPointer(self, num, data):
 		self.lp[num]=data
+
+	#Enlaza parametros a memoria local
+	def addParamInt(self, num, data):
+		self.nwint[num]=data
+
+	def addParamFloat(self, num, data):
+		self.nwfloat[num]=data
+
+	def addParamBool(self, num, data):
+		self.nwbool[num]=data
 	
 	#Busca elemento en memoria
 	def getGlobalInt(self, num):
@@ -145,6 +262,12 @@ class Memory:
 	def getLocalPointer(self, num):
 		return self.lp[num]
 
+	def addIP(self, ip):
+		self.callip.append(ip)
+
+	def getIP(self):
+		return self.callip.pop()
+
 	def echoGlobal(self):
 		print "GLOBAL INT--", self.gint
 		print "GLOBAL FLOAT--", self.gfloat
@@ -154,6 +277,24 @@ class Memory:
 		print "GLOBAL BOOL TEMP--", self.gtbool
 		print "GLOBAL POINT--", self.gp
 
+	def echoLocal(self):
+		print "LOCAL INT--", self.lint
+		print "LOCAL FLOAT--", self.lfloat
+		print "LOCAL BOOL--", self.lbool
+		print "LOCAL INT TEMP--", self.ltint
+		print "LOCAL FLOAT TEMP--", self.ltfloat
+		print "LOCAL BOOL TEMP--", self.ltbool
+		print "LOCAL POINT--", self.lp
+
+	def echoNew(self):
+		print "NEW INT--", self.nwint
+		print "NEW FLOAT--", self.nwfloat
+		print "NEW BOOL--", self.nwbool
+		print "NEW INT TEMP--", self.nwtint
+		print "NEW FLOAT TEMP--", self.nwtfloat
+		print "NEW BOOL TEMP--", self.nwtbool
+		print "NEW POINT--", self.nwp
+
 	def echoEndMemory(self):
 		print self.gintend
 		print self.gfloatend
@@ -162,3 +303,10 @@ class Memory:
 		print self.gtfloatend
 		print self.gtboolend
 		print self.gpend
+		print self.lintend
+		print self.lfloatend
+		print self.lboolend
+		print self.ltintend
+		print self.ltfloatend
+		print self.ltboolend
+		print self.lpend
