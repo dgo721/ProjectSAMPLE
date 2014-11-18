@@ -346,6 +346,30 @@ while quad[ip][1][0] != 'end':
 		tmp = operador1 < operador2
 		addDirData(int(qactual[3]), tmp)
 
+	elif qactual[0] == 'and':
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 and operador2
+		addDirData(int(qactual[3]), tmp)
+
+	elif qactual[0] == 'or':
+		if int(qactual[1]) >= 40000:
+			operador1 = getDirData(getDirData(int(qactual[1])))
+		else:
+			operador1 = getDirData(int(qactual[1]))
+		if int(qactual[2]) >= 40000:
+			operador2 = getDirData(getDirData(int(qactual[2])))
+		else:
+			operador2 = getDirData(int(qactual[2]))
+		tmp = operador1 or operador2
+		addDirData(int(qactual[3]), tmp)
+
 	elif qactual[0] == 'sample1':
 		prevSample = True
 		if int(qactual[1]) >= 40000:
@@ -540,12 +564,17 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'era':
 		print qactual[0], qactual[1]
-		memoria.newLocalMemory(cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p)
+		actual = directory[qactual[1]]
+		print "ERA--", actual
+		memoria.newLocalMemory(actual[2], actual[3], actual[4], actual[5], actual[6], actual[7], actual[8])
 		if directory[qactual[1]][0] != None:
 			parametros = directory[qactual[1]][0]
 		else:
 			parametros = []
 		num_parametros = 0
+		paramint = 12000
+		paramfloat = 14000
+		parambool = 16000
 
 	elif qactual[0] == 'param':
 		print qactual[0], qactual[1]
@@ -566,13 +595,14 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'gosub':
 		print qactual[0], qactual[1]
-		memoria.sleepLocalMemory()
+		if current_scope != "*work*":
+			memoria.sleepLocalMemory()
+		memoria.addIP([ip, current_scope])
 		memoria.setLocalMemory()
-		if current_scope == "*work*":
-			memoria.addIP([ip, current_scope])
 		current_scope = qactual[1]
 		direcmod = directory[qactual[1]][1]
 		ip = direcmod - 2
+		memoria.echoLocal()
 
 	elif qactual[0] == 'ret':
 		memoria.freeLocalMemory()

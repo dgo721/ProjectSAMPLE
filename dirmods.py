@@ -30,6 +30,9 @@ class DirMods:
 				return True
 		return False
 
+	def remove(self, key):
+		self.data.pop(key)
+
 	def getTable(self, key):
 		return self.data[key][4]
 
@@ -104,4 +107,15 @@ def dirmod(dir_modulos, nombre, params, conti, contf, contb, tab_valores, quad, 
 		dir_modulos.add(nombre, params, conti, contf, contb, tab_valores, quad, tempi, tempf, tempb, tpoints, tab_temporales, tab_pointer)
 	else:
 		senderror(11, linea, nombre)
+	return dir_modulos
+
+def tempdirmod(dir_modulos, nombre, params):
+	if dir_modulos.lookup(nombre)!=True:
+		dir_modulos.add(nombre, params, None, None, None, None, None, None, None, None, None, None, None)
+	else:
+		senderror(11, linea, nombre)
+	return dir_modulos
+
+def removedirmod(dir_modulos, nombre):
+	dir_modulos.remove(nombre)
 	return dir_modulos

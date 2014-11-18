@@ -39,10 +39,6 @@ reserva = {
     'replay' : 'REPLAY',
     'arr' : 'ARR',
     'mat' : 'MAT',
-    'pipe' : 'PIPE',
-    'in' : 'IN',
-    'out' : 'OUT',
-    'count' : 'COUNT',
     'red' : 'RED',
     'yellow' : 'YELLOW',
     'green' : 'GREEN',
@@ -56,7 +52,7 @@ reserva = {
 
 tokens = ['CTE_INTEGER','CTE_FLOAT', 'CTE_STRING','ID'] + list(reserva.values())
 
-literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#']
+literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#','&']
 
 linenumber = 0;
 
@@ -151,7 +147,6 @@ def p_statute(p):
                 | calling
                 | array
                 | matrix
-                | pipeline
                 | screen'''
     global assign_vars
     assign_vars=[]
@@ -161,6 +156,7 @@ def p_module(p):
     global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp
     #print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
+    dir_modulos = removedirmod(dir_modulos, p[3])
     x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
     while (x < suma and pairs_idtype):
@@ -194,9 +190,10 @@ def p_moduleA(p):
 
 def p_moduleID(p):
     '''moduleID : ID'''
-    global flagTabTemp, line_mod
+    global flagTabTemp, line_mod, dir_modulos
     flagTabTemp = True
     line_mod = linenumber
+    dir_modulos = tempdirmod(dir_modulos, p[1], list_params)
     quads_gen.addGoTo('goTo', -1, -1, -1)
     quads_gen.setScope(p[1])
     p[0] = p[1]
@@ -294,8 +291,9 @@ def p_sumdim(p):
 
 def p_calling(p):
     '''calling : '#' callID '(' insertEra callingA'''
+    global lista_params
     quads_gen.addQ('gosub',id_mod,-1,-1)
-    list_params = []
+    lista_params = []
     #print dir_modulos.getParams(p[2])
     #print "CALLING", assign_vars
 
@@ -308,11 +306,11 @@ def p_callID(p):
 
 def p_insertEra(p):
     '''insertEra : '''
-    global list_params
+    global lista_params
     quads_gen.addQ('era',id_mod,-1,-1)
-    list_params = dir_modulos.getParamsNum(id_mod)
-    #print "INSERERA--",  list_params, len(list_params)
-    if len(list_params) != 0:
+    lista_params = dir_modulos.getParamsNum(id_mod)
+    print "INSERERA--",  list_params, len(list_params)
+    if len(lista_params) != 0:
     	xparam = 0
     else:
     	xparam = -1
@@ -320,24 +318,26 @@ def p_insertEra(p):
 def p_callingA(p):
     '''callingA : callingB ')' ';'
                 | ')' ';' '''
-    if (p[1] == ')' or p[2] == ')') and (xparam + 1) != len(list_params):
-    	senderror(9, linenumber, id_mod, len(list_params))
+    if (p[1] == ')' or p[2] == ')') and (xparam + 1) != len(lista_params):
+    	senderror(9, linenumber, id_mod, len(lista_params))
 
 def p_callingB(p):
     '''callingB : expression checkParam callingC'''
 
 def p_checkParam(p):
     '''checkParam : '''
+    global lista_params
     argum = pilaOpera.pop()
     tipo = pilaTipos.pop()
-    #print "CHECK PARAM--1-", xparam, list_params, argum, tipo
+    print "CHECK PARAM---", xparam, lista_params, argum, tipo, len(dir_modulos.getParamsNum(id_mod)), id_mod
+    dir_modulos.echo()
     if xparam >= len(dir_modulos.getParamsNum(id_mod)):
     	senderror(9, linenumber, id_mod, len(dir_modulos.getParamsNum(id_mod)))
-    if list_params[xparam] == tipo:
+    if lista_params[xparam] == tipo:
     	prm = "param" + str(xparam + 1)
     	quads_gen.addQ('param',argum,-1,prm)
     else:
-    	senderror(8, linenumber, invartipo_mod(list_params[xparam]))
+    	senderror(8, linenumber, invartipo_mod(lista_params[xparam]))
 
 def p_callingC(p):
     '''callingC : ',' sumXparam callingB
@@ -470,22 +470,6 @@ def p_matrix(p):
 	tab_dims.add(p[3], 2, p[5]-1, p[8]-1)
 	quads_gen.addQ('mat', p[3], -1, r)
 
-def p_pipeline(p):
-    '''pipeline : PIPE ID pipelineA'''
-
-def p_pipelineA(p):
-    '''pipelineA : '[' pipelineB ']' ';'
-            | IN '(' var_cte ')' ';'
-            | OUT '(' ')' ';'
-            | COUNT ';' '''
-
-def p_pipelineB(p):
-    '''pipelineB : exp pipelineC'''
-
-def p_pipelineC(p):
-    '''pipelineC : ',' pipelineB
-            | empty'''
-
 def p_typeDim(p):
     '''typeDim : INT
                 | FLOAT
@@ -578,6 +562,10 @@ def p_expression(p):
         	tipoNuevo = semant_oper(tipo1, tipo2, 4)
     	elif p[2] == '>':
         	tipoNuevo = semant_oper(tipo1, tipo2, 5)
+        elif p[2] == 'and':
+        	tipoNuevo = semant_oper(tipo1, tipo2, 10)
+        elif p[2] == 'or':
+        	tipoNuevo = semant_oper(tipo1, tipo2, 11)
         #print tipoNuevo
         if tipoNuevo != -1:
             if tipoNuevo == 2:
@@ -810,6 +798,7 @@ work_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/
 cont_point = 0 #Contador de apuntadores en modulos
 work_point = 0 #Contador de apuntadores en el workspace
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
+lista_params = []
 quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
 line_mod = 0 #Almacena el numero de linea donde comienza un modulo
 id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA

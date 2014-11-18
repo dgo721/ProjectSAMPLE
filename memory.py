@@ -301,6 +301,15 @@ class Memory:
 	def getLocalPointer(self, num):
 		return self.lp[num]
 
+	def getParamInt(self, num):
+		return self.nwint[num]
+
+	def getParamFloat(self, num, data):
+		return self.nwfloat[num]
+
+	def getParamBool(self, num, data):
+		return self.nwbool[num]
+
 	def addIP(self, ip):
 		self.callip.append(ip)
 
