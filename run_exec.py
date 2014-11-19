@@ -602,9 +602,25 @@ while quad[ip][1][0] != 'end':
 		current_scope = qactual[1]
 		direcmod = directory[qactual[1]][1]
 		ip = direcmod - 2
-		memoria.echoLocal()
 
 	elif qactual[0] == 'ret':
+		memoria.freeLocalMemory()
+		ipscope = memoria.getIP()
+		if ipscope[1] != "*work*":
+			memoria.awakeLocalMemory()
+		ip = ipscope[0]
+		current_scope = ipscope[1]
+
+	elif qactual[0] == 'return':
+		if int(qactual[1]) >= 40000:
+			tmp = getDirData(getDirData(int(qactual[1])))
+		else:
+			tmp = getDirData(int(qactual[1]))
+		if int(qactual[3]) >= 40000:
+			data = getDirData(int(qactual[3]))
+		else:
+			data = int(qactual[3])
+		addDirData(data, tmp)
 		memoria.freeLocalMemory()
 		ipscope = memoria.getIP()
 		if ipscope[1] != "*work*":

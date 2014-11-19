@@ -11,8 +11,10 @@ mod int # factorial (int n) {
     x = factorial #(n-1);
     j = n * x;
     return j;
+  }
 }
 
 i = factorial #(i);
+echo i;
 
 end

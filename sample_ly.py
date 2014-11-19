@@ -155,34 +155,38 @@ def p_typeMod(p):
 			| FLOAT
 			| BOOL
 			| empty'''
-	global tipomod
+	global tipomod, has_return
 	p[0] = p[1]
 	tipomod = p[1]
-
+	if p[1] != None:
+		has_return = True
 
 def p_addMod(p):
 	'''addMod : '''
 	global tipomod, nombremod, tab_valores, work_vars
 	if tipomod == 'int':
 		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
-		work_vars[0] = work_vars[0] + 1
 	elif tipomod == 'float':
 		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
-		work_vars[1] = work_vars[1] + 1
 	elif tipomod == 'bool':
 		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
-		work_vars[2] = work_vars[2] + 1
 
 def p_module(p):
     '''module : MOD typeMod '#' moduleID addMod insertQuadMod moduleA endMod'''
-    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_valores, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp
+    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_valores, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp, has_return, find_return
     #print "modulo #", p[3]
     #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
+    if has_return == True and find_return == False:
+    	senderror(19, linenumber, p[4])
+    if has_return == False and find_return == True:
+    	senderror(20, linenumber, p[4])
     dir_modulos = removedirmod(dir_modulos, p[4])
     x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
+    #print pairs_idtype, x, suma
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
+    	#print par[0], par[1], par[2]
     	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber)
     	suma = suma - 1
@@ -201,6 +205,8 @@ def p_module(p):
     quads_gen.addcontinueG()
     quads_gen.setScope("*work*")
     flagTabTemp = False
+    has_return = False
+    find_return = False
     tab_lvalores = TabVars(12000, 14000, 16000)
     tab_ltemporal = TabVars(32000, 34000, 36000)
     tab_lpointer = TabPointer(42000)
@@ -214,6 +220,7 @@ def p_moduleID(p):
     global flagTabTemp, line_mod, dir_modulos, nombremod
     flagTabTemp = True
     line_mod = linenumber
+    print "MODULE ID--", list_params
     dir_modulos = tempdirmod(dir_modulos, p[1], list_params)
     quads_gen.addGoTo('goTo', -1, -1, -1)
     quads_gen.setScope(p[1])
@@ -237,7 +244,7 @@ def p_vars(p):
     elif tipo1 == 2:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
-    #print "NUEVO ID", p[1]
+    print "NUEVO ID en PARAM", p[2]
     pairs_idtype.append([p[2], tipo1, 0])
     #print "MODULEA--",pairs_idtype
     #tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
@@ -261,8 +268,11 @@ def p_id(p):
 		| ID empty'''
 	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer, cont_point, work_point
 	p[0] = [p[1], None]
-	print "ID--", es_dim, tab_dims.getDim(p[1])
-	#senderror(17, linenumber, p[1])
+	if p[2] == '#' and tab_valores.lookup(p[1]) == True:
+		print dir_modulos.getType(p[1]), p[1]
+		p[0] = [p[1], 'mod', tab_valores.getType(p[1])]
+	elif p[2] == '#' and dir_modulos.lookup(p[1]) == False:
+		senderror(7, linenumber, p[1])
 	if es_dim > 0 and tab_dims.getDim(p[1]) == -1:
 		senderror(16, linenumber, p[1])
 	if es_dim != tab_dims.getDim(p[1]) and tab_dims.getDim(p[1]) != -1:
@@ -318,16 +328,14 @@ def p_calling(p):
 
 def p_calling2(p):
 	'''calling2 : '(' maincalling ')' '''
+	global lista_params
 	if (xparam + 1) != len(lista_params):
 		senderror(9, linenumber, id_mod, len(lista_params))
+	quads_gen.addQ('gosub',id_mod,-1,-1)
+	lista_params = []
 
 def p_maincalling(p):
     '''maincalling : insertEra callingA'''
-    global lista_params
-    quads_gen.addQ('gosub',id_mod,-1,-1)
-    lista_params = []
-    #print dir_modulos.getParams(p[2])
-    #print "CALLING", assign_vars
 
 def p_callID(p):
     '''callID : ID'''
@@ -343,7 +351,7 @@ def p_insertEra(p):
     quads_gen.addQ('era',id_mod,-1,-1)
     print id_mod, dir_modulos.getParams(id_mod)
     lista_params = dir_modulos.getParamsNum(id_mod)
-    print "INSERERA--",  list_params, len(list_params)
+    print "INSERERA--",  lista_params, len(lista_params)
     if len(lista_params) != 0:
     	xparam = 0
     else:
@@ -362,7 +370,6 @@ def p_checkParam(p):
     argum = pilaOpera.pop()
     tipo = pilaTipos.pop()
     print "CHECK PARAM---", xparam, lista_params, argum, tipo, len(dir_modulos.getParamsNum(id_mod)), id_mod
-    dir_modulos.echo()
     if xparam >= len(dir_modulos.getParamsNum(id_mod)):
     	senderror(9, linenumber, id_mod, len(dir_modulos.getParamsNum(id_mod)))
     if lista_params[xparam] == tipo:
@@ -403,7 +410,7 @@ def p_assign(p):
     #print "ASSIGN--", assign_vars
     index = vartipo_assign(assign_vars)
     #print "ASSIGN--", assign_vars, index
-    #print "ASSIGN--", valor1, tipo1, index
+    print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
     	senderror(3, linenumber, p[1][0])
     if tipo1 == 0 and p[1][1] == None:
@@ -415,7 +422,7 @@ def p_assign(p):
     elif tipo1 == 2 and p[1][1] == None:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
-    #print "NUEVO ID", p[1]
+    print "NUEVO ID", p[1]
     pairs_idtype.append([p[1][0], tipo1, 0])
     #print "ASSIGN--1 PAIRS", pairs_idtype, vartipo_mod[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
     #print "ASSIGN--2 PAIRS", cont_vars, work_vars
@@ -655,7 +662,7 @@ def p_exp(p):
 
 def p_return(p):
 	'''return : RETURN exp ';' '''
-	global pilaOpera, pilaTipos, quads_gen
+	global pilaOpera, pilaTipos, quads_gen, cont_vars, work_vars, find_return
 	valor=pilaOpera.pop()
 	tipo=pilaTipos.pop()
 	print 'return', valor, tipo, nombremod, tipomod
@@ -664,6 +671,7 @@ def p_return(p):
 	if tipo != vartipo_mod(tipomod):
 		senderror(17, linenumber, nombremod, tipomod)
 	quads_gen.add('return', valor, -1, nombremod)
+	find_return = True
 
 def p_factor(p):
     '''factor : '(' expression ')'
@@ -671,7 +679,7 @@ def p_factor(p):
     global listoper, pilaOpera
     if p[1] != '(':
         pilaOpera.append(p[1])
-        print "FACTOR--", pilaOpera
+        #print "FACTOR--", pilaOpera
     p[0] = p[1]
 
 def p_figure(p):
@@ -733,9 +741,11 @@ def p_var_cte(p):
         p[0] = p[1]
         #print "--FALSE", p[1], pilaOpera
     else:
-        print "VAR_CTE--", p[1][0], p[1][1]
+        #print "VAR_CTE--", p[1][0], p[1][1]
         findtipo = buscaID(pairs_idtype, p[1][0])
         esdimensionada = tab_dims.isDuplicate(p[1][0])
+        if p[1][1] == 'mod':
+        	findtipo = p[1][2]
         #print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         if findtipo == -1:
         	senderror(4, linenumber, p[1][0])
@@ -791,7 +801,8 @@ def p_insertQuadMod(p):
 
 def p_endMod(p):
 	'''endMod : '''
-	quads_gen.addQ('ret',-1,-1,-1)
+	if has_return == False:
+		quads_gen.addQ('ret',-1,-1,-1)
 
 def p_empty(p):
     'empty :'
@@ -838,7 +849,7 @@ work_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/
 cont_point = 0 #Contador de apuntadores en modulos
 work_point = 0 #Contador de apuntadores en el workspace
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.
-lista_params = []
+lista_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de invocacion.
 quad_mod = 0 #Almacena el cuadruplo donde comienza un modulo
 line_mod = 0 #Almacena el numero de linea donde comienza un modulo
 id_mod = "work" #Guarda el id que sera registrado en el cuadruplo ERA
@@ -847,6 +858,8 @@ flagTabTemp = False #Indica si almacena valores temporales globales o locales
 es_dim = 0 #Variable indica si la variable es atomica, de dimension 1 o dimension 2
 nombremod = str()
 tipomod = str()
+has_return = False
+find_return = False
 
 #'''
 
