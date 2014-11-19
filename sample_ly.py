@@ -113,7 +113,7 @@ def p_program(p):
     	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
     	tab_valores=tabvar(tab_valores, par[0], par[1], par[2], linenumber)
     
-    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0], work_vars[1], work_vars[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], work_point, tab_temporal, tab_pointer, None, None)
+    dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0]+work_offs[0], work_vars[1]+work_offs[1], work_vars[2]+work_offs[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], work_point, tab_temporal, tab_pointer, None, None)
 
 def p_programA(p):
     '''programA : programB END
@@ -173,9 +173,9 @@ def p_addMod(p):
 
 def p_module(p):
     '''module : MOD typeMod '#' moduleID addMod insertQuadMod moduleA endMod'''
-    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_valores, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp, has_return, find_return
-    #print "modulo #", p[3]
-    #print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
+    global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_valores, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp, has_return, find_return, cont_offs, work_offs
+    print "modulo #", p[4]
+    print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     if has_return == True and find_return == False:
     	senderror(19, linenumber, p[4])
     if has_return == False and find_return == True:
@@ -183,14 +183,14 @@ def p_module(p):
     dir_modulos = removedirmod(dir_modulos, p[4])
     x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
-    #print pairs_idtype, x, suma
+    print pairs_idtype, x, suma
     while (x < suma and pairs_idtype):
     	par = pairs_idtype.pop(x)
     	#print par[0], par[1], par[2]
-    	#print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
+    	print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
     	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber)
     	suma = suma - 1
-    dir_modulos = dirmod(dir_modulos, p[4], list_params, cont_vars[0], cont_vars[1], cont_vars[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], cont_point, copy.deepcopy(tab_ltemporal), copy.deepcopy(tab_lpointer), p[2], line_mod)
+    dir_modulos = dirmod(dir_modulos, p[4], list_params, cont_vars[0]+cont_offs[0], cont_vars[1]+cont_offs[1], cont_vars[2]+cont_offs[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], cont_point, copy.deepcopy(tab_ltemporal), copy.deepcopy(tab_lpointer), p[2], line_mod)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
     work_vars[0] = work_vars[0] - cont_vars[0]
@@ -199,6 +199,9 @@ def p_module(p):
     work_tvars[0] = work_tvars[0] - cont_tvars[0]
     work_tvars[1] = work_tvars[1] - cont_tvars[1]
     work_tvars[2] = work_tvars[2] - cont_tvars[2]
+    work_offs[0] = work_offs[0] - cont_offs[0]
+    work_offs[1] = work_offs[1] - cont_offs[1]
+    work_offs[2] = work_offs[2] - cont_offs[2]
     work_point = work_point - cont_point
     cont_vars = [0,0,0] #Reinicia contador
     cont_point = 0
@@ -459,7 +462,7 @@ def p_writeA(p):
 
 def p_array(p):
 	'''array : ARR typeDim ID '[' CTE_INTEGER ']' ';' '''
-	global pairs_idtype, tab_constant, tab_dims
+	global pairs_idtype, tab_constant, tab_dims, cont_vars, work_vars, cont_offs, work_offs
 	if tab_dims.isDuplicate(p[3]) != -1:
 		senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
 	if p[5] < 1:
@@ -467,14 +470,20 @@ def p_array(p):
 	r = p[5] #Equivalente a R = (Ls - Li) * R, R = 1
 	tipo1 = vartipo_mod(p[2])
 	if tipo1 == 0:
-		cont_vars[0] = cont_vars[0] + r
-		work_vars[0] = work_vars[0] + r
+		cont_vars[0] = cont_vars[0] + 1
+		work_vars[0] = work_vars[0] + 1
+		cont_offs[0] = cont_offs[0] + r - 1
+		work_offs[0] = work_offs[0] + r - 1
 	elif tipo1 == 1:
-		cont_vars[1] = cont_vars[1] + r
-		work_vars[1] = work_vars[1] + r
+		cont_vars[1] = cont_vars[1] + 1
+		work_vars[1] = work_vars[1] + 1
+		cont_offs[1] = cont_offs[1] + r - 1
+		work_offs[1] = work_offs[1] + r - 1
 	elif tipo1 == 2:
-		cont_vars[2] = cont_vars[2] + r
-		work_vars[2] = work_vars[2] + r
+		cont_vars[2] = cont_vars[2] + 1
+		work_vars[2] = work_vars[2] + 1
+		cont_offs[2] = cont_offs[2] + r - 1
+		work_offs[2] = work_offs[2] + r - 1
 	print "NUEVO ARR", p[1], p[5]
 	tab_constant = tabconstante(tab_constant, p[5])
 	tab_constant = tabconstante(tab_constant, p[5]-1)
@@ -484,7 +493,7 @@ def p_array(p):
 
 def p_matrix(p):
 	'''matrix : MAT typeDim ID '[' CTE_INTEGER ']' '[' CTE_INTEGER ']' ';' '''
-	global pairs_idtype, tab_constant, tab_dims
+	global pairs_idtype, tab_constant, tab_dims, cont_vars, work_vars
 	if tab_dims.isDuplicate(p[3]) != -1:
 		senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
 	if p[5] < 1 or p[8] < 1:
@@ -492,14 +501,20 @@ def p_matrix(p):
 	r = p[5] * p[8] #Equivalente a 2 veces R = (Ls - Li) * R, R = 1
 	tipo1 = vartipo_mod(p[2])
 	if tipo1 == 0:
-		cont_vars[0] = cont_vars[0] + r
-		work_vars[0] = work_vars[0] + r
+		cont_vars[0] = cont_vars[0] + 1
+		work_vars[0] = work_vars[0] + 1
+		cont_offs[0] = cont_offs[0] + r - 1
+		work_offs[0] = work_offs[0] + r - 1
 	elif tipo1 == 1:
-		cont_vars[1] = cont_vars[1] + r
-		work_vars[1] = work_vars[1] + r
+		cont_vars[1] = cont_vars[1] + 1
+		work_vars[1] = work_vars[1] + 1
+		cont_offs[1] = cont_offs[1] + r - 1
+		work_offs[1] = work_offs[1] + r - 1
 	elif tipo1 == 2:
-		cont_vars[2] = cont_vars[2] + r
-		work_vars[2] = work_vars[2] + r
+		cont_vars[2] = cont_vars[2] + 1
+		work_vars[2] = work_vars[2] + 1
+		cont_offs[2] = cont_offs[2] + r - 1
+		work_offs[2] = work_offs[2] + r - 1
 	print "NUEVO MAT", p[1], p[5], p[8]
 	tab_constant = tabconstante(tab_constant, p[5])
 	tab_constant = tabconstante(tab_constant, p[5]-1)
@@ -846,6 +861,8 @@ cont_vars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotan
 work_vars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
 cont_tvars = [0,0,0] #Contador de variables en modulos, en el orden entero/flotante/boleano
 work_tvars = [0,0,0] #Contador de variables en el workspace, en el orden entero/flotante/boleano
+cont_offs = [0,0,0] #Contador de offsets en el modulo, en el orden entero/flotante/boleano
+work_offs = [0,0,0] #Contador de offsets en el workspace, en el orden entero/flotante/boleano
 cont_point = 0 #Contador de apuntadores en modulos
 work_point = 0 #Contador de apuntadores en el workspace
 list_params = [] #Lista que almacena el tipo de variables encontrado en los parametros de modulos.

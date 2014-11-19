@@ -1,23 +1,22 @@
 QUAD|   OP  |   OPR1|   OPR2|   TEMP|   
 ----|   ----|   ----|   ----|   ----|   
-   1|   =   |   5   |   -1  |   i   |   
-   2|   goTo|   -1  |   -1  |   16  |   
-   3|   ==  |   n   |   1   |   _t1 |   
-   4|   goToF|   _t1 |   -1  |   8   |   
-   5|   =   |   1   |   -1  |   j   |   
-   6|   return|   j   |   -1  |   factorial|   
-   7|   goTo|   -1  |   -1  |   16  |   
-   8|   era |   factorial|   -1  |   -1  |   
-   9|   -   |   n   |   1   |   _t2 |   
-  10|   param|   _t2 |   -1  |   param1|   
-  11|   gosub|   factorial|   -1  |   -1  |   
-  12|   =   |   factorial|   -1  |   x   |   
-  13|   *   |   n   |   x   |   _t3 |   
-  14|   =   |   _t3 |   -1  |   j   |   
-  15|   return|   j   |   -1  |   factorial|   
+   1|   mat |   b   |   -1  |   9   |   
+   2|   =   |   2   |   -1  |   m   |   
+   3|   mat |   a   |   -1  |   9   |   
+   4|   goTo|   -1  |   -1  |   16  |   
+   5|   =   |   3   |   -1  |   x   |   
+   6|   <=  |   n   |   1   |   _t1 |   
+   7|   goToF|   _t1 |   -1  |   10  |   
+   8|   return|   1   |   -1  |   factorial|   
+   9|   goTo|   -1  |   -1  |   16  |   
+  10|   era |   factorial|   -1  |   -1  |   
+  11|   -   |   n   |   1   |   _t2 |   
+  12|   param|   _t2 |   -1  |   param1|   
+  13|   gosub|   factorial|   -1  |   -1  |   
+  14|   *   |   n   |   factorial|   _t3 |   
+  15|   return|   _t3 |   -1  |   factorial|   
   16|   era |   factorial|   -1  |   -1  |   
-  17|   param|   i   |   -1  |   param1|   
+  17|   param|   5   |   -1  |   param1|   
   18|   gosub|   factorial|   -1  |   -1  |   
-  19|   =   |   factorial|   -1  |   i   |   
-  20|   echo|   i   |   -1  |   -1  |   
-  21|   end |   -1  |   -1  |   -1  |   
+  19|   echo|   factorial|   -1  |   -1  |   
+  20|   end |   -1  |   -1  |   -1  |   

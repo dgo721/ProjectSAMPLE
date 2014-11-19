@@ -165,5 +165,14 @@ def isduplicate(lista, par, contvars):
 		x = x + 1
 	return 0
 
+def offsetVars(lista):
+	offset = 0
+	i = 0
+	for x in lista:
+		if lista[i][2] != 0:
+			offset = offset + (lista[i][2]-1)
+		i += 1
+	return offset
+
 #lista = [['a',0],['b',1],['c',1]]
 #print isduplicate(lista, ['b',0], 3)

@@ -161,7 +161,8 @@ for line in f:
 			cont_tfloat = int(string[7])
 			cont_tbool = int(string[8])
 			cont_p = int(string[9])
-			directory[string[0]] = [list_param, quad_init, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p]
+			tipo_return = string[10]
+			directory[string[0]] = [list_param, quad_init, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p, tipo_return]
 			if string[0] == "*work*":
 				memoria.setGlobalMemory(cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p)
 		if read == 2:
@@ -517,7 +518,7 @@ while quad[ip][1][0] != 'end':
 		prevSample = False
 
 	elif qactual[0] == 'arr' or qactual[0] == 'mat':
-		print qactual[0], int(qactual[1]), 0, qactual[3]
+		#print qactual[0], int(qactual[1]), 0, qactual[3]
 		ini = int(qactual[1])
 		if ini >= 6000:
 			data = False
@@ -531,7 +532,7 @@ while quad[ip][1][0] != 'end':
 			i = i + 1
 
 	elif qactual[0] == 'ver':
-		print qactual[0], getDirData(int(qactual[1])), qactual[2], qactual[3]
+		#print qactual[0], getDirData(int(qactual[1])), qactual[2], qactual[3]
 		tmp = getDirData(int(qactual[1]))
 		if tmp < 0 or tmp > int(qactual[3]):
 			senderror(2)
@@ -554,18 +555,18 @@ while quad[ip][1][0] != 'end':
 		addDirData(int(qactual[3]), tmp)
 
 	elif qactual[0] == 'goTo':
-		print qactual[0], qactual[3]
+		#print qactual[0], qactual[3]
 		ip = int(qactual[3]) - 2
 
 	elif qactual[0] == 'goToF':
-		print qactual[0], getDirData(int(qactual[1])), qactual[3]
+		#print qactual[0], getDirData(int(qactual[1])), qactual[3]
 		if getDirData(int(qactual[1])) == False:
 			ip = int(qactual[3]) - 2
 
 	elif qactual[0] == 'era':
-		print qactual[0], qactual[1]
+		#print qactual[0], qactual[1]
 		actual = directory[qactual[1]]
-		print "ERA--", actual
+		#print "ERA--", actual
 		memoria.newLocalMemory(actual[2], actual[3], actual[4], actual[5], actual[6], actual[7], actual[8])
 		if directory[qactual[1]][0] != None:
 			parametros = directory[qactual[1]][0]
@@ -577,7 +578,7 @@ while quad[ip][1][0] != 'end':
 		parambool = 16000
 
 	elif qactual[0] == 'param':
-		print qactual[0], qactual[1]
+		#print qactual[0], qactual[1]
 		if int(qactual[1]) >= 40000:
 			tmp = getDirData(getDirData(int(qactual[1])))
 		else:
@@ -594,7 +595,7 @@ while quad[ip][1][0] != 'end':
 		num_parametros += 1
 
 	elif qactual[0] == 'gosub':
-		print qactual[0], qactual[1]
+		#print qactual[0], qactual[1]
 		if current_scope != "*work*":
 			memoria.sleepLocalMemory()
 		memoria.addIP([ip, current_scope])
