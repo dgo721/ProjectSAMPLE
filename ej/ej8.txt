@@ -4,7 +4,7 @@ m = 2;
 arr float a [3];
 arr int b [3];
 c = 45.3;
-b[1] = 5;
+b[1] = 3;
 
 mod int # factorial (int n) {
   arr int a[3];
@@ -16,7 +16,9 @@ mod int # factorial (int n) {
   }
 }
 
-//x = b[1];
-echo (factorial #(b[1]), "Algo mas que imprimir");
+x = b[1];
+input int t #;
+echo (t);
+echo (factorial #(t));
 
 end

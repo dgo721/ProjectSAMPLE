@@ -305,7 +305,7 @@ class CodeGen:
 					q.append(tablapoint.getDir(quad[3]))
 				elif (tablapointP.lookup(quad[3])==True):
 					q.append(tablapointP.getDir(quad[3]))
-			elif quad[0] == "sample2":
+			elif quad[0] == "sample2" or quad[0] == "input":
 				q.append(quad[0])
 				q.append(quad[1])
 				q.append(quad[2])

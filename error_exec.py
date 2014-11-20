@@ -7,4 +7,6 @@ def senderror(x, *resto):
 		print("RUNTIME ERROR // Index variable is OUT OF BOUNDS")
 	elif x == 3:
 		print("RUNTIME ERROR // Out of MEMORY")
+	elif x == 4:
+		print("RUNTIME ERROR // An INPUT type <%s> was expected") % resto[0]
 	sys.exit()

@@ -6,7 +6,7 @@ QUAD|   OP  |   OPR1|   OPR2|   TEMP|
    4|   =   |   45.3|   -1  |   c   |   
    5|   ver |   1   |   -1  |   2   |   
    6|   +dir|   1   |   b   |   _a1 |   
-   7|   =   |   5   |   -1  |   _a1 |   
+   7|   =   |   3   |   -1  |   _a1 |   
    8|   goTo|   -1  |   -1  |   29  |   
    9|   arr |   a   |   -1  |   3   |   
   10|   ver |   2   |   -1  |   2   |   
@@ -28,11 +28,14 @@ QUAD|   OP  |   OPR1|   OPR2|   TEMP|
   26|   gosub|   factorial|   -1  |   -1  |   
   27|   *   |   _a4 |   factorial|   _t3 |   
   28|   return|   _t3 |   -1  |   factorial|   
-  29|   era |   factorial|   -1  |   -1  |   
-  30|   ver |   1   |   -1  |   2   |   
-  31|   +dir|   1   |   b   |   _a6 |   
-  32|   param|   _a6 |   -1  |   param1|   
-  33|   gosub|   factorial|   -1  |   -1  |   
-  34|   echo|   factorial|   -1  |   -1  |   
-  35|   echo|   "Algo mas que imprimir"|   -1  |   -1  |   
-  36|   end |   -1  |   -1  |   -1  |   
+  29|   ver |   1   |   -1  |   2   |   
+  30|   +dir|   1   |   b   |   _a6 |   
+  31|   =   |   _a6 |   -1  |   x   |   
+  32|   input|   int |   -1  |   t   |   
+  33|   =   |   5   |   -1  |   t   |   
+  34|   echo|   t   |   -1  |   -1  |   
+  35|   era |   factorial|   -1  |   -1  |   
+  36|   param|   t   |   -1  |   param1|   
+  37|   gosub|   factorial|   -1  |   -1  |   
+  38|   echo|   factorial|   -1  |   -1  |   
+  39|   end |   -1  |   -1  |   -1  |   

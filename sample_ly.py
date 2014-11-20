@@ -18,6 +18,7 @@ reserva = {
     'false' : 'FALSE',
     'and' : 'AND',
     'or' : 'OR',
+    'input' : 'INPUT',
     'echo' : 'ECHO',
     'sample' : 'SAMPLE',
     'on' : 'ON',
@@ -140,6 +141,7 @@ def p_workspace(p):
 def p_statute(p):
     '''statute : assign
                 | condition
+                | read
                 | write
                 | cycle
                 | repeat
@@ -443,6 +445,22 @@ def p_condition(p):
 def p_conditionA(p):
     '''conditionA : ELSE gotoE block
                 | empty '''
+
+def p_read(p):
+    '''read : INPUT typeDim ID '#' ';' '''
+    global quads_gen, cont_vars, work_vars, pairs_idtype
+    tipo = vartipo_mod(p[2])
+    if tipo == 0:
+        cont_vars[0] = cont_vars[0] + 1
+        work_vars[0] = work_vars[0] + 1
+    elif tipo == 1:
+        cont_vars[1] = cont_vars[1] + 1
+        work_vars[1] = work_vars[1] + 1
+    elif tipo == 2:
+        cont_vars[2] = cont_vars[2] + 1
+        work_vars[2] = work_vars[2] + 1
+    pairs_idtype.append([p[3], tipo, 0])
+    quads_gen.add('input', p[2], -1, p[3])
 
 def p_write(p):
     '''write : ECHO '(' writeA writeB ')' ';' '''

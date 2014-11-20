@@ -538,6 +538,31 @@ while quad[ip][1][0] != 'end':
 		if tmp < 0 or tmp > int(qactual[3]):
 			senderror(2)
 
+	elif qactual[0] == 'input':
+		#print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
+		i = raw_input('--> ')
+		if qactual[1] == 'int':
+			try:
+				i = int(i)
+			except ValueError:
+				senderror(4, qactual[1])
+		elif qactual[1] == 'float':
+			try:
+				i = float(i)
+			except ValueError:
+				senderror(4, qactual[1])
+		elif qactual[1] == 'bool':
+			try:
+				i = bool(i)
+			except ValueError:
+				senderror(4, qactual[1])
+
+		if int(qactual[3]) >= 40000:
+			data = getDirData(int(qactual[3]))
+		else:
+			data = int(qactual[3])
+		addDirData(data, i)
+
 	elif qactual[0] == 'echo':
 		if int(qactual[1]) >= 40000:
 			tmp = getDirData(getDirData(int(qactual[1])))
