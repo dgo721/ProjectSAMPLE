@@ -2,18 +2,21 @@ init
 
 m = 2;
 arr float a [3];
-arr float b [3];
+arr int b [3];
+c = 45.3;
+b[1] = 5;
 
 mod int # factorial (int n) {
-  //arr float a [3];
-  x = 3;
-  if (n <= 1){
+  arr int a[3];
+  a[2] = n;
+  if (a[2] <= 1){
     return 1;
   } else {
-    return n * factorial #(n-1);
+    return a[2] * factorial #(a[2]-1);
   }
 }
 
-echo factorial #(5);
+//x = b[1];
+echo (factorial #(b[1]), "Algo mas que imprimir");
 
 end

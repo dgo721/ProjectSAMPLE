@@ -204,9 +204,10 @@ while quad[ip][1][0] != 'end':
 	turtle.pendown()
 	#print qactual
 
-	if ip == 10:
+	if ip == 9-1:
 		#print getDirData(int(qactual[1])), getDirData(int(qactual[2]))
 		#memoria.echoGlobal()
+		#memoria.echoLocal()
 		#memoria.echoEndMemory()
 		#print constants
 		pass
@@ -629,7 +630,7 @@ while quad[ip][1][0] != 'end':
 		ip = ipscope[0]
 		current_scope = ipscope[1]
 
-	#print "IP-", ip+1
+	#print "IP-", ip+2
 	ip = ip + 1
 turtle.hideturtle()
 turtle.done()
