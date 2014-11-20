@@ -7,7 +7,7 @@ QUAD|   OP  |   OPR1|   OPR2|   TEMP|
    5|   ver |   1   |   -1  |   2   |   
    6|   +dir|   1   |   b   |   _a1 |   
    7|   =   |   3   |   -1  |   _a1 |   
-   8|   goTo|   -1  |   -1  |   29  |   
+   8|   goTo|   -1  |   -1  |   31  |   
    9|   arr |   a   |   -1  |   3   |   
   10|   ver |   2   |   -1  |   2   |   
   11|   +dir|   2   |   a   |   _a2 |   
@@ -15,27 +15,28 @@ QUAD|   OP  |   OPR1|   OPR2|   TEMP|
   13|   ver |   2   |   -1  |   2   |   
   14|   +dir|   2   |   a   |   _a3 |   
   15|   <=  |   _a3 |   1   |   _t1 |   
-  16|   goToF|   _t1 |   -1  |   19  |   
-  17|   return|   1   |   -1  |   factorial|   
-  18|   goTo|   -1  |   -1  |   29  |   
-  19|   ver |   2   |   -1  |   2   |   
-  20|   +dir|   2   |   a   |   _a4 |   
-  21|   era |   factorial|   -1  |   -1  |   
-  22|   ver |   2   |   -1  |   2   |   
-  23|   +dir|   2   |   a   |   _a5 |   
-  24|   -   |   _a5 |   1   |   _t2 |   
-  25|   param|   _t2 |   -1  |   param1|   
-  26|   gosub|   factorial|   -1  |   -1  |   
-  27|   *   |   _a4 |   factorial|   _t3 |   
-  28|   return|   _t3 |   -1  |   factorial|   
-  29|   ver |   1   |   -1  |   2   |   
-  30|   +dir|   1   |   b   |   _a6 |   
-  31|   =   |   _a6 |   -1  |   x   |   
-  32|   input|   int |   -1  |   t   |   
-  33|   =   |   5   |   -1  |   t   |   
-  34|   echo|   t   |   -1  |   -1  |   
-  35|   era |   factorial|   -1  |   -1  |   
-  36|   param|   t   |   -1  |   param1|   
-  37|   gosub|   factorial|   -1  |   -1  |   
-  38|   echo|   factorial|   -1  |   -1  |   
-  39|   end |   -1  |   -1  |   -1  |   
+  16|   goToF|   _t1 |   -1  |   21  |   
+  17|   input|   int |   -1  |   t   |   
+  18|   echo|   t   |   -1  |   -1  |   
+  19|   return|   1   |   -1  |   factorial|   
+  20|   goTo|   -1  |   -1  |   31  |   
+  21|   ver |   2   |   -1  |   2   |   
+  22|   +dir|   2   |   a   |   _a4 |   
+  23|   era |   factorial|   -1  |   -1  |   
+  24|   ver |   2   |   -1  |   2   |   
+  25|   +dir|   2   |   a   |   _a5 |   
+  26|   -   |   _a5 |   1   |   _t2 |   
+  27|   param|   _t2 |   -1  |   param1|   
+  28|   gosub|   factorial|   -1  |   -1  |   
+  29|   *   |   _a4 |   factorial|   _t3 |   
+  30|   return|   _t3 |   -1  |   factorial|   
+  31|   ver |   1   |   -1  |   2   |   
+  32|   +dir|   1   |   b   |   _a6 |   
+  33|   =   |   _a6 |   -1  |   x   |   
+  34|   input|   int |   -1  |   t   |   
+  35|   echo|   t   |   -1  |   -1  |   
+  36|   era |   factorial|   -1  |   -1  |   
+  37|   param|   t   |   -1  |   param1|   
+  38|   gosub|   factorial|   -1  |   -1  |   
+  39|   echo|   factorial|   -1  |   -1  |   
+  40|   end |   -1  |   -1  |   -1  |   

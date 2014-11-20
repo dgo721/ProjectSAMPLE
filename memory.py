@@ -77,35 +77,63 @@ class Memory:
 	def newLocalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p):
 		self.nwintdir = 12000
 		self.nwintend = self.nwintdir + cont_int
+		if self.nwintend >= 14000:
+			senderror(3)
 		self.nwint = dict()
 		self.nwfloatdir = 14000
 		self.nwfloatend = self.nwfloatdir + cont_float
+		if self.nwfloatend >= 16000:
+			senderror(3)
 		self.nwfloat = dict()
 		self.nwbooldir = 16000
 		self.nwboolend = self.nwbooldir + cont_bool
+		if self.nwboolend >= 18000:
+			senderror(3)
 		self.nwbool = dict()
 		self.nwtintdir = 32000
 		self.nwtintend = self.nwintdir + cont_tint
+		if self.nwtintend >= 34000:
+			senderror(3)
 		self.nwtint = dict()
 		self.nwtfloatdir = 34000
 		self.nwtfloatend = self.nwfloatdir + cont_tfloat
+		if self.nwtfloatend >= 36000:
+			senderror(3)
 		self.nwtfloat = dict()
 		self.nwtbooldir = 36000
 		self.nwtboolend = self.nwtbooldir + cont_tbool
+		if self.nwtboolend >= 38000:
+			senderror(3)
 		self.nwtbool = dict()
 		self.nwpdir = 42000
 		self.nwpend = self.nwpdir + cont_p
+		if self.nwpend >= 44000:
+			senderror(3)
 		self.nwp = dict()
 
 	#Inicializa mapa de memoria global (workspace)
 	def setGlobalMemory(self, cont_int, cont_float, cont_bool, cont_tint, cont_tfloat, cont_tbool, cont_p):
 		self.gintend = self.gintend + cont_int
+		if self.gintend >= 4000:
+			senderror(3)
 		self.gfloatend = self.gfloatend + cont_float
+		if self.gfloatend >= 6000:
+			senderror(3)
 		self.gboolend = self.gboolend + cont_bool
+		if self.gboolend >= 8000:
+			senderror(3)
 		self.gtintend = self.gtintend + cont_tint
+		if self.gtintend >= 24000:
+			senderror(3)
 		self.gtfloatend = self.gtfloatend + cont_tfloat
+		if self.gtfloatend >= 26000:
+			senderror(3)
 		self.gtboolend = self.gtboolend + cont_tbool
+		if self.gtboolend >= 28000:
+			senderror(3)
 		self.gpend = self.gpend + cont_p
+		if self.gpend >= 42000:
+			senderror(3)
 		#print self.gintend, self.gfloatend, self.gboolend, self.gtintend, self.gtfloatend, self.gtboolend
 
 	#Inicializa mapa de memoria local (modulo)

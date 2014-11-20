@@ -10,6 +10,8 @@ mod int # factorial (int n) {
   arr int a[3];
   a[2] = n;
   if (a[2] <= 1){
+    input int t #;
+    echo (t);
     return 1;
   } else {
     return a[2] * factorial #(a[2]-1);
