@@ -52,7 +52,7 @@ reserva = {
 
 tokens = ['CTE_INTEGER','CTE_FLOAT', 'CTE_STRING','ID'] + list(reserva.values())
 
-literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#','&']
+literals = [',',';','*','/', '(',')','[',']','{','}','+','-','=','<','>','#']
 
 linenumber = 0;
 
@@ -923,7 +923,7 @@ try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
-    Name = "ej/ej10.txt"
+    Name = "ej/ej8.txt"
 
 try:
     if int(sys.argv[2])==1:

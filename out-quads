@@ -1,42 +1,49 @@
 QUAD|   OP  |   OPR1|   OPR2|   TEMP|   
 ----|   ----|   ----|   ----|   ----|   
-   1|   =   |   2   |   -1  |   m   |   
-   2|   arr |   a   |   -1  |   3   |   
-   3|   arr |   b   |   -1  |   3   |   
-   4|   =   |   45.3|   -1  |   c   |   
-   5|   ver |   1   |   -1  |   2   |   
-   6|   +dir|   1   |   b   |   _a1 |   
-   7|   =   |   3   |   -1  |   _a1 |   
-   8|   goTo|   -1  |   -1  |   31  |   
-   9|   arr |   a   |   -1  |   3   |   
-  10|   ver |   2   |   -1  |   2   |   
-  11|   +dir|   2   |   a   |   _a2 |   
-  12|   =   |   n   |   -1  |   _a2 |   
-  13|   ver |   2   |   -1  |   2   |   
-  14|   +dir|   2   |   a   |   _a3 |   
-  15|   <=  |   _a3 |   1   |   _t1 |   
-  16|   goToF|   _t1 |   -1  |   21  |   
-  17|   input|   int |   -1  |   t   |   
-  18|   echo|   t   |   -1  |   -1  |   
-  19|   return|   1   |   -1  |   factorial|   
-  20|   goTo|   -1  |   -1  |   31  |   
-  21|   ver |   2   |   -1  |   2   |   
-  22|   +dir|   2   |   a   |   _a4 |   
-  23|   era |   factorial|   -1  |   -1  |   
-  24|   ver |   2   |   -1  |   2   |   
-  25|   +dir|   2   |   a   |   _a5 |   
-  26|   -   |   _a5 |   1   |   _t2 |   
-  27|   param|   _t2 |   -1  |   param1|   
-  28|   gosub|   factorial|   -1  |   -1  |   
-  29|   *   |   _a4 |   factorial|   _t3 |   
-  30|   return|   _t3 |   -1  |   factorial|   
-  31|   ver |   1   |   -1  |   2   |   
-  32|   +dir|   1   |   b   |   _a6 |   
-  33|   =   |   _a6 |   -1  |   x   |   
-  34|   input|   int |   -1  |   t   |   
-  35|   echo|   t   |   -1  |   -1  |   
-  36|   era |   factorial|   -1  |   -1  |   
-  37|   param|   t   |   -1  |   param1|   
-  38|   gosub|   factorial|   -1  |   -1  |   
-  39|   echo|   factorial|   -1  |   -1  |   
-  40|   end |   -1  |   -1  |   -1  |   
+   1|   goTo|   -1  |   -1  |   12  |   
+   2|   <=  |   n   |   1   |   _t1 |   
+   3|   goToF|   _t1 |   -1  |   6   |   
+   4|   return|   1   |   -1  |   factorialRec|   
+   5|   goTo|   -1  |   -1  |   12  |   
+   6|   era |   factorialRec|   -1  |   -1  |   
+   7|   -   |   n   |   1   |   _t2 |   
+   8|   param|   _t2 |   -1  |   param1|   
+   9|   gosub|   factorialRec|   -1  |   -1  |   
+  10|   *   |   n   |   factorialRec|   _t3 |   
+  11|   return|   _t3 |   -1  |   factorialRec|   
+  12|   goTo|   -1  |   -1  |   22  |   
+  13|   =   |   1   |   -1  |   x   |   
+  14|   >   |   n   |   1   |   _t4 |   
+  15|   goToF|   _t4 |   -1  |   21  |   
+  16|   *   |   x   |   n   |   _t5 |   
+  17|   =   |   _t5 |   -1  |   x   |   
+  18|   -   |   n   |   1   |   _t6 |   
+  19|   =   |   _t6 |   -1  |   n   |   
+  20|   goTo|   -1  |   -1  |   14  |   
+  21|   return|   x   |   -1  |   factorialIter|   
+  22|   input|   int |   -1  |   x   |   
+  23|   echo|   "Factorial-Recursivo"|   -1  |   -1  |   
+  24|   era |   factorialRec|   -1  |   -1  |   
+  25|   param|   x   |   -1  |   param1|   
+  26|   gosub|   factorialRec|   -1  |   -1  |   
+  27|   echo|   factorialRec|   -1  |   -1  |   
+  28|   echo|   "Factorial-Iterativo"|   -1  |   -1  |   
+  29|   era |   factorialIter|   -1  |   -1  |   
+  30|   param|   x   |   -1  |   param1|   
+  31|   gosub|   factorialIter|   -1  |   -1  |   
+  32|   echo|   factorialIter|   -1  |   -1  |   
+  33|   echo|   "Factorial-Main"|   -1  |   -1  |   
+  34|   <=  |   x   |   1   |   _t7 |   
+  35|   goToF|   _t7 |   -1  |   38  |   
+  36|   echo|   1   |   -1  |   -1  |   
+  37|   goTo|   -1  |   -1  |   47  |   
+  38|   =   |   1   |   -1  |   y   |   
+  39|   >   |   x   |   1   |   _t8 |   
+  40|   goToF|   _t8 |   -1  |   46  |   
+  41|   *   |   y   |   x   |   _t9 |   
+  42|   =   |   _t9 |   -1  |   y   |   
+  43|   -   |   x   |   1   |   _t10|   
+  44|   =   |   _t10|   -1  |   x   |   
+  45|   goTo|   -1  |   -1  |   39  |   
+  46|   echo|   y   |   -1  |   -1  |   
+  47|   end |   -1  |   -1  |   -1  |   

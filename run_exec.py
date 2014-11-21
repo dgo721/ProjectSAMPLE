@@ -540,7 +540,7 @@ while quad[ip][1][0] != 'end':
 
 	elif qactual[0] == 'input':
 		#print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
-		i = raw_input('--> ')
+		i = raw_input('input> ')
 		if qactual[1] == 'int':
 			try:
 				i = int(i)
@@ -572,9 +572,9 @@ while quad[ip][1][0] != 'end':
 		esstring = re.compile(pattn_string)
 		if re.match(esstring, tmp1):
 			tmp1 = tmp.split("\"")
-			print tmp1[1]
+			print "----->", tmp1[1]
 		else:
-			print tmp
+			print "----->", tmp
 
 	elif qactual[0] == '+dir':
 		tmp = getDirData(int(qactual[1])) + int(qactual[2])
