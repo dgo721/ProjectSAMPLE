@@ -41,4 +41,8 @@ A graphical-output compiler that receives input commands, displaying drawing and
 
 **error_exec.py** - Python file, includes error statements while running a Sample input.
 
+**tabdims.py** - Python class TabDims, retains dimension values for arrays and matrices.
+
+**tabpointers.py** - Python class TabPointer, saves memory value for a certain array/matrix index location.
+
 Input examples: */ej*
