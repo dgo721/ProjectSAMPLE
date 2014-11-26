@@ -1,5 +1,6 @@
 import sys
 
+#Recibe un ID y datos de contexto respecto ante posibles salidas de error
 def senderror(x, linenumber, *resto):
 	if linenumber == 0:
 		linenumber = 1

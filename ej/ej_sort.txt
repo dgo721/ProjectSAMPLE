@@ -1,0 +1,45 @@
+init
+
+arr float r[10];
+
+i=0;
+while (i < 10){
+	rand float m 10;
+	r[i] = m;
+	i = i + 1;	
+}
+
+echo ("En desorden");
+
+i=0;
+while (i < 10){
+	echo (r[i]);
+	i = i + 1;	
+}
+
+len = 10;
+x = 0;
+aux = 0.0;
+while (x < len){
+	y = 0;
+	while (y < len-1) {	
+      if (r[y] > r[y+1]){
+      	aux = r[y+1];
+      	r[y+1] = r[y];
+      	r[y] = aux;
+      }
+      y = y+1;
+    }
+	x = x+1;
+}
+
+
+echo ("En orden - Bubble Sort");
+
+i=0;
+while (i < 10){
+	echo (r[i]);
+	i = i + 1;	
+}
+
+end

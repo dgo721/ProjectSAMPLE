@@ -1,0 +1,67 @@
+init
+
+mat int m1 [3][4];
+mat int m2 [4][3];
+mat int m3 [3][3];
+
+len1 = 3;
+len2 = 4;
+
+echo("Matriz 1");
+
+i=0;
+while (i < len1){
+	j=0;
+	while (j < len2){
+		rand int r 12;
+		r = r + 1;
+		echo (r);
+		m1[i][j] = r;
+		j = j + 1;
+	}
+	i = i + 1;
+}
+
+echo("Matriz 2");
+
+i=0;
+while (i < len2){
+	j=0;
+	while (j < len1){
+		rand int r 12;
+		r = r + 1;
+		echo (r);
+		m2[i][j] = r;
+		j = j + 1;
+	}
+	i = i + 1;	
+}
+
+i=0;
+while (i < len1){
+	j=0;
+	while (j < len1){
+		k=0;
+		m3[i][j] = 0;
+		while (k < len1){
+			m3[i][j] = m3[i][j] + m1[i][k] * m2[k][j];
+			k = k + 1;
+		}
+		j = j + 1;
+	}
+	i = i + 1;	
+}
+
+echo("Matriz 3");
+
+i=0;
+while (i < len1){
+	j=0;
+	while (j < len1){
+		echo (m3[i][j]);
+		j = j + 1;
+	}
+	i = i + 1;	
+}
+
+end

@@ -134,17 +134,17 @@ class Memory:
 		self.gpend = self.gpend + cont_p
 		if self.gpend >= 42000:
 			senderror(3)
-		#print self.gintend, self.gfloatend, self.gboolend, self.gtintend, self.gtfloatend, self.gtboolend
 
-	#Inicializa mapa de memoria local (modulo)
+	#Inicializa mapa de memoria local (modulo); el espacio local recibe la informacion de la memoria, la cual fue inicializada al momento de realizar una operacion del cuadruplo era.
 	def setLocalMemory(self):
+		#Se ocupa un nuevo espacio de memoria local
 		self.localspace = self.localspace - (self.nwintend - self.nwintdir) - (self.nwfloatend - self.nwfloatdir) - (self.nwboolend - self.nwbooldir) - (self.nwtintend - self.nwtintdir) - (self.nwtfloatend - self.nwtfloatdir) - (self.nwtboolend - self.nwtbooldir) - (self.nwpend - self.nwpdir)
 		if self.localspace <= 0:
-			senderror(3)
-		self.lintdir = self.nwintdir
-		self.lintend = self.nwintend
+			senderror(3) #Salida de error en caso de agotarse el espacio de memoria local.
+		self.lintdir = self.nwintdir #Memoria local toma direccion nueva
+		self.lintend = self.nwintend #Memoria local establece el limite de espacio para variables
 		self.lint = self.nwint
-		self.lint = copy.deepcopy(self.nwint)
+		self.lint = copy.deepcopy(self.nwint) #La memoria local recibe la informacion de la memoria nueva.
 		self.lfloatdir = self.nwfloatdir 
 		self.lfloatend = self.nwfloatend
 		self.lfloat = self.nwfloat
@@ -169,8 +169,8 @@ class Memory:
 		self.lpend = self.nwpend
 		self.lp = self.nwp
 		self.lp = copy.deepcopy(self.nwp)
-		#print self.lintend, self.lfloatend, self.lboolend, self.ltintend, self.ltfloatend, self.ltboolend
 
+	#El espacio de memoria local (modulo) es liberado
 	def freeLocalMemory(self):
 		self.localspace = self.localspace + (self.lintend - self.lintdir) + (self.lfloatend - self.lfloatdir) + (self.lboolend - self.lbooldir) + (self.ltintend - self.ltintdir) + (self.ltfloatend - self.ltfloatdir) + (self.ltboolend - self.ltbooldir) + (self.lpend - self.lpdir)
 		self.lintdir = 12000
@@ -199,6 +199,7 @@ class Memory:
 	def sleepLocalMemory(self):
 		self.pilaLocal.append([self.lintend, self.lint, self.lfloatend, self.lfloat, self.lboolend, self.lbool, self.ltintend, self.ltint, self.ltfloatend, self.ltfloat, self.ltboolend, self.ltbool, self.lpend, self.lp])
 
+	#Retoma un espacio local de memoria que fue previamente almacenado a guardar, a partir de la pila Local de memoria
 	def awakeLocalMemory(self):
 		mem_awake = self.pilaLocal.pop()
 		self.lintdir = 12000
@@ -338,11 +339,17 @@ class Memory:
 	def getParamBool(self, num, data):
 		return self.nwbool[num]
 
+	#Aniade cuadruplo para su proxima continuacion
 	def addIP(self, ip):
 		self.callip.append(ip)
 
+	#Obtiene cuadruplo para la continuacion de la ejecucion
 	def getIP(self):
 		return self.callip.pop()
+
+	def checkNone(data):
+		if data == None:
+			senderror(5, data)
 
 	def echoGlobal(self):
 		print "GLOBAL INT--", self.gint

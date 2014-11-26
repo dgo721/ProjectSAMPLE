@@ -2,44 +2,50 @@ from error import senderror
 
 class TabVars:
 
+	#Inicializa clase TabVars
 	def __init__(self, dirint, dirfloat, dirbool):
 		self.offsint = dirint
 		self.offsflo = dirfloat
 		self.offsbol = dirbool
 		self.data = {}
 
+	#Aniade nuevo indice de variable, incluyendo su tipo de dato.
 	def add(self, key, value, numdim):
 		if value == 0:
 			self.data.update({key:[value, self.offsint]})
 			if numdim == 0:
-				self.offsint = self.offsint + 1
+				self.offsint = self.offsint + 1 #El indice del tipo entero se incrementa en 1.
 			else:
-				self.offsint = self.offsint + numdim
+				self.offsint = self.offsint + numdim #El indice del tipo entero se incrementa en el numero que cuenta el valor dimensionado.
 		elif value == 1:
 			self.data.update({key:[value, self.offsflo]})
 			if numdim == 0:
-				self.offsflo = self.offsflo + 1
+				self.offsflo = self.offsflo + 1 #El indice del tipo flotante se incrementa en 1.
 			else:
-				self.offsflo = self.offsflo + numdim
+				self.offsflo = self.offsflo + numdim #El indice del tipo flotante se incrementa en el numero que cuenta el valor dimensionado.
 		elif value == 2:
 			self.data.update({key:[value, self.offsbol]})
 			if numdim == 0:
-				self.offsbol = self.offsbol + 1
+				self.offsbol = self.offsbol + 1 #El indice del tipo booleano se incrementa en 1.
 			else:
-				self.offsbol = self.offsbol + numdim
+				self.offsbol = self.offsbol + numdim #El indice del tipo booleano se incrementa en el numero que cuenta el valor dimensionado.
 
+	#Obtiene valor de variable
 	def getKey(self, key):
 		for llave in self.data:
 			if (llave==key):
 				return key
 		return None
 
+	#Obtiene tipo de variable
 	def getType(self, key):
 		return self.data[key][0]
 
+	#Obtiene direccion de variable
 	def getDir(self, key):
 		return self.data[key][1]
 
+	#Verifica si la veriable existe en la tabla
 	def lookup(self, key):
 		for llave in self.data:
 			if (llave==key):
@@ -63,10 +69,9 @@ class TabVars:
 			if (self.data[key][1] == limit):
 				llave = key
 				break
-		#print "SE VA", llave, pair, self.data[key][1]
 		self.data.pop(llave)
 
-	
+	#Impresion en pantalla de tabla de variables
 	def echo(self):
 		print "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5) + "Direccion".ljust(10) + "|".ljust(5)
 		print "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5) + "----------".ljust(10) + "|".ljust(5)
@@ -78,6 +83,7 @@ class TabVars:
 			elif (self.data[key][0]==2):
 				print key.ljust(10) + "|".ljust(5) + "BOOL".ljust(10) + "|".ljust(5) + str(self.data[key][1]).ljust(10) + "|".ljust(5)
 	
+	#Impresion en archivo de tabla de variables
 	def write(self):
 		f = open('out-tabla_vars', 'w')
 		output = "Variables".ljust(10) + "|".ljust(5) + "Tipo".ljust(10) + "|".ljust(5) + "Direccion".ljust(10) + "|".ljust(5)
@@ -137,7 +143,6 @@ def invartipo_mod(tipo):
 #Recibe la tabla y el nuevo par (nombre-tipo) para aniadir a la tabla, solo seran agregados
 #si el par no existe previamente
 def tabvar(tab_valores, nombre, tipo, numdim, linea):
-	#print "TABVAR--", nombre, tipo
 	if tab_valores.lookup(nombre)!=True:
 		tab_valores.add(nombre, tipo, numdim)
 	else:
@@ -146,20 +151,19 @@ def tabvar(tab_valores, nombre, tipo, numdim, linea):
 			senderror(6, linea, nombre, invartipo_mod(tab_valores.getType(nombre)))
 	return tab_valores
 
+#Busca un ID dentro de la lista de variables acumuladas.
 def buscaID(lista, idv):
 	x = 1
 	for l in lista:
-		#print lista[-x][0]
 		if lista[-x][0] == idv:
 			return lista[-x][1]
 		x = x + 1
 	return -1
 
+#Busca un ID dublicado dentro de la lista de variables acumuladas.
 def isduplicate(lista, par, contvars):
 	x = 1
-	#print "LISTA:", lista, par, contvars
 	while x < contvars:
-		#print lista[-x][0], par[0]
 		if lista[-x][0] == par[0]:
 			return 1
 		x = x + 1
@@ -173,6 +177,3 @@ def offsetVars(lista):
 			offset = offset + (lista[i][2]-1)
 		i += 1
 	return offset
-
-#lista = [['a',0],['b',1],['c',1]]
-#print isduplicate(lista, ['b',0], 3)

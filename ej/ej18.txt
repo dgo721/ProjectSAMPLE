@@ -1,10 +1,39 @@
 init
 
-a=0;
+i=0;
+x=0;
 
-while (a < 31){
-	a = a + 3;
-	echo a;
+sample off left 40;
+sample off up 40;
+
+mod float # calculaPocentaje (int n) {
+	sample off left 50;
+	sample off down 70;
+
+	quad 50 50 red;
+	quad (n*5) (n*5) green;
+
+	return (n/10.0);
 }
+
+while (i < 10){
+	echo ("Escribe un valor entre 0 y 5");
+	input int y #;
+	rand int m 6;
+	if (y == m){
+		x = x + 1;
+		quad 5 5 green;
+		sample off right 10;
+	} else {
+		oval 5 5 red;
+		sample off right 10;
+	}
+	i = i + 1;	
+}
+
+echo ("Cantidad de aciertos", x);
+
+porcentaje = calculaPocentaje #(x);
+echo ("Porcentaje", porcentaje);
 
 end

@@ -1,0 +1,52 @@
+init
+
+i=0;
+x=0;
+
+//arc 40 90 yellow;
+
+sample off left 40;
+sample off up 40;
+
+mod float # calculaPocentaje (int n) {
+	sample off left 30;
+	sample off down 40;
+
+	m = n * 360 / 10;
+
+	arc 30 360 red;
+	arc 30 m blue;
+
+	sample off left 20;
+	sample off down 30;
+
+	if (m >= 180){
+		oval 60 60 green;
+	} else {
+		oval 60 60 red;
+	}
+
+	return (n/10.0);
+}
+
+while (i < 10){
+	echo ("Escribe un valor entre 0 y 5");
+	input int y #;
+	rand int m 6;
+	if (y == m){
+		x = x + 1;
+		trio 5 5 green;
+		sample off right 10;
+	} else {
+		oval 5 5 red;
+		sample off right 10;
+	}
+	i = i + 1;	
+}
+
+echo ("Cantidad de aciertos", x);
+
+porcentaje = calculaPocentaje #(x);
+echo ("Porcentaje", porcentaje);
+
+end

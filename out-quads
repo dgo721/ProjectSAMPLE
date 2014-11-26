@@ -1,49 +1,16 @@
 QUAD|   OP  |   OPR1|   OPR2|   TEMP|   
 ----|   ----|   ----|   ----|   ----|   
-   1|   goTo|   -1  |   -1  |   12  |   
-   2|   <=  |   n   |   1   |   _t1 |   
-   3|   goToF|   _t1 |   -1  |   6   |   
-   4|   return|   1   |   -1  |   factorialRec|   
-   5|   goTo|   -1  |   -1  |   12  |   
-   6|   era |   factorialRec|   -1  |   -1  |   
-   7|   -   |   n   |   1   |   _t2 |   
-   8|   param|   _t2 |   -1  |   param1|   
-   9|   gosub|   factorialRec|   -1  |   -1  |   
-  10|   *   |   n   |   factorialRec|   _t3 |   
-  11|   return|   _t3 |   -1  |   factorialRec|   
-  12|   goTo|   -1  |   -1  |   22  |   
-  13|   =   |   1   |   -1  |   x   |   
-  14|   >   |   n   |   1   |   _t4 |   
-  15|   goToF|   _t4 |   -1  |   21  |   
-  16|   *   |   x   |   n   |   _t5 |   
-  17|   =   |   _t5 |   -1  |   x   |   
-  18|   -   |   n   |   1   |   _t6 |   
-  19|   =   |   _t6 |   -1  |   n   |   
-  20|   goTo|   -1  |   -1  |   14  |   
-  21|   return|   x   |   -1  |   factorialIter|   
-  22|   input|   int |   -1  |   x   |   
-  23|   echo|   "Factorial-Recursivo"|   -1  |   -1  |   
-  24|   era |   factorialRec|   -1  |   -1  |   
-  25|   param|   x   |   -1  |   param1|   
-  26|   gosub|   factorialRec|   -1  |   -1  |   
-  27|   echo|   factorialRec|   -1  |   -1  |   
-  28|   echo|   "Factorial-Iterativo"|   -1  |   -1  |   
-  29|   era |   factorialIter|   -1  |   -1  |   
-  30|   param|   x   |   -1  |   param1|   
-  31|   gosub|   factorialIter|   -1  |   -1  |   
-  32|   echo|   factorialIter|   -1  |   -1  |   
-  33|   echo|   "Factorial-Main"|   -1  |   -1  |   
-  34|   <=  |   x   |   1   |   _t7 |   
-  35|   goToF|   _t7 |   -1  |   38  |   
-  36|   echo|   1   |   -1  |   -1  |   
-  37|   goTo|   -1  |   -1  |   47  |   
-  38|   =   |   1   |   -1  |   y   |   
-  39|   >   |   x   |   1   |   _t8 |   
-  40|   goToF|   _t8 |   -1  |   46  |   
-  41|   *   |   y   |   x   |   _t9 |   
-  42|   =   |   _t9 |   -1  |   y   |   
-  43|   -   |   x   |   1   |   _t10|   
-  44|   =   |   _t10|   -1  |   x   |   
-  45|   goTo|   -1  |   -1  |   39  |   
-  46|   echo|   y   |   -1  |   -1  |   
-  47|   end |   -1  |   -1  |   -1  |   
+   1|   quad|   30  |   30  |   white|   
+   2|   oval|   30  |   30  |   purple|   
+   3|   trio|   30  |   30  |   blue|   
+   4|   sample|   off |   down|   10  |   
+   5|   sample|   off |   right|   10  |   
+   6|   quad|   30  |   30  |   cyan|   
+   7|   oval|   30  |   30  |   red |   
+   8|   trio|   30  |   30  |   orange|   
+   9|   sample|   off |   down|   10  |   
+  10|   sample|   off |   right|   10  |   
+  11|   quad|   30  |   30  |   green|   
+  12|   oval|   30  |   30  |   yellow|   
+  13|   trio|   30  |   30  |   black|   
+  14|   end |   -1  |   -1  |   -1  |   

@@ -1,4 +1,4 @@
-import re, turtle, math, sys
+import re, turtle, math, sys, random
 from memory import Memory
 from error_exec import senderror
 
@@ -192,6 +192,7 @@ paramint = 12000
 paramfloat = 14000
 parambool = 16000
 
+turtle.title("Project SAMPLE by Python Turtle")
 turtle.bgcolor("#727678")
 turtle.seth(90)
 turtle.color("darkgreen", "black")
@@ -533,7 +534,7 @@ while quad[ip][1][0] != 'end':
 			i = i + 1
 
 	elif qactual[0] == 'ver':
-		#print qactual[0], getDirData(int(qactual[1])), qactual[2], qactual[3]
+		#print ip+1, qactual[0], getDirData(int(qactual[1])), qactual[2], qactual[3]
 		tmp = getDirData(int(qactual[1]))
 		if tmp < 0 or tmp > int(qactual[3]):
 			senderror(2)
@@ -562,6 +563,23 @@ while quad[ip][1][0] != 'end':
 		else:
 			data = int(qactual[3])
 		addDirData(data, i)
+
+	elif qactual[0] == 'random':
+		#print "=", getDirData(int(qactual[1])), qactual[1], int(qactual[3])
+		if int(qactual[2]) >= 40000:
+			limite = getDirData(getDirData(int(qactual[2])))
+		else:
+			limite = getDirData(int(qactual[2]))
+		if qactual[1] == 'int':
+			val = random.randrange(0, limite)
+		elif qactual[1] == 'float':
+			val = round(random.uniform(0, limite),2)
+
+		if int(qactual[3]) >= 40000:
+			data = getDirData(int(qactual[3]))
+		else:
+			data = int(qactual[3])
+		addDirData(data, val)
 
 	elif qactual[0] == 'echo':
 		if int(qactual[1]) >= 40000:
@@ -655,6 +673,28 @@ while quad[ip][1][0] != 'end':
 		ip = ipscope[0]
 		current_scope = ipscope[1]
 
+	
+	if (turtle.pos()[0] < -turtle.screensize()[0]):
+		turtle.hideturtle()
+		turtle.penup()
+		turtle.goto(turtle.screensize()[0], turtle.pos()[1])
+		turtle.showturtle()
+	elif (turtle.pos()[0] > turtle.screensize()[0]):
+		turtle.hideturtle()
+		turtle.penup()
+		turtle.goto(-turtle.screensize()[0], turtle.pos()[1])
+		turtle.showturtle()
+	elif (turtle.pos()[1] > turtle.screensize()[1]):
+		turtle.hideturtle()
+		turtle.penup()
+		turtle.goto(turtle.pos()[0], -turtle.screensize()[1])
+		turtle.showturtle()
+	elif (turtle.pos()[1] < -turtle.screensize()[1]):
+		turtle.hideturtle()
+		turtle.penup()
+		turtle.goto(turtle.pos()[0], turtle.screensize()[1])
+		turtle.showturtle()
+	
 	#print "IP-", ip+2
 	ip = ip + 1
 turtle.hideturtle()

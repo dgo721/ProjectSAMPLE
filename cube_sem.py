@@ -36,5 +36,3 @@ def semant_oper(operando1, operando2, oper):
 		llave = 22
 
 	return cubo[llave][oper]
-
-#print "Operacion encontrada", semant_oper(0,0,4) #Flotante, Flotante, AND

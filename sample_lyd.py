@@ -59,36 +59,39 @@ linenumber = 0;
 
 #TOKENS
 
-def t_ID(t): #Recibe IDs
+def t_ID(t):
     r'[a-z][a-zA-Z0-9_]*'
     t.type = reserva.get(t.value,'ID') # Checa palabras reservadas
     return t
 
 t_CTE_STRING = r'\".*?\"'
 
-def t_CTE_FLOAT(t): #Recibe flotantes
+def t_CTE_FLOAT(t):
     r'\d+\.\d*'
     t.value = float(t.value)
     return t
 
-def t_CTE_INTEGER(t): #Recibe enteros
+def t_CTE_INTEGER(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
 t_ignore = " \t"
 
-def t_COMMENT(t): #Recibe/Ignora comentarios
+#def t_newline(t):
+#    r'\r\n+'
+
+def t_COMMENT(t):
     r'\/\/.*'
     pass
 
-def t_newline(t): #Recibe el salto de linea
+def t_newline(t):
     r'\n+'
     global linenumber
     t.lexer.lineno += len(t.value)
     linenumber = t.lexer.lineno
 
-def t_error(t): #Salida de error por caracter ilegal
+def t_error(t):
     print("ERROR // Ilegar character '%s'" % t.value[0])
     print "-LINE //", linenumber
     sys.exit()
@@ -111,28 +114,29 @@ def p_program(p):
     
     while (pairs_idtype):
     	par = pairs_idtype.pop(0)
-    	tab_valores=tabvar(tab_valores, par[0], par[1], par[2], linenumber)#Almacena las variables correpondientes al ambito global
+    	#print "PROGRAM--1 ULTIMO PAR", par, len(pairs_idtype)
+    	tab_valores=tabvar(tab_valores, par[0], par[1], par[2], linenumber)
     
-    #Adjunta el workspace al directorio de modulos
     dir_modulos = dirmod(dir_modulos, "*work*", [], work_vars[0]+work_offs[0], work_vars[1]+work_offs[1], work_vars[2]+work_offs[2], tab_valores, None, work_tvars[0], work_tvars[1], work_tvars[2], work_point, tab_temporal, tab_pointer, None, None)
 
 def p_programA(p):
     '''programA : programB END
                 | END'''
-    quads_gen.addGoTo('end', -1, -1, -1) #Aniade cuadruplo de salida
+    quads_gen.addGoTo('end', -1, -1, -1)
 
 def p_programB(p):
     '''programB : workspace programC'''
+    #print "programB", p[1]
 
 def p_programC(p):
     '''programC : programB
             | empty'''
+    #print "programC", p[1]
 
 def p_workspace(p):
     '''workspace : statute
             | module'''
     global cont_vars, cont_tvars, cont_offs
-    #Reinicia variables de contadores locales
     cont_vars = [0,0,0]
     cont_tvars = [0,0,0]
     cont_offs = [0,0,0]
@@ -151,7 +155,6 @@ def p_statute(p):
                 | random
                 | return'''
     global assign_vars
-    #Reinicia pila de operandos
     assign_vars=[]
 
 def p_typeMod(p):
@@ -163,12 +166,11 @@ def p_typeMod(p):
 	p[0] = p[1]
 	tipomod = p[1]
 	if p[1] != None:
-		has_return = True #Prende la bandera de retorno del modulo
+		has_return = True
 
 def p_addMod(p):
 	'''addMod : '''
 	global tipomod, nombremod, tab_valores, work_vars
-    #Aniade el modulo como una variable global
 	if tipomod == 'int':
 		tab_valores = tabvar(tab_valores, nombremod, vartipo_mod(tipomod), 0, linenumber)
 	elif tipomod == 'float':
@@ -179,22 +181,25 @@ def p_addMod(p):
 def p_module(p):
     '''module : MOD typeMod '#' moduleID addMod insertQuadMod moduleA endMod'''
     global id_params, cont_vars, cont_point, dir_modulos, list_params, work_vars, work_point, tab_valores, tab_lvalores, tab_ltemporal, tab_lpointer, pairs_idtype, flagTabTemp, has_return, find_return, cont_offs, work_offs
+    print "modulo #", p[4]
+    print "MODULE-- suma", sum(cont_vars), sum(work_vars), len(pairs_idtype), sum(work_vars) - sum(cont_vars)
     if has_return == True and find_return == False:
-    	senderror(19, linenumber, p[4]) #Salida de error al no encontrar el return cuando se esperaba.
+    	senderror(19, linenumber, p[4])
     if has_return == False and find_return == True:
-    	senderror(20, linenumber, p[4]) #Salida de error al encontrar el return cuando no se esperaba.
-    dir_modulos = removedirmod(dir_modulos, p[4]) #Remueve el directorio temporal
-    x = sum(work_vars) - sum(cont_vars) #Calcula la diferencia de variables encontradas de ambito local sobre ambito global.
+    	senderror(20, linenumber, p[4])
+    dir_modulos = removedirmod(dir_modulos, p[4])
+    x = sum(work_vars) - sum(cont_vars)
     suma = sum(work_vars)
-    while (x < suma and pairs_idtype): #Mientras se tengan variables en ambito local
-    	par = pairs_idtype.pop(x) #Se saca la variable de la lista auxiliar.
-    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber) #Se aniade el la variable a la tabla con su tipo y dimension
+    print pairs_idtype, x, suma
+    while (x < suma and pairs_idtype):
+    	par = pairs_idtype.pop(x)
+    	#print par[0], par[1], par[2]
+    	print "MODULE-- ULTIMO PAR", par, len(pairs_idtype)
+    	tab_lvalores=tabvar(tab_lvalores, par[0], par[1], par[2], linenumber)
     	suma = suma - 1
-    #El modulo es entregado al directorio de modulos
     dir_modulos = dirmod(dir_modulos, p[4], list_params, cont_vars[0]+cont_offs[0], cont_vars[1]+cont_offs[1], cont_vars[2]+cont_offs[2], copy.deepcopy(tab_lvalores), quad_mod, cont_tvars[0], cont_tvars[1], cont_tvars[2], cont_point, copy.deepcopy(tab_ltemporal), copy.deepcopy(tab_lpointer), p[2], line_mod)
     list_params=[] #Reinicia lista de parametros
     id_params=[] #Reinicia lista de parametros
-    #Se actualizan los contadores globales.
     work_vars[0] = work_vars[0] - cont_vars[0]
     work_vars[1] = work_vars[1] - cont_vars[1]
     work_vars[2] = work_vars[2] - cont_vars[2]
@@ -206,15 +211,15 @@ def p_module(p):
     work_offs[2] = work_offs[2] - cont_offs[2]
     work_point = work_point - cont_point
     cont_vars = [0,0,0] #Reinicia contador
-    cont_point = 0 #Reinicia contador
-    quads_gen.addcontinueG() #Se aniade el salto al cuatro goto previo al modulo
-    quads_gen.setScope("*work*") #Se establece el workspace a scope
-    flagTabTemp = False #Se apaga la bandera de tabla temporal / local
-    has_return = False #Se apaga la bandera de retorno
-    find_return = False #Se apaga la bandera de encuentra retorno
-    tab_lvalores = TabVars(12000, 14000, 16000) #Reinicializan tablas de valores
-    tab_ltemporal = TabVars(32000, 34000, 36000) #Reinicializan tablas de temporales
-    tab_lpointer = TabPointer(42000) #Reinicializan tablas de apuntadores
+    cont_point = 0
+    quads_gen.addcontinueG()
+    quads_gen.setScope("*work*")
+    flagTabTemp = False
+    has_return = False
+    find_return = False
+    tab_lvalores = TabVars(12000, 14000, 16000)
+    tab_ltemporal = TabVars(32000, 34000, 36000)
+    tab_lpointer = TabPointer(42000)
     tab_ldims = TabDims()
 
 def p_moduleA(p):
@@ -226,16 +231,20 @@ def p_moduleID(p):
     global flagTabTemp, line_mod, dir_modulos, nombremod
     flagTabTemp = True
     line_mod = linenumber
-    dir_modulos = tempdirmod(dir_modulos, p[1], list_params) #Se aniade el modulo temporalmente al directorio
-    quads_gen.addGoTo('goTo', -1, -1, -1) #Se establece un salto goTo
-    quads_gen.setScope(p[1]) #Se establece el scope al modulo senialado
+    print "MODULE ID--", list_params
+    dir_modulos = tempdirmod(dir_modulos, p[1], list_params)
+    quads_gen.addGoTo('goTo', -1, -1, -1)
+    quads_gen.setScope(p[1])
     nombremod = p[1]
     p[0] = p[1]
 
 def p_vars(p):
     '''vars : type ID varsA'''
     global id_type, tab_lvalores, id_params, pairs_idtype
-    id_params.append(p[2]) #Guarda el ID del parametro
+    #print p[2]
+    id_params.append(p[2])
+    #print id_type
+    #print id_params
     tipo1 = vartipo_mod(id_type.pop())
     if tipo1 == 0:
         cont_vars[0] = cont_vars[0] + 1
@@ -246,7 +255,10 @@ def p_vars(p):
     elif tipo1 == 2:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
-    pairs_idtype.append([p[2], tipo1, 0]) #Aniade el par id-tipo a la lista de variables
+    print "NUEVO ID en PARAMVARS", p[2], cont_vars, work_vars
+    pairs_idtype.append([p[2], tipo1, 0])
+    #print "MODULEA--",pairs_idtype
+    #tab_lvalores = tabvar(tab_lvalores, p[2], vartipo_mod(id_type.pop())) #Aniade a la tabla de valores el par ID, TIPO
 
 def p_varsA(p):
     '''varsA : ',' vars
@@ -267,32 +279,34 @@ def p_id(p):
 		| ID initdim empty'''
 	global es_dim, pilaOpera, pilaTipos, quads_gen, tab_temporal, tab_ltemporal, tab_pointer, tab_lpointer, cont_point, work_point, list_dims, flag_dim
 	p[0] = [p[1], None]
-	flag = flag_dim.pop() #Toma la bandera del ultimo id evaluado.
+	flag = flag_dim.pop()
 	es_dim = 0
 	if flag == True:
-		es_dim = list_dims.pop() #Toma la dimension del utlimo id no atomico
+		es_dim = list_dims.pop()
+	print "flag--", flag_dim, list_dims, flag, es_dim, p[0]
 	if p[3] == '#' and tab_valores.lookup(p[1]) == True:
-		p[0] = [p[1], 'mod', tab_valores.getType(p[1])] #Devuelve el id y el tipo de dato una llamada
+		print dir_modulos.getType(p[1]), p[1]
+		p[0] = [p[1], 'mod', tab_valores.getType(p[1])]
 	elif p[3] == '#' and dir_modulos.lookup(p[1]) == False:
-		senderror(7, linenumber, p[1]) #Salida de error cuando se hace una llamada a un modulo que no existe
+		senderror(7, linenumber, p[1])
 	if es_dim > 0 and tab_dims.getDim(p[1]) == -1:
-		senderror(16, linenumber, p[1]) #Salida de error cuando se accesa una variable como dimensionada siendo atomica
+		senderror(16, linenumber, p[1])
 	if es_dim != tab_dims.getDim(p[1]) and tab_dims.getDim(p[1]) != -1:
 		if tab_dims.getDim(p[1]) == 2:
-			senderror(13, linenumber, p[1]) #Salida de error cuando una variable se accesa como arreglo siendo matriz
+			senderror(13, linenumber, p[1])
 		elif tab_dims.getDim(p[1]) == 1:
-			senderror(14, linenumber, p[1]) #Salida de error cuando una variable se accesa como matriz siendo arreglo
+			senderror(14, linenumber, p[1])
 	if tab_dims.getDim(p[1]) == 1:
 		oper = pilaOpera.pop()
 		tipo = pilaTipos.pop()
 		if flagTabTemp == True:
-			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_lpointer) #Se realizan los cuadruplos de acceso a variable dimensionada
-			tab_lpointer = templist[0] #Se actualiza la tabla de apuntadores locales
+			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_lpointer)
+			tab_lpointer = templist[0]
 			cont_point = cont_point + 1
 			work_point = work_point + 1
 		else:
-			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_pointer) #Se realizan los cuadruplos de acceso a variable dimensionada
-			tab_pointer = templist[0] #Se actualiza la tabla de apuntadores globales
+			templist = quads_gen.addVer1(oper, p[1], tab_dims.getLimit1(p[1]), tab_pointer)
+			tab_pointer = templist[0]
 			cont_point = cont_point + 1
 			work_point = work_point + 1
 		p[0] = [p[1], templist[1]]
@@ -302,17 +316,17 @@ def p_id(p):
 		tipo2 = pilaTipos.pop()
 		tipo1 = pilaTipos.pop()
 		if flagTabTemp == True:
-			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_lpointer, tab_ltemporal, linenumber) #Se realizan los cuadruplos de acceso a variable dimensionada
-			tab_lpointer = templist[0] #Se actualiza la tabla de apuntadores locales
-			tab_ltemporal = templist[1] #Se actualiza la tabla de temporales globales
+			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_lpointer, tab_ltemporal, linenumber)
+			tab_lpointer = templist[0]
+			tab_ltemporal = templist[1]
 			cont_tvars[0] = cont_tvars[0] + 2
 			work_tvars[0] = work_tvars[0] + 2
 			cont_point = cont_point + 1
 			work_point = work_point + 1
 		else:
-			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_pointer, tab_temporal, linenumber) #Se realizan los cuadruplos de acceso a variable dimensionada
-			tab_pointer = templist[0] #Se actualiza la tabla de apuntadores globales
-			tab_temporal = templist[1] #Se actualiza la tabla de temporales globales
+			templist = quads_gen.addVer2(oper1, oper2, p[1], tab_dims.getLimit1(p[1]), tab_dims.getLimit2(p[1]), tab_pointer, tab_temporal, linenumber)
+			tab_pointer = templist[0]
+			tab_temporal = templist[1]
 			cont_tvars[0] = cont_tvars[0] + 2
 			work_tvars[0] = work_tvars[0] + 2
 			cont_point = cont_point + 1
@@ -324,7 +338,8 @@ def p_initdim(p):
 	'''initdim : '''
 	global flag_dim, es_dim
 	esdim = 0
-	flag_dim.append(False) #Se aniade una bandera en falso
+	flag_dim.append(False)
+	print "initdim", es_dim
 
 def p_sumdim(p):
 	'''sumdim : '''
@@ -333,13 +348,15 @@ def p_sumdim(p):
 	if flag == False:
 		flag = True
 		es_dim = es_dim + 1
-		flag_dim.append(flag) #Se aniade la bandera con valor de verdadero
-		list_dims.append(es_dim) #Se aniade el valor actual de dimension
+		print "esdim", es_dim
+		flag_dim.append(flag)
+		list_dims.append(es_dim)
 	else:
 		es_dim = list_dims.pop()
 		es_dim = es_dim + 1
+		print "esdim", es_dim
 		flag_dim.append(flag)
-		list_dims.append(es_dim) #Se aniade el nuevo valor de dimension
+		list_dims.append(es_dim)
 
 def p_calling(p):
 	'''calling : '#' callID calling2 ';' '''
@@ -348,8 +365,8 @@ def p_calling2(p):
 	'''calling2 : '(' maincalling ')' '''
 	global lista_params
 	if (xparam + 1) != len(lista_params):
-		senderror(9, linenumber, id_mod, len(lista_params)) #Salida de error cuando se excede o faltan parametros en un modulo
-	quads_gen.addQ('gosub',id_mod,-1,-1) #Se coloca el cuadruplo de rutina gosub
+		senderror(9, linenumber, id_mod, len(lista_params))
+	quads_gen.addQ('gosub',id_mod,-1,-1)
 	lista_params = []
 
 def p_maincalling(p):
@@ -359,15 +376,15 @@ def p_callID(p):
     '''callID : ID'''
     global id_mod
     if dir_modulos.lookup(p[1]) == False:
-    	senderror(7, linenumber, p[1]) #Salida de error se quiere hacer una llamada a un modulo no declarado
+    	senderror(7, linenumber, p[1])
     id_mod = p[1]
     p[0] = p[1]
 
 def p_insertEra(p):
     '''insertEra : '''
     global lista_params
-    quads_gen.addQ('era',id_mod,-1,-1) #Se coloca el cuadruplo ERA
-    lista_params = dir_modulos.getParamsNum(id_mod) #Se pide la lista de parametros a revisar
+    quads_gen.addQ('era',id_mod,-1,-1)
+    lista_params = dir_modulos.getParamsNum(id_mod)
     if len(lista_params) != 0:
     	xparam = 0
     else:
@@ -385,13 +402,14 @@ def p_checkParam(p):
     global lista_params
     argum = pilaOpera.pop()
     tipo = pilaTipos.pop()
+    #print "CHECK PARAM---", xparam, lista_params, argum, tipo, len(dir_modulos.getParamsNum(id_mod)), id_mod
     if xparam >= len(dir_modulos.getParamsNum(id_mod)):
     	senderror(9, linenumber, id_mod, len(dir_modulos.getParamsNum(id_mod)))
     if lista_params[xparam] == tipo:
     	prm = "param" + str(xparam + 1)
-    	quads_gen.addQ('param',argum,-1,prm) #Coloca un cuadruplo para registro de parametro
+    	quads_gen.addQ('param',argum,-1,prm)
     else:
-    	senderror(8, linenumber, invartipo_mod(lista_params[xparam])) #Salida de error cuando se introduce un dato de tipo incorrecto
+    	senderror(8, linenumber, invartipo_mod(lista_params[xparam]))
 
 def p_callingC(p):
     '''callingC : ',' sumXparam callingB
@@ -400,7 +418,7 @@ def p_callingC(p):
 def p_sumXparam(p):
 	'''sumXparam : '''
 	global xparam
-	xparam = xparam + 1 #Se posiciona en el siguiente parametro
+	xparam = xparam + 1
 
 def p_block(p):
     '''block : '{' blockA '''
@@ -419,11 +437,15 @@ def p_blockC(p):
 def p_assign(p):
     '''assign : id '=' expression ';' '''
     global tab_valores, pilaOpera, pilaTipos, quads_gen, cont_vars, work_vars, pairs_idtype
-    valor1 = pilaOpera.pop() #Obtiene el valor del operando
-    tipo1 = pilaTipos.pop() #Obtiene el tipo del operando
-    index = vartipo_assign(assign_vars) #Verifica que tipo de dato se espera guardar
+    #print pilaOpera, pilaTipos, assign_vars
+    valor1 = pilaOpera.pop()
+    tipo1 = pilaTipos.pop()
+    #print "ASSIGN--", assign_vars
+    index = vartipo_assign(assign_vars)
+    print "ASSIGN--", assign_vars, index
+    print "ASSIGN--", valor1, tipo1, index
     if tipo1 != index:
-    	senderror(3, linenumber, p[1][0]) #Salida de error por asignacion incorrecta.
+    	senderror(3, linenumber, p[1][0])
     if tipo1 == 0:
         cont_vars[0] = cont_vars[0] + 1
         work_vars[0] = work_vars[0] + 1
@@ -433,11 +455,16 @@ def p_assign(p):
     elif tipo1 == 2:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
-    pairs_idtype.append([p[1][0], tipo1, 0]) #Aniade el par id-tipo a la lista de variables
+    print "NUEVO ID-ASSIGN", p[1], cont_vars, work_vars
+    pairs_idtype.append([p[1][0], tipo1, 0])
+    #print "ASSIGN--1 PAIRS", pairs_idtype, vartipo_mod[sum(work_vars) - sum(cont_vars)], sum(work_vars) - sum(cont_vars)
+    #print "ASSIGN--2 PAIRS", cont_vars, work_vars
+    #tab_valores = tabvar(tab_valores, p[1], tipo1)
+    #print "TABVAL en assign", tab_valores
     if p[1][1] == None:
-    	quads_gen.add('=', valor1, -1, p[1][0]) #Aniade el cuadruplo de asignacion
+    	quads_gen.add('=', valor1, -1, p[1][0])
     else:
-    	quads_gen.add('=', valor1, -1, p[1][1]) #Aniade el cuadruplo de asignacion en variable dimensionada
+    	quads_gen.add('=', valor1, -1, p[1][1])
 
 
 def p_condition(p):
@@ -479,8 +506,8 @@ def p_read(p):
     elif tipo == 2:
         cont_vars[2] = cont_vars[2] + 1
         work_vars[2] = work_vars[2] + 1
-    pairs_idtype.append([p[3], tipo, 0]) #Aniade el par id-tipo a la lista de variables
-    quads_gen.addQ('input', p[2], -1, p[3]) #Aniade el cuadruplo de input
+    pairs_idtype.append([p[3], tipo, 0])
+    quads_gen.addQ('input', p[2], -1, p[3])
 
 def p_write(p):
     '''write : ECHO '(' writeA writeB ')' ';' '''
@@ -490,11 +517,11 @@ def p_writeA(p):
             | CTE_STRING'''
     global tab_constant
     if p[1] != None:
-    	tab_constant = tabconstante(tab_constant, p[1]) #Aniade la constante string a la tabla de constantes
-    	quads_gen.addQ('echo', p[1], -1, -1) #Aniade el cuadruplo de escritura
+    	tab_constant = tabconstante(tab_constant, p[1])
+    	quads_gen.addQ('echo', p[1], -1, -1)
     else:
     	pilaTipos.pop()
-    	quads_gen.addQ('echo', pilaOpera.pop(), -1, -1) #Aniade el cuadruplo de escritura
+    	quads_gen.addQ('echo', pilaOpera.pop(), -1, -1)
 
 def p_writeB(p):
     '''writeB : ',' writeA
@@ -505,12 +532,12 @@ def p_array(p):
 	global pairs_idtype, tab_constant, tab_dims, cont_vars, work_vars, cont_offs, work_offs
 	if flagTabTemp == True:
 		if tab_ldims.isDuplicate(p[3]) != -1:
-			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3])) #Salida de error dado que el arreglo ya fue asignado previamente
+			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
 	else:
 		if tab_dims.isDuplicate(p[3]) != -1:
-			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3])) #Salida de error dado que el arreglo ya fue asignado previamente
+			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
 	if p[5] < 1:
-		senderror(12, linenumber-1) #Salida de error cuando se inicializa un arreglo de tamanio 0
+		senderror(12, linenumber-1)
 	r = p[5] #Equivalente a R = (Ls - Li) * R, R = 1
 	tipo1 = vartipo_mod(p[2])
 	if tipo1 == 0:
@@ -528,26 +555,28 @@ def p_array(p):
 		work_vars[2] = work_vars[2] + 1
 		cont_offs[2] = cont_offs[2] + r - 1
 		work_offs[2] = work_offs[2] + r - 1
+	#print "NUEVO ARR", p[1], p[5]
+	print "NUEVO ID-ARRAY", p[3], cont_vars, work_vars
 	tab_constant = tabconstante(tab_constant, p[5])
 	tab_constant = tabconstante(tab_constant, p[5]-1)
-	pairs_idtype.append([p[3], tipo1, r]) #Aniade el par id-tipo a la lista de variables
+	pairs_idtype.append([p[3], tipo1, r])
 	if flagTabTemp == True:
-		tab_ldims.add(p[3], 1, p[5]-1, -1) #Se coloca el id con sus respectivas dimensiones en la tabla local
+		tab_ldims.add(p[3], 1, p[5]-1, -1)
 	else:
-		tab_dims.add(p[3], 1, p[5]-1, -1) #Se coloca el id con sus respectivas dimensiones en la tabla
-	quads_gen.addQ('arr', p[3], -1, r) #Se coloca el cuadruplo de asignacion de arreglo
+		tab_dims.add(p[3], 1, p[5]-1, -1)
+	quads_gen.addQ('arr', p[3], -1, r)
 
 def p_matrix(p):
 	'''matrix : MAT typeDim ID '[' CTE_INTEGER ']' '[' CTE_INTEGER ']' ';' '''
 	global pairs_idtype, tab_constant, tab_dims, cont_vars, work_vars
 	if flagTabTemp == True:
 		if tab_ldims.isDuplicate(p[3]) != -1:
-			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3])) #Salida de error dado que la matriz ya fue asignado previamente
+			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
 	else:
 		if tab_dims.isDuplicate(p[3]) != -1:
-			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3])) #Salida de error dado que la matriz ya fue asignado previamente
+			senderror(15, linenumber, p[3], tab_dims.isDuplicate(p[3]))
 	if p[5] < 1 or p[8] < 1:
-		senderror(12, linenumber-1) #Salida de error cuando se inicializa una matriz de tamanio 0
+		senderror(12, linenumber-1)
 	r = p[5] * p[8] #Equivalente a 2 veces R = (Ls - Li) * R, R = 1
 	tipo1 = vartipo_mod(p[2])
 	if tipo1 == 0:
@@ -565,16 +594,18 @@ def p_matrix(p):
 		work_vars[2] = work_vars[2] + 1
 		cont_offs[2] = cont_offs[2] + r - 1
 		work_offs[2] = work_offs[2] + r - 1
+	#print "NUEVO MAT", p[1], p[5], p[8]
+	print "NUEVO ID-MATRIX", p[3], cont_vars, work_vars
 	tab_constant = tabconstante(tab_constant, p[5])
 	tab_constant = tabconstante(tab_constant, p[5]-1)
 	tab_constant = tabconstante(tab_constant, p[8])
 	tab_constant = tabconstante(tab_constant, p[8]-1)
-	pairs_idtype.append([p[3], tipo1, r]) #Aniade el par id-tipo a la lista de variables
+	pairs_idtype.append([p[3], tipo1, r])
 	if flagTabTemp == True:
-		tab_ldims.add(p[3], 2, p[5]-1, p[8]-1) #Se coloca el id con sus respectivas dimensiones en la tabla local
+		tab_ldims.add(p[3], 2, p[5]-1, p[8]-1)
 	else:
-		tab_dims.add(p[3], 2, p[5]-1, p[8]-1) #Se coloca el id con sus respectivas dimensiones en la tabla
-	quads_gen.addQ('mat', p[3], -1, r) #Se coloca el cuadruplo de asignacion de matriz
+		tab_dims.add(p[3], 2, p[5]-1, p[8]-1)
+	quads_gen.addQ('mat', p[3], -1, r)
 
 def p_typeDim(p):
     '''typeDim : INT
@@ -588,27 +619,27 @@ def p_command(p):
     global quads_gen, pilaOpera, pilaTipos
     if p[1] == 'sample':
     	if p[2][0] == 'on':
-    		quads_gen.addQ('sample1', p[2][3], p[2][4], -1) #Se coloca el cuadruplo1 de dibujo
-    		quads_gen.addQ('sample2', p[2][0], p[2][1], p[2][2]) #Se coloca el cuadruplo2 de dibujo
+    		quads_gen.addQ('sample1', p[2][3], p[2][4], -1)
+    		quads_gen.addQ('sample2', p[2][0], p[2][1], p[2][2])
     	elif p[2][0] == 'off':
-			quads_gen.addQ('sample', p[2][0], p[2][1], p[2][2]) #Se coloca el cuadruplo de cursor
+			quads_gen.addQ('sample', p[2][0], p[2][1], p[2][2])
     else:
     	tipo2 = pilaTipos.pop()
     	tipo1 = pilaTipos.pop()
     	if tipo1 == 2 or tipo2 == 2:
-    		senderror(10, linenumber-1) #Salida de error si se recibe un tipo de dato booleano
+    		senderror(10, linenumber-1)
     	valor2 = pilaOpera.pop()
     	valor1 = pilaOpera.pop()
-    	quads_gen.addQ(p[1], valor1, valor2, p[4]) #Se coloca el cuadruplo de figura
+    	quads_gen.addQ(p[1], valor1, valor2, p[4])
     
 def p_commandA(p):
     '''commandA : ON move exp CTE_INTEGER color ';'
             | OFF move exp ';' '''
     global tab_constant
     if pilaTipos.pop() == 2:
-    	senderror(10, linenumber-1) #Salida de error si se recibe un tipo de dato booleano
+    	senderror(10, linenumber-1)
     if p[1] == 'on':
-    	tab_constant = tabconstante(tab_constant, p[4]) #Aniade constantes de dibujo a tabla de constantes
+    	tab_constant = tabconstante(tab_constant, p[4])
         p[0] = [p[1], p[2], pilaOpera.pop(), p[4], p[5]]
     else:
 		p[0] = [p[1], p[2], pilaOpera.pop()]
@@ -622,9 +653,9 @@ def p_repeat(p):
     tab_constant = tabconstante(tab_constant, 1)
     tab_constant = tabconstante(tab_constant, p[2])
     if flagTabTemp == True:
-    	tab_ltemporal=quads_gen.addcontinueR(p[2], tab_ltemporal, linenumber) #Actualiza tabla local de temporales
+    	tab_ltemporal=quads_gen.addcontinueR(p[2], tab_ltemporal, linenumber)
     else:
-    	tab_temporal=quads_gen.addcontinueR(p[2], tab_temporal, linenumber) #Actualiza tabla global de temporales
+    	tab_temporal=quads_gen.addcontinueR(p[2], tab_temporal, linenumber)
     cont_tvars[0] = cont_tvars[0] + 1
     work_tvars[0] = work_tvars[0] + 1
     cont_tvars[2] = cont_tvars[2] + 1
@@ -649,43 +680,46 @@ def p_expression(p):
                 | exp empty'''
     global pilaOpera, pilaTipos, quads_gen, tab_ltemporal, tab_temporal
     if p[2] == '=' or p[2] == '<' or p[2] == '>' or p[2] == 'and' or p[2] == 'or':
-        valor2=pilaOpera.pop() #Operando2
-        valor1=pilaOpera.pop() #Operando1
-        tipo2=pilaTipos.pop() #Tipo2
-        tipo1=pilaTipos.pop() #Tipo1
+        valor2=pilaOpera.pop()
+        valor1=pilaOpera.pop()
+        tipo2=pilaTipos.pop()
+        tipo1=pilaTipos.pop()
+        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
         if p[2] == '=' and p[3] == '=':
-            tipoNuevo = semant_oper(tipo1, tipo2, 8) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 8)
             p[2] = p[2] + p[3]
         elif p[2] == '<' and p[3] == '>':
-            tipoNuevo = semant_oper(tipo1, tipo2, 9) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 9)
             p[2] = p[2] + p[3]
         elif p[2] == '<' and p[3] == '=':
-            tipoNuevo = semant_oper(tipo1, tipo2, 6) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 6)
             p[2] = p[2] + p[3]
         elif p[2] == '>' and p[3] == '=':
-            tipoNuevo = semant_oper(tipo1, tipo2, 7) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 7)
             p[2] = p[2] + p[3]
         elif p[2] == '<':
-        	tipoNuevo = semant_oper(tipo1, tipo2, 4) #Analisis semantico por cubo
+        	tipoNuevo = semant_oper(tipo1, tipo2, 4)
     	elif p[2] == '>':
-        	tipoNuevo = semant_oper(tipo1, tipo2, 5) #Analisis semantico por cubo
+        	tipoNuevo = semant_oper(tipo1, tipo2, 5)
         elif p[2] == 'and':
-        	tipoNuevo = semant_oper(tipo1, tipo2, 10) #Analisis semantico por cubo
+        	tipoNuevo = semant_oper(tipo1, tipo2, 10)
         elif p[2] == 'or':
-        	tipoNuevo = semant_oper(tipo1, tipo2, 11) #Analisis semantico por cubo
+        	tipoNuevo = semant_oper(tipo1, tipo2, 11)
+        #print tipoNuevo
         if tipoNuevo != -1:
             if tipoNuevo == 2:
             	cont_tvars[2] = cont_tvars[2] + 1
             	work_tvars[2] = work_tvars[2] + 1
             if flagTabTemp == True:
-            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber) #Actualiza tabla local de temporales
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
             else:
-            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber) #Actualiza tabla global de temporales
-            quads_gen.add(p[2], valor1, valor2, -1) #Se aniade cuadruplo de operacion
-            pilaOpera.append(quads_gen.lasttemp()) #Inserta nuevo operando
-            pilaTipos.append(tipoNuevo) #Inserta nuevo tipo
+            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
+            quads_gen.add(p[2], valor1, valor2, -1)
+            pilaOpera.append(quads_gen.lasttemp())
+            pilaTipos.append(tipoNuevo)
+            #print pilaOpera, pilaTipos
         else:
-            senderror(2, linenumber) #Salida de error por operacion incompatible
+            senderror(2, linenumber)
 
 def p_exp(p):
     '''exp : exp '+' exp
@@ -695,18 +729,20 @@ def p_exp(p):
             | factor empty'''
     global pilaOpera, pilaTipos, quads_gen, tab_ltemporal, tab_temporal
     if p[2] == '+' or p[2] == '-' or p[2] == '*' or p[2] == '/':
-        valor2=pilaOpera.pop() #Operando2
-        valor1=pilaOpera.pop() #Operando1
-        tipo2=pilaTipos.pop() #Tipo2
-        tipo1=pilaTipos.pop() #Tipo1
+        valor2=pilaOpera.pop()
+        valor1=pilaOpera.pop()
+        tipo2=pilaTipos.pop()
+        tipo1=pilaTipos.pop()
+        #print valor1, p[2], valor2, "//", tipo1, p[2], tipo2
         if p[2] == '+':
-            tipoNuevo = semant_oper(tipo1, tipo2, 0) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 0)
         elif p[2] == '-':
-            tipoNuevo = semant_oper(tipo1, tipo2, 1) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 1)
         elif p[2] == '*':
-            tipoNuevo = semant_oper(tipo1, tipo2, 2) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 2)
         elif p[2] == '/':
-            tipoNuevo = semant_oper(tipo1, tipo2, 3) #Analisis semantico por cubo
+            tipoNuevo = semant_oper(tipo1, tipo2, 3)
+        #print tipoNuevo
         if tipoNuevo != -1:
             if tipoNuevo == 0:
             	cont_tvars[0] = cont_tvars[0] + 1
@@ -715,25 +751,26 @@ def p_exp(p):
             	cont_tvars[1] = cont_tvars[1] + 1
             	work_tvars[1] = work_tvars[1] + 1
             if flagTabTemp == True:
-            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber) #Actualiza tabla local de temporales
+            	tab_ltemporal=tabvar(tab_ltemporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
             else:
-            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber) #Actualiza tabla global de temporales
-            quads_gen.add(p[2], valor1, valor2, -1) #Se aniade cuadruplo de operacion
-            pilaOpera.append(quads_gen.lasttemp()) #Inserta nuevo operando
-            pilaTipos.append(tipoNuevo) #Inserta nuevo tipo
+            	tab_temporal=tabvar(tab_temporal, quads_gen.gettemp(), tipoNuevo, 0, linenumber)
+            quads_gen.add(p[2], valor1, valor2, -1)
+            pilaOpera.append(quads_gen.lasttemp())
+            pilaTipos.append(tipoNuevo)
         else:
-            senderror(2, linenumber) #Salida de error por operacion incompatible
+            senderror(2, linenumber)
 
 def p_return(p):
 	'''return : RETURN exp ';' '''
 	global pilaOpera, pilaTipos, quads_gen, cont_vars, work_vars, find_return
 	valor=pilaOpera.pop()
 	tipo=pilaTipos.pop()
+	print 'return', valor, tipo, nombremod, tipomod
 	if quads_gen.getScope() == "*work*":
-		senderror(18, linenumber) #Salida de error por encontrar return en ambito global
+		senderror(18, linenumber)
 	if tipo != vartipo_mod(tipomod):
-		senderror(17, linenumber, nombremod, tipomod) #Salida de error por un return de tipo incorrecto
-	quads_gen.add('return', valor, -1, nombremod) #Se ingresa cuadruplo de return
+		senderror(17, linenumber, nombremod, tipomod)
+	quads_gen.add('return', valor, -1, nombremod)
 	find_return = True
 
 def p_factor(p):
@@ -741,7 +778,8 @@ def p_factor(p):
             | var_cte '''
     global listoper, pilaOpera
     if p[1] != '(':
-        pilaOpera.append(p[1]) #Se aniade operando a la lista/pila de operandos
+        pilaOpera.append(p[1])
+        #print "FACTOR--", pilaOpera
     p[0] = p[1]
 
 def p_figure(p):
@@ -778,30 +816,37 @@ def p_var_cte(p):
                 | FALSE'''
     global assign_vars, pilaTipos, tab_constant
     if (type(p[1]) is int):
+        #print "VAR_CTE--",p[1]
         tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(0) #Encuentra un entero para asignar
         pilaTipos.append(0)
         p[0] = p[1]
+        #print "--INT", p[1], pilaOpera
     elif (type(p[1]) is float):
         tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(1) #Encuentra un float para asignar
         pilaTipos.append(1)
         p[0] = p[1]
+        #print "--FLOAT", p[1], pilaOpera
     elif (p[1] == 'true'):
         tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(2) #Encuentra un boleano para asignar
         pilaTipos.append(2)
         p[0] = p[1]
+        #print "--TRUE", p[1], pilaOpera
     elif (p[1] == 'false'):
         tab_constant = tabconstante(tab_constant, p[1])
         assign_vars.append(2) #Encuentra un boleano para asignar
         pilaTipos.append(2)
         p[0] = p[1]
+        #print "--FALSE", p[1], pilaOpera
     else:
-        findtipo = buscaID(pairs_idtype, p[1][0]) #Encuentra un id para asignar
+        #print "VAR_CTE--", p[1][0], p[1][1]
+        findtipo = buscaID(pairs_idtype, p[1][0])
         esdimensionada = tab_dims.isDuplicate(p[1][0])
         if p[1][1] == 'mod':
         	findtipo = p[1][2]
+        #print "VAR_CTE find tipo--", pairs_idtype, p[1], findtipo
         if findtipo == -1:
         	senderror(4, linenumber, p[1][0])
         assign_vars.append(findtipo)
@@ -810,10 +855,13 @@ def p_var_cte(p):
         	p[0] = p[1][0]
         else:
         	p[0] = p[1][1]
+        #print "--ID", p[1], pilaOpera
 
 def p_gotoFalse(p):
 	'''gotoFalse : '''
 	global pilaOpera, pilaTipos, assign_vars
+	#print "GOTOFALSE--", pilaOpera
+	#print "GOTOFALSE--", pilaTipos
 	if pilaTipos.pop() != 2:
 		senderror(5, linenumber)
 	assign_vars = []
@@ -925,7 +973,7 @@ try:
     if sys.argv[1]:
         Name = str(sys.argv[1])
 except:
-    Name = "ej/ej17.txt"
+    Name = "ej/ej8.txt"
 
 try:
     if int(sys.argv[2])==1:
@@ -943,9 +991,39 @@ for l in lines:
     st=st+lines[x]
     x=x+1
 yacc.parse(st)
+#print st
 f.close()
-
-if nodisplay != 1:
+'''
+def compileData(data):
+	yacc.parse(data)
 	dir_modulos.writeQ()
 	tab_constant.writeQ()
+	quads_gen.writeQ(dir_modulos, tab_constant)
+
+'''
+if nodisplay != 1:
+	print("\n")
+	print tab_dims
+	print tab_pointer
+	print("\n")
+	dir_modulos.echotables()
+	dir_modulos.echotablestemp()
+	#tab_valores.echo() #Despliega tabla de valores
+	#tab_valores.write() #Guarda en archivo la tabla de valores
+	print("\n")
+	dir_modulos.echo() #Despliega directorio de modulos
+	dir_modulos.echoV()
+	dir_modulos.echoT()
+	#dir_modulos.write()
+	dir_modulos.writeQ()
+	#print tab_valores.getDir("b")
+	print("\n")
+	tab_constant.echo()
+	#tab_constant.write()
+	tab_constant.writeQ()
+	print("\n")
+	quads_gen.echo()
+	quads_gen.write()
+	print("\n")
+	#quads_gen.echoQ(dir_modulos, tab_constant)
 	quads_gen.writeQ(dir_modulos, tab_constant)

@@ -1,10 +1,12 @@
-init
-
-j = 23.2;
-i = 7 + 9;
-
-//trio i 6 green;
-//quad 5 j yellow;
+init
+
+j = 23.2;
+i = 7 + 9;
+
+//trio i 6 green;
+//quad 5 j yellow;
 //arc 3 2 cyan;
 
+z=i+j;
+
 end

@@ -1,0 +1,36 @@
+init
+
+arr int r[5];
+encontrado = false;
+
+i=0;
+
+while (i < 5){
+	rand int m 10;
+	r[i] = m;
+	i=i+1;
+}
+
+input float x #;
+
+n = 0;
+while (n < 5){
+  if (r[n] == x){
+    encontrado = true;
+  }
+  n = n + 1;
+}
+
+n = 0;
+while (n < 5){
+  echo (r[n]);
+  n = n + 1;
+}
+
+if (encontrado == true){
+  echo ("Valor encontrado.");
+} else {
+  echo ("Valor no encontrado.");
+}
+
+end
