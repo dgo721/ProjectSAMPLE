@@ -35,7 +35,7 @@ A graphical-output compiler that receives input commands, displaying drawing and
 
 **sample.smo** - Sample object file .smo, includes module directory, constants and quads.
 
-**run_exec.py** - Sample runtime file, read and executes .smo file.
+**run_sample.py** - Sample runtime file, read and executes .smo file.
 
 **memory.py** - Python class Memory, serves as virtual memory for runtime procedures.
 
