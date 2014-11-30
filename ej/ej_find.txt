@@ -11,6 +11,7 @@ while (i < 5){
 	i=i+1;
 }
 
+echo ("Escribe un valor entre 0 y 9");
 input float x #;
 
 n = 0;

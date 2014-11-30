@@ -1,16 +1,42 @@
 QUAD|   OP  |   OPR1|   OPR2|   TEMP|   
 ----|   ----|   ----|   ----|   ----|   
-   1|   quad|   30  |   30  |   white|   
-   2|   oval|   30  |   30  |   purple|   
-   3|   trio|   30  |   30  |   blue|   
-   4|   sample|   off |   down|   10  |   
-   5|   sample|   off |   right|   10  |   
-   6|   quad|   30  |   30  |   cyan|   
-   7|   oval|   30  |   30  |   red |   
-   8|   trio|   30  |   30  |   orange|   
-   9|   sample|   off |   down|   10  |   
-  10|   sample|   off |   right|   10  |   
-  11|   quad|   30  |   30  |   green|   
-  12|   oval|   30  |   30  |   yellow|   
-  13|   trio|   30  |   30  |   black|   
-  14|   end |   -1  |   -1  |   -1  |   
+   1|   =   |   0   |   -1  |   i   |   
+   2|   =   |   0   |   -1  |   x   |   
+   3|   sample|   off |   left|   40  |   
+   4|   sample|   off |   up  |   40  |   
+   5|   goTo|   -1  |   -1  |   15  |   
+   6|   sample|   off |   left|   30  |   
+   7|   sample|   off |   down|   40  |   
+   8|   *   |   n   |   360 |   _t1 |   
+   9|   /   |   _t1 |   10  |   _t2 |   
+  10|   =   |   _t2 |   -1  |   m   |   
+  11|   arc |   30  |   360 |   red |   
+  12|   arc |   30  |   m   |   blue|   
+  13|   /   |   n   |   10.0|   _t3 |   
+  14|   return|   _t3 |   -1  |   calculaPocentaje|   
+  15|   <   |   i   |   10  |   _t4 |   
+  16|   goToF|   _t4 |   -1  |   32  |   
+  17|   echo|   "Escribe un valor entre 0 y 5"|   -1  |   -1  |   
+  18|   input|   int |   -1  |   y   |   
+  19|   random|   int |   6   |   m   |   
+  20|   ==  |   y   |   m   |   _t5 |   
+  21|   goToF|   _t5 |   -1  |   27  |   
+  22|   +   |   x   |   1   |   _t6 |   
+  23|   =   |   _t6 |   -1  |   x   |   
+  24|   trio|   5   |   5   |   green|   
+  25|   sample|   off |   right|   10  |   
+  26|   goTo|   -1  |   -1  |   29  |   
+  27|   oval|   5   |   5   |   red |   
+  28|   sample|   off |   right|   10  |   
+  29|   +   |   i   |   1   |   _t7 |   
+  30|   =   |   _t7 |   -1  |   i   |   
+  31|   goTo|   -1  |   -1  |   15  |   
+  32|   echo|   "Cantidad de aciertos"|   -1  |   -1  |   
+  33|   echo|   x   |   -1  |   -1  |   
+  34|   era |   calculaPocentaje|   -1  |   -1  |   
+  35|   param|   x   |   -1  |   param1|   
+  36|   gosub|   calculaPocentaje|   -1  |   -1  |   
+  37|   =   |   calculaPocentaje|   -1  |   porcentaje|   
+  38|   echo|   "Porcentaje"|   -1  |   -1  |   
+  39|   echo|   porcentaje|   -1  |   -1  |   
+  40|   end |   -1  |   -1  |   -1  |   

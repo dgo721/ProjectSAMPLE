@@ -948,4 +948,6 @@ f.close()
 if nodisplay != 1:
 	dir_modulos.writeQ()
 	tab_constant.writeQ()
+	quads_gen.write()
 	quads_gen.writeQ(dir_modulos, tab_constant)
+
